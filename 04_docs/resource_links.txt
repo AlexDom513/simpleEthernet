@@ -1,0 +1,41 @@
+resource_links:
+
+Ethernet:
+    - Ethernet Frame Format
+        https://www.youtube.com/watch?v=JsYqqDqmQaE
+
+    - How Ethernet Works
+        https://www.youtube.com/playlist?list=PLfSW-xVM-0-LniWAh3vUk8EplJsiOfKGc
+
+    - 10 Gigabit Ethernet
+        https://en.wikipedia.org/wiki/10_Gigabit_Ethernet
+
+    - Ethernet Frame State Machine
+        https://www.youtube.com/watch?v=zTsHbEIOM2A
+
+
+
+
+
+
+***CRC32 // Online CRC32 Calculator:       https://crccalc.com/
+
+
+
+By Module:
+    - proj_top.v
+        Setting up a top-level design
+          https://github.com/HDLForBeginners/Examples/tree/main/ZynqSeries
+
+    - clk_rst_mgr.v
+        Example Clock Divider/Enable
+          https://github.com/gtaylormb/opl3_fpga/blob/master/fpga/modules/clks/src/clk_div.sv
+        
+        Reduce Clock Speed (PLL too Fast)
+          https://www.reddit.com/r/FPGA/comments/pyss1v/noob_question_i_am_trying_to_reduce_to_speed_of/
+        
+        How to generate a clock enable signal on FPGA
+          https://www.fpga4student.com/2017/08/how-to-generate-clock-enable-signal.html
+
+        MMCM vs Clock Divider
+          https://www.reddit.com/r/FPGA/comments/qbes5c/mmcm_vs_clock_divider/
