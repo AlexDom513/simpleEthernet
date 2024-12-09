@@ -1,0 +1,58 @@
+########################################################################
+# Gitignore Rules
+########################################################################
+
+sim_build/
+__pycache__
+*.fst
+*.xml
+*.vcd
+*.wpc
+*.lpr
+*.veo
+*.vh
+*.str
+*.jou
+*.log
+*.ui
+*.hwh
+*.bda
+*.bxml
+*.html
+*.debug
+*.zip
+*.Xil
+*.dll
+*.so
+*.cc
+*.protoinst
+*.hwdef
+*.dcp
+*.xpr
+*.bkp
+
+# vivado project files
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.srcs/
+*.ioplanning/
+
+# block design
+**/bd/*
+!**/bd/hdl
+**/bd/hdl/*
+!**/bd/hdl/bd_wrapper.v
+
+# vitis
+sw_platform_gen/
+
+# exceptions
+!*_sim/
+!component.xml
+
+# vscode
+.vscode
