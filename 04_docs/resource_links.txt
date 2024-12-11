@@ -13,6 +13,10 @@ Ethernet:
     - Ethernet Frame State Machine
         https://www.youtube.com/watch?v=zTsHbEIOM2A
 
+    - RMII spec
+        http://ebook.pldworld.com/_eBook/-Telecommunications,Networks-/TCPIP/RMII/rmii_rev12.pdf
+        https://www.reddit.com/r/FPGA/comments/s56dtt/using_fpga_as_a_mac_to_control_a_phy_by_rmii/
+
 
 
 
