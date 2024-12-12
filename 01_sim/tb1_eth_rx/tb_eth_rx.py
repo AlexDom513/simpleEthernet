@@ -14,9 +14,6 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
-CLK_PERIOD = 20
-CLK_UNITS = 'ns'
-
 @cocotb.test()
 async def tb_eth_rx(dut):
 
@@ -24,7 +21,7 @@ async def tb_eth_rx(dut):
     dut.Rst.value = 1
 
     # start clock
-    Clk = Clock(dut.Clk, CLK_PERIOD, CLK_UNITS)
+    Clk = Clock(dut.Clk, 20, 'ns')
     cocotb.start_soon(Clk.start())
     for _ in range(5):
         await(RisingEdge(dut.Clk))
