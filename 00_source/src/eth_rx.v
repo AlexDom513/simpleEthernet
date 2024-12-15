@@ -45,14 +45,15 @@ module eth_rx (
   localparam pFCS_Len_Cnt       = pFCS_Len_Bits >> (pMII_WIDTH >> 1);
 
   // eth_rx_fsm
-  localparam IDLE               = 3'h0;
-  localparam PREAMBLE           = 3'h1;
-  localparam DEST_ADDR          = 3'h2;
-  localparam SRC_ADDR           = 3'h3;
-  localparam LEN_TYPE           = 3'h4;
-  localparam PAYLOAD_LEN        = 3'h5;
-  localparam PAYLOAD            = 3'h6;
-  localparam FCS                = 3'h7;
+  localparam IDLE               = 4'h0;
+  localparam PREAMBLE           = 4'h1;
+  localparam DEST_ADDR          = 4'h2;
+  localparam SRC_ADDR           = 4'h3;
+  localparam LEN_TYPE           = 4'h4;
+  localparam PAYLOAD_LEN        = 4'h5;
+  localparam PAYLOAD            = 4'h6;
+  localparam FCS                = 4'h7;
+  localparam IPG                = 4'h8;
 
   // header parameters
   localparam IP_LEN_TYPE      = 16'h0800;
@@ -62,7 +63,7 @@ module eth_rx (
   //==========================================
 
   // eth_rx_fsm
-  reg [2:0]     rCurr_State;
+  reg [3:0]     rCurr_State;
   reg [7:0]     rCtrl_Cnt;
   reg [15:0]    rLen_Type;
   reg [7:0]     rIP_Prev_Byte;
@@ -78,6 +79,11 @@ module eth_rx (
   // crc
   wire [31:0]   wCrc;
   reg [31:0]    rCrc;
+  wire          wCrc_En;
+  reg           rCrc_En;
+
+  reg [31:0]    rCrc_Recv;
+  reg           rCrc_Valid;
 
   //==========================================
   // eth_rx_fsm
@@ -85,6 +91,7 @@ module eth_rx (
   always @(posedge Clk)
   begin
     if (Rst) begin
+      rCrc_En <= 0;
       rIP_Curr_Payload_Bytes <= 0;
       rCtrl_Cnt <= 0;
       rCurr_State <= IDLE;
@@ -98,6 +105,7 @@ module eth_rx (
       //================
       IDLE:
       begin
+        rCrc_En <= 0;
         rIP_Curr_Payload_Bytes <= 0;
         rCtrl_Cnt <= 0;
 
@@ -110,8 +118,10 @@ module eth_rx (
       //================
       PREAMBLE:
       begin
-        if (Rxd == 2'b11)
+        if (Rxd == 2'b11) begin
+          rCrc_En <= 1;
           rCurr_State <= DEST_ADDR;
+        end
       end
 
       //================
@@ -189,27 +199,51 @@ module eth_rx (
       PAYLOAD:
       begin
         if (wByte_Rdy) begin
-          rCrc <= wCrc;
           rIP_Curr_Payload_Bytes <= rIP_Curr_Payload_Bytes + 1;
         end
 
-        if (rIP_Curr_Payload_Bytes == rIP_Tot_Payload_Bytes)
-          if (wByte_Rdy)
+        if (rIP_Curr_Payload_Bytes == rIP_Tot_Payload_Bytes) begin
+          rCrc_En <= 0;
+          if (wByte_Rdy) begin
+            rCrc_Recv <= {rCrc_Recv[23:0], wByte_Rx};
             rCurr_State <= FCS;
-          else if (rBit_Cnt == 2'b11)
-            rCrc <= wCrc;
+          end
+        end
       end
 
       //================
       // FCS (7)
       //================
+
+      // assuming FCS enters LSB first from PHY
+
       FCS:
       begin
         rCtrl_Cnt <= rCtrl_Cnt + 1;
-        if (rCtrl_Cnt == pFCS_Len_Cnt-1) begin
-          rCtrl_Cnt <= 0;
-          rCurr_State <= IDLE;
+
+        if (wByte_Rdy & rCtrl_Cnt < pFCS_Len_Cnt-1)
+          rCrc_Recv <= {rCrc_Recv[23:0], wByte_Rx};
+
+
+        if (rCtrl_Cnt == pFCS_Len_Cnt-4) begin
+          if (rCrc == rCrc_Recv)
+            rCrc_Valid <= 1;
+          else
+            rCrc_Valid <= 0;
         end
+        else if (rCtrl_Cnt == pFCS_Len_Cnt-3) begin
+          rCtrl_Cnt <= 0;
+          rCurr_State <= IPG;
+        end
+      end
+
+      //================
+      // IPG (8)
+      //================
+      IPG:
+      begin
+        rCtrl_Cnt <= rCtrl_Cnt + 1;
+        
       end
 
       //================
@@ -253,9 +287,17 @@ module eth_rx (
   eth_crc_gen2 eth_crc_gen2_inst (
     .Clk      (Clk),
     .Rst      (Rst),
-    .Crc_En   (wByte_Rdy),
+    .Crc_En   (wCrc_En),
     .Data     (wByte_Rx),
     .Crc_Out  (wCrc)
   );
+  assign wCrc_En = wByte_Rdy & rCrc_En;
+
+  always @(posedge Clk)
+  begin
+    if (wCrc_En) begin
+      rCrc <= wCrc;
+    end
+  end
 
 endmodule

@@ -28,7 +28,9 @@ def frame_gen():
         file.write(str(hex(zlib.crc32(bin_data))))
 
     # create input vector
-    frame_bytes = bytes(frame)
+    crc32 = zlib.crc32(bin_data).to_bytes(4, byteorder='big')
+    frame_bytes = bytes(frame) + crc32
+    print(frame_bytes)
     frame_binary = np.unpackbits(np.frombuffer(frame_bytes, dtype=np.uint8))
     frame_binary = frame_binary.reshape(-1, 8)[:, ::-1].flatten() # LSBs of each byte are sent first
     frame_binary = np.concatenate((preamble, sfd, frame_binary))

@@ -39,9 +39,12 @@ module eth_crc_gen2 (
     else begin
       if (Crc_En)
         Lfsr_Q <= Lfsr_C;
+      // else
+      //   Lfsr_Q <= 32'hFFFFFFFF;
     end
   end
 
+  // post complement
   assign Crc_Out = Lfsr_C ^ 32'hFFFFFFFF;
 
   assign Lfsr_C[0] = Lfsr_Q[2] ^ Lfsr_Q[8] ^ Data[2];
