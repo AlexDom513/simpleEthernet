@@ -43,7 +43,7 @@ async def tb_eth_rx(dut):
 
     await(RisingEdge(dut.Clk))
     dut.Rxd.value = 0
-    await(Timer(1, 'us'))
+    await(Timer(5, 'us'))
 
 
 
