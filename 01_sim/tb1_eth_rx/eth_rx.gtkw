@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Sun Dec 15 22:52:18 2024
+[*] Sun Dec 15 23:02:03 2024
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.fst"
-[dumpfile_mtime] "Sun Dec 15 22:40:38 2024"
-[dumpfile_size] 3945
+[dumpfile_mtime] "Sun Dec 15 23:01:15 2024"
+[dumpfile_size] 4708
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
 [timestart] 0
 [size] 1440 1243
 [pos] -1 -1
-*-20.486509 -1 5200000 5200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.271215 8490000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] .
 [treeopen] .eth_rx.
 [sst_width] 233
@@ -68,14 +68,14 @@ eth_rx.wByte_Rdy
 -byte_rx
 @200
 -
-@800201
+@800200
 -crc
 @29
 eth_rx.eth_crc_gen2_inst.Crc_En
 @23
 eth_rx.eth_crc_gen2_inst.Data[7:0]
 eth_rx.rCrc_Recv[31:0]
-@1000201
+@1000200
 -crc
 [pattern_trace] 1
 [pattern_trace] 0

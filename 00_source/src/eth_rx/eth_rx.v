@@ -24,25 +24,25 @@ module eth_rx (
   //==========================================
 
   // eth_rx_ctrl
-  reg           rRx_En;
+  reg             rRx_En;
 
   // byte formation
-  wire          wByte_Rdy;
-  wire [7:0]    wByte_Rx;
-  reg [7:0]     rByte_Rx;
-  reg [1:0]     rBit_Cnt;
+  wire            wByte_Rdy;
+  wire [7:0]      wByte_Rx;
+  reg  [7:0]      rByte_Rx;
+  reg  [1:0]      rBit_Cnt;
 
   // formed bytes
-  reg           rByte_Rdy;
-  reg           rByte_Rdy_d1;
-  reg [7:0]     rByte;
-  reg [7:0]     rByte_d1;
+  reg             rByte_Rdy;
+  reg             rByte_Rdy_d1;
+  reg  [7:0]      rByte;
+  reg  [7:0]      rByte_d1;
 
   // crc
-  wire          wCrc_En;
-  wire [31:0]   wCrc;
-  reg           rCrc_En;
-  reg [31:0]    rCrc_Recv;
+  wire            wCrc_En;
+  wire [31:0]     wCrc;
+  reg             rCrc_En;
+  reg  [31:0]     rCrc_Recv;
 
   //==========================================
   // eth_rx_ctrl
