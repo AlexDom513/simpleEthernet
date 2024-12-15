@@ -75,6 +75,10 @@ module eth_rx (
   reg [7:0]     rByte_Rx;
   wire [7:0]    wByte_Rx;
 
+  // crc
+  wire [31:0]   wCrc;
+  reg [31:0]    rCrc;
+
   //==========================================
   // eth_rx_fsm
   //==========================================
@@ -184,11 +188,16 @@ module eth_rx (
       //================
       PAYLOAD:
       begin
-        if (wByte_Rdy)
+        if (wByte_Rdy) begin
+          rCrc <= wCrc;
           rIP_Curr_Payload_Bytes <= rIP_Curr_Payload_Bytes + 1;
+        end
 
         if (rIP_Curr_Payload_Bytes == rIP_Tot_Payload_Bytes)
-          rCurr_State <= FCS;
+          if (wByte_Rdy)
+            rCurr_State <= FCS;
+          else if (rBit_Cnt == 2'b11)
+            rCrc <= wCrc;
       end
 
       //================
@@ -223,19 +232,30 @@ module eth_rx (
   assign wByte_Rx = {Rxd, rByte_Rx[5:0]};
   always @(posedge Clk)
   begin
-    if (rCurr_State > PREAMBLE & rCurr_State < FCS)
+    if (rCurr_State > PREAMBLE)
       rByte_Rx <= wByte_Rx >> pMII_WIDTH;
   end
 
   // indicate when formed byte is valid
   always @(posedge Clk)
   begin
-    if (rCurr_State > PREAMBLE & rCurr_State < FCS)
+    if (rCurr_State > PREAMBLE)
       rBit_Cnt <= rBit_Cnt + 1;
     else
       rBit_Cnt <= 0;
   end
   assign wByte_Rdy = rBit_Cnt[1] & rBit_Cnt[0];
 
+
+  //==========================================
+  // crc
+  //==========================================
+  eth_crc_gen2 eth_crc_gen2_inst (
+    .Clk      (Clk),
+    .Rst      (Rst),
+    .Crc_En   (wByte_Rdy),
+    .Data     (wByte_Rx),
+    .Crc_Out  (wCrc)
+  );
 
 endmodule

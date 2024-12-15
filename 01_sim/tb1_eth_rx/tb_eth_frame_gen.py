@@ -1,6 +1,9 @@
 import os
+import zlib
 import numpy as np
 from scapy.all import Ether, IP, UDP, raw
+
+# https://crccalc.com/?crc=123456789&method=&datatype=hex&outtype=hex
 
 def frame_gen():
 
@@ -13,11 +16,16 @@ def frame_gen():
     payload     = "Hello, UDP!"
     frame       = eth_layer / ip_layer / udp_layer / payload
 
-    # write frame bytes to file
-    with open('expected_packet_bytes.txt', 'w') as file:
-        hex_data = raw(frame).hex()
+    # write frame bytes/info to file
+    with open('expected.txt', 'w') as file:
+        bin_data = raw(frame)
+        hex_data = bin_data.hex()
         for i in range(0, len(hex_data), 2):
             file.write(hex_data[i:i+2] + '\n')
+        file.write('\n')
+        file.write(hex_data)
+        file.write('\n')
+        file.write(str(hex(zlib.crc32(bin_data))))
 
     # create input vector
     frame_bytes = bytes(frame)
@@ -27,3 +35,6 @@ def frame_gen():
     frame_binary = frame_binary.reshape((-1, 2))
 
     return frame_binary
+
+if __name__ == "__main__":
+    frame_gen()
