@@ -1,18 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Dec 12 06:37:07 2024
+[*] Sun Dec 15 05:01:56 2024
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.fst"
-[dumpfile_mtime] "Thu Dec 12 06:32:11 2024"
-[dumpfile_size] 1758
+[dumpfile_mtime] "Sun Dec 15 04:53:55 2024"
+[dumpfile_size] 1970
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
-[timestart] 815800
+[timestart] 4380000
 [size] 1440 1243
 [pos] -1 -1
-*-15.868572 860000 -1 880000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.130474 5140000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] .
-[sst_width] 233
-[signals_width] 216
+[sst_width] 315
+[signals_width] 267
 [sst_expanded] 1
 [sst_vpaned_height] 368
 @800200
@@ -35,33 +35,48 @@ eth_rx.Rxd[1:0]
 @800200
 -eth_rx_fsm
 @24
+[color] 2
 eth_rx.IDLE
-@25
+[color] 2
 eth_rx.PREAMBLE
-@24
+[color] 2
 eth_rx.DEST_ADDR
+[color] 2
 eth_rx.SRC_ADDR
+[color] 2
+eth_rx.LEN_TYPE
+[color] 2
+eth_rx.PAYLOAD_LEN
+[color] 2
+eth_rx.PAYLOAD
+[color] 2
 eth_rx.rCurr_State[2:0]
 @22
 eth_rx.rCtrl_Cnt[7:0]
+eth_rx.rLen_Type[15:0]
+@23
+eth_rx.rIP_Curr_Payload_Bytes[15:0]
+@22
+eth_rx.rIP_Tot_Payload_Bytes[15:0]
 @1000200
 -eth_rx_fsm
 @200
 -
 @800200
 -byte_rx
-@28
-eth_rx.Rxd[1:0]
-[color] 2
-eth_rx.rRxd[1:0]
-@22
-eth_rx.wByte_Rx[7:0]
-eth_rx.rByte_Rx[7:0]
-@28
-eth_rx.wByte_Rdy
 @24
 eth_rx.rBit_Cnt[1:0]
+@28
+eth_rx.Rxd[1:0]
+@22
+eth_rx.rByte_Rx[7:0]
+eth_rx.wByte_Rx[7:0]
+@28
+eth_rx.wByte_Rdy
 @1000200
 -byte_rx
+@200
+-
+-
 [pattern_trace] 1
 [pattern_trace] 0

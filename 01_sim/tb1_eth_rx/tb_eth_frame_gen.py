@@ -1,6 +1,6 @@
-
+import os
 import numpy as np
-from scapy.all import Ether, IP, UDP
+from scapy.all import Ether, IP, UDP, raw
 
 def frame_gen():
 
@@ -12,6 +12,12 @@ def frame_gen():
     udp_layer   = UDP(dport=12345, sport=54321)
     payload     = "Hello, UDP!"
     frame       = eth_layer / ip_layer / udp_layer / payload
+
+    # write frame bytes to file
+    with open('expected_packet_bytes.txt', 'w') as file:
+        hex_data = raw(frame).hex()
+        for i in range(0, len(hex_data), 2):
+            file.write(hex_data[i:i+2] + '\n')
 
     # create input vector
     frame_bytes = bytes(frame)
