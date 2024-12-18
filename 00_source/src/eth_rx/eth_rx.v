@@ -9,7 +9,7 @@ module eth_rx (
   input wire        Clk,
   input wire        Rst,
   input wire [1:0]  Rxd,
-  input wire        Crs_DV
+  output wire       wRx_Req // placeholder, output required
 );
 
   //==========================================
@@ -24,7 +24,7 @@ module eth_rx (
   //==========================================
 
   // eth_rx_ctrl
-  reg             rRx_En;
+  wire            wRx_Req;
 
   // byte formation
   wire            wByte_Rdy;
@@ -40,8 +40,8 @@ module eth_rx (
 
   // crc
   wire            wCrc_En;
+  wire            wCrc_Req;
   wire [31:0]     wCrc;
-  reg             rCrc_En;
   reg  [31:0]     rCrc_Recv;
 
   //==========================================
@@ -54,8 +54,8 @@ module eth_rx (
     .Byte_Rdy       (rByte_Rdy),
     .Byte           (rByte),
     .Crc_Recv       (rCrc_Recv),
-    .Rx_En          (rRx_En),
-    .Crc_En         (rCrc_En)
+    .Rx_En          (wRx_Req),
+    .Crc_En         (wCrc_Req)
   );
 
   //==========================================
@@ -67,7 +67,7 @@ module eth_rx (
   assign wByte_Rx = {Rxd, rByte_Rx[5:0]};
   always @(posedge Clk)
   begin
-    if (rRx_En)
+    if (wRx_Req)
       rByte_Rx <= wByte_Rx >> pMII_WIDTH;
   end
 
@@ -75,7 +75,7 @@ module eth_rx (
   assign wByte_Rdy = rBit_Cnt[1] & rBit_Cnt[0];
   always @(posedge Clk)
   begin
-    if (rRx_En)
+    if (wRx_Req)
       rBit_Cnt <= rBit_Cnt + 1;
     else
       rBit_Cnt <= 0;
@@ -85,7 +85,7 @@ module eth_rx (
   always @(posedge Clk)
   begin
     rByte_Rdy <= wByte_Rdy;
-    if (wByte_Rdy & rRx_En)
+    if (wByte_Rdy & wRx_Req)
       rByte <= wByte_Rx;
   end
 
@@ -100,7 +100,7 @@ module eth_rx (
     rByte_d1 <= rByte;
   end
 
-  assign wCrc_En = rByte_Rdy_d1 & rCrc_En; // only update when a byte is ready
+  assign wCrc_En = rByte_Rdy_d1 & wCrc_Req; // only update when a byte is ready
   eth_crc_gen2 eth_crc_gen2_inst (
     .Clk      (Clk),
     .Rst      (Rst),
