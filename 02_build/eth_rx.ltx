@@ -31,62 +31,8 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 1,
-                                "portIndex": 0,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe1",
-                                "id": 1,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
-                                "rightIndex": 2,
-                                "portIndex": 1,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
-                                                "parentNetId": 2
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
-                                                "parentNetId": 3
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
-                                                "parentNetId": 4
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe2",
-                                "id": 2,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
                                 "rightIndex": 7,
-                                "portIndex": 2,
+                                "portIndex": 0,
                                 "nets": [
                                     {
                                         "name": "rByte",
@@ -121,6 +67,60 @@
                                 ]
                             },
                             {
+                                "name": "probe1",
+                                "id": 1,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 2,
+                                "portIndex": 1,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
+                                                "parentNetId": 8
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
+                                                "parentNetId": 9
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
+                                                "parentNetId": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe2",
+                                "id": 2,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 1,
+                                "portIndex": 2,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe3",
                                 "id": 3,
                                 "type": "DATA_TRIGGER",
@@ -135,13 +135,45 @@
                                         "isBus": false
                                     }
                                 ]
+                            },
+                            {
+                                "name": "probe4",
+                                "id": 4,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 4,
+                                "nets": [
+                                    {
+                                        "name": "Crc_Valid_OBUF",
+                                        "isBus": false
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe5",
+                                "id": 5,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 5,
+                                "nets": [
+                                    {
+                                        "name": "Rx_Req_OBUF",
+                                        "isBus": false
+                                    }
+                                ]
                             }
                         ]
                     }
                 ],
                 "parent_nets": [
                     {
-                        "id": 2,
+                        "id": 8,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
                         "state_reg": [
                             {
@@ -184,7 +216,7 @@
                         ]
                     },
                     {
-                        "id": 3,
+                        "id": 9,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
                         "state_reg": [
                             {
@@ -227,7 +259,7 @@
                         ]
                     },
                     {
-                        "id": 4,
+                        "id": 10,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
                         "state_reg": [
                             {
