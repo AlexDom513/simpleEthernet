@@ -1,0 +1,276 @@
+{
+    "ltx_root": {
+        "version": 4,
+        "minor": 0,
+        "ltx_data": [
+            {
+                "name": "EDA_PROBESET",
+                "active": true,
+                "debug_cores": [
+                    {
+                        "type": "XSDB_V3",
+                        "name": "dbg_hub",
+                        "spec": "labtools_xsdbm_v3",
+                        "clk_input_freq_hz": "50000000"
+                    },
+                    {
+                        "type": "ILA_V3",
+                        "name": "u_ila_0",
+                        "spec": "labtools_ila_v6",
+                        "core_location": {
+                            "user_chain": 1,
+                            "slave_index": 0,
+                            "bscan_switch_index": 0
+                        },
+                        "uuid": "23e7d65a79bc59f7bc47406c1714dfae",
+                        "pins": [
+                            {
+                                "name": "probe0",
+                                "id": 0,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 1,
+                                "portIndex": 0,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe1",
+                                "id": 1,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 2,
+                                "portIndex": 1,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
+                                                "parentNetId": 2
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
+                                                "parentNetId": 3
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
+                                                "parentNetId": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe2",
+                                "id": 2,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 7,
+                                "portIndex": 2,
+                                "nets": [
+                                    {
+                                        "name": "rByte",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "rByte[7]"
+                                            },
+                                            {
+                                                "name": "rByte[6]"
+                                            },
+                                            {
+                                                "name": "rByte[5]"
+                                            },
+                                            {
+                                                "name": "rByte[4]"
+                                            },
+                                            {
+                                                "name": "rByte[3]"
+                                            },
+                                            {
+                                                "name": "rByte[2]"
+                                            },
+                                            {
+                                                "name": "rByte[1]"
+                                            },
+                                            {
+                                                "name": "rByte[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe3",
+                                "id": 3,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 3,
+                                "nets": [
+                                    {
+                                        "name": "rByte_Rdy",
+                                        "isBus": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "parent_nets": [
+                    {
+                        "id": 2,
+                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
+                        "state_reg": [
+                            {
+                                "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[2]",
+                                "states": [
+                                    {
+                                        "name": "SRC_ADDR",
+                                        "val": "010"
+                                    },
+                                    {
+                                        "name": "LEN_TYPE",
+                                        "val": "011"
+                                    },
+                                    {
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
+                                    },
+                                    {
+                                        "name": "PAYLOAD",
+                                        "val": "101"
+                                    },
+                                    {
+                                        "name": "FCS",
+                                        "val": "110"
+                                    },
+                                    {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
+                                    {
+                                        "name": "IDLE",
+                                        "val": "000"
+                                    },
+                                    {
+                                        "name": "IPG",
+                                        "val": "111"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
+                        "state_reg": [
+                            {
+                                "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[1]",
+                                "states": [
+                                    {
+                                        "name": "SRC_ADDR",
+                                        "val": "010"
+                                    },
+                                    {
+                                        "name": "LEN_TYPE",
+                                        "val": "011"
+                                    },
+                                    {
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
+                                    },
+                                    {
+                                        "name": "PAYLOAD",
+                                        "val": "101"
+                                    },
+                                    {
+                                        "name": "FCS",
+                                        "val": "110"
+                                    },
+                                    {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
+                                    {
+                                        "name": "IDLE",
+                                        "val": "000"
+                                    },
+                                    {
+                                        "name": "IPG",
+                                        "val": "111"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
+                        "state_reg": [
+                            {
+                                "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[0]",
+                                "states": [
+                                    {
+                                        "name": "SRC_ADDR",
+                                        "val": "010"
+                                    },
+                                    {
+                                        "name": "LEN_TYPE",
+                                        "val": "011"
+                                    },
+                                    {
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
+                                    },
+                                    {
+                                        "name": "PAYLOAD",
+                                        "val": "101"
+                                    },
+                                    {
+                                        "name": "FCS",
+                                        "val": "110"
+                                    },
+                                    {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
+                                    {
+                                        "name": "IDLE",
+                                        "val": "000"
+                                    },
+                                    {
+                                        "name": "IPG",
+                                        "val": "111"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
