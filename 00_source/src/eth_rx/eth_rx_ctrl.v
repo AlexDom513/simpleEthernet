@@ -241,7 +241,7 @@ module eth_rx_ctrl (
 
             if (rByte_Cnt == rTot_Payload_Bytes-1) begin
               Crc_En <= 0;
-              rCrc_Recv <= {rCrc_Recv[23:0], Byte};
+              rCrc_Recv <= {Byte, rCrc_Recv[31:8]};
               rByte_Cnt <= 0;
               rByte_Ctrl_FSM_State <= FCS;
             end
@@ -254,7 +254,7 @@ module eth_rx_ctrl (
         FCS:
         begin
           if (Byte_Rdy) begin
-            rCrc_Recv <= {rCrc_Recv[23:0], Byte};
+            rCrc_Recv <= {Byte, rCrc_Recv[31:8]};
             rByte_Cnt <= rByte_Cnt + 1;
 
             if (rByte_Cnt == pFCS_Len_Bytes-2) begin

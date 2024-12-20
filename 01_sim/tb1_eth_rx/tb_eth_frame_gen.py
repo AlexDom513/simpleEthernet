@@ -27,13 +27,17 @@ def frame_gen():
         file.write('\n')
         file.write(str(hex(zlib.crc32(bin_data))))
 
+    # create crc, FCS is sent most significant bit first
+    crc32_bytes = zlib.crc32(bin_data).to_bytes(4, byteorder='big')
+    crc32_binary = np.unpackbits(np.frombuffer(crc32_bytes, dtype=np.uint8))
+    crc32_binary = crc32_binary.reshape(-1, 8)[:, ::-1].flatten() # Reverse bits within each byte
+    crc32_binary = crc32_binary.reshape(-1,8)[::-1].flatten() # Reverse byte order
+
     # create input vector
-    crc32 = zlib.crc32(bin_data).to_bytes(4, byteorder='big')
-    frame_bytes = bytes(frame) + crc32
-    print(frame_bytes)
+    frame_bytes = bytes(frame)
     frame_binary = np.unpackbits(np.frombuffer(frame_bytes, dtype=np.uint8))
     frame_binary = frame_binary.reshape(-1, 8)[:, ::-1].flatten() # LSBs of each byte are sent first
-    frame_binary = np.concatenate((preamble, sfd, frame_binary))
+    frame_binary = np.concatenate((preamble, sfd, frame_binary, crc32_binary))
     frame_binary = frame_binary.reshape((-1, 2))
 
     return frame_binary
