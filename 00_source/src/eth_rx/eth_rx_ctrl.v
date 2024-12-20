@@ -13,7 +13,8 @@ module eth_rx_ctrl (
   input wire [7:0]  Byte,
   input wire [31:0] Crc_Recv,
   output reg        Rx_En,
-  output reg        Crc_En
+  output reg        Crc_En,
+  output reg        Crc_Valid
 );
 
   //==========================================
@@ -80,6 +81,7 @@ module eth_rx_ctrl (
   begin
     if (Rst) begin
       rRx_Ctrl_FSM_State <= RX_IDLE;
+      Rx_En <= 0;
     end
     else begin
 
@@ -90,6 +92,7 @@ module eth_rx_ctrl (
         //================
         RX_IDLE:
         begin
+          Rx_En <= 0;
           if (Rxd == 2'b01)
             rRx_Ctrl_FSM_State <= RX_PREAMBLE;
         end
@@ -110,10 +113,10 @@ module eth_rx_ctrl (
         //================
         RX_DATA:
         begin
-          if (rByte_Ctrl_Done)
+          if (rByte_Ctrl_Done) begin
             Rx_En <= 0;
-          if (rByte_Ctrl_FSM_State == IDLE)
             rRx_Ctrl_FSM_State <= RX_IDLE;
+          end
         end
 
         //================
@@ -139,11 +142,12 @@ module eth_rx_ctrl (
   always @(posedge Clk)
   begin
     if (Rst) begin
-      rByte_Ctrl_FSM_State <= 0;
+      rByte_Ctrl_FSM_State <= IDLE;
       rByte_Ctrl_Cnt <= 0;
       rByte_Cnt <= 0;
       rByte_Ctrl_Done <= 0;
       rTot_Payload_Bytes <= 0;
+      Crc_Valid <= 0;
     end
     else begin
 
@@ -160,6 +164,7 @@ module eth_rx_ctrl (
           rByte_Ctrl_Done <= 0;
           rTot_Payload_Bytes <= 0;
           Crc_En <= 0;
+          Crc_Valid <= 0;
           if (Byte_Rdy) begin
             Crc_En <= 1;
             rByte_Ctrl_FSM_State <= DEST_ADDR;
@@ -265,6 +270,9 @@ module eth_rx_ctrl (
         IPG:
         begin
           rByte_Ctrl_Cnt <= rByte_Ctrl_Cnt + 1;
+
+          if (rCrc_Recv == Crc_Recv)
+            Crc_Valid <= 1;
           
           if (rByte_Ctrl_Cnt == pIPG_Cnt)
             rByte_Ctrl_FSM_State <= IDLE;

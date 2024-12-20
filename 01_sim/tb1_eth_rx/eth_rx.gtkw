@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Sun Dec 15 23:02:03 2024
+[*] Fri Dec 20 05:07:45 2024
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.fst"
-[dumpfile_mtime] "Sun Dec 15 23:01:15 2024"
-[dumpfile_size] 4708
+[dumpfile_mtime] "Fri Dec 20 05:05:51 2024"
+[dumpfile_size] 4733
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
 [timestart] 0
 [size] 1440 1243
 [pos] -1 -1
-*-21.271215 8490000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-21.271215 1590000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] .
 [treeopen] .eth_rx.
 [sst_width] 233
@@ -21,7 +21,11 @@
 @28
 eth_rx.Clk
 eth_rx.Rst
-eth_rx.Crs_DV
+@29
+Rxd[1:0]
+@28
+Rx_Req
+Crc_Valid
 @1000200
 -Ports
 @200
@@ -37,6 +41,9 @@ eth_rx.Rxd[1:0]
 (1)eth_rx.Rxd[1:0]
 @1401200
 -group_end
+@28
+eth_rx.eth_rx_ctrl_inst.Rx_En
+eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Done
 @200
 -
 @22
@@ -70,9 +77,9 @@ eth_rx.wByte_Rdy
 -
 @800200
 -crc
-@29
+@28
 eth_rx.eth_crc_gen2_inst.Crc_En
-@23
+@22
 eth_rx.eth_crc_gen2_inst.Data[7:0]
 eth_rx.rCrc_Recv[31:0]
 @1000200

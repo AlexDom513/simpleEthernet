@@ -9,7 +9,8 @@ module eth_rx (
   input wire        Clk,
   input wire        Rst,
   input wire [1:0]  Rxd,
-  output wire       wRx_Req // placeholder, output required
+  output wire       Rx_Req, // placeholder, output required
+  output wire       Crc_Valid
 );
 
   //==========================================
@@ -23,10 +24,8 @@ module eth_rx (
   // Wires/Registers
   //==========================================
 
-  // eth_rx_ctrl
-  wire            wRx_Req;
-
   // byte formation
+  wire            wRx_Req;
   wire            wByte_Rdy;
   wire [7:0]      wByte_Rx;
   reg  [7:0]      rByte_Rx;
@@ -47,6 +46,8 @@ module eth_rx (
   //==========================================
   // eth_rx_ctrl
   //==========================================
+
+  assign Rx_Req = wRx_Req;
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk            (Clk),
     .Rst            (Rst),
@@ -55,7 +56,8 @@ module eth_rx (
     .Byte           (rByte),
     .Crc_Recv       (rCrc_Recv),
     .Rx_En          (wRx_Req),
-    .Crc_En         (wCrc_Req)
+    .Crc_En         (wCrc_Req),
+    .Crc_Valid      (Crc_Valid)
   );
 
   //==========================================
