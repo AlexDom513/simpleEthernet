@@ -31,62 +31,8 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 2,
-                                "portIndex": 0,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
-                                                "parentNetId": 0
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
-                                                "parentNetId": 1
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
-                                                "parentNetId": 2
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe1",
-                                "id": 1,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
-                                "rightIndex": 1,
-                                "portIndex": 1,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe2",
-                                "id": 2,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
                                 "rightIndex": 7,
-                                "portIndex": 2,
+                                "portIndex": 0,
                                 "nets": [
                                     {
                                         "name": "rByte",
@@ -121,18 +67,170 @@
                                 ]
                             },
                             {
+                                "name": "probe1",
+                                "id": 1,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 31,
+                                "portIndex": 1,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/rCrc_Recv",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[31]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[30]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[29]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[28]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[27]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[26]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[25]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[24]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[23]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[22]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[21]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[20]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[19]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[18]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[17]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[16]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[15]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[14]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[13]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[12]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[11]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[10]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[9]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[8]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[7]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[6]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[5]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[4]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[3]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[2]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[1]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rCrc_Recv[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe2",
+                                "id": 2,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 1,
+                                "portIndex": 2,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe3",
                                 "id": 3,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
-                                "isVector": false,
+                                "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 0,
+                                "rightIndex": 2,
                                 "portIndex": 3,
                                 "nets": [
                                     {
-                                        "name": "rByte_Rdy",
-                                        "isBus": false
+                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
+                                                "parentNetId": 42
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
+                                                "parentNetId": 43
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
+                                                "parentNetId": 44
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -141,14 +239,112 @@
                                 "id": 4,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
-                                "isVector": false,
+                                "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 0,
+                                "rightIndex": 31,
                                 "portIndex": 4,
                                 "nets": [
                                     {
-                                        "name": "eth_rx_ctrl_inst/Crc_Valid0",
-                                        "isBus": false
+                                        "name": "rCrc_Computed",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "rCrc_Computed[31]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[30]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[29]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[28]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[27]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[26]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[25]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[24]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[23]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[22]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[21]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[20]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[19]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[18]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[17]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[16]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[15]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[14]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[13]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[12]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[11]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[10]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[9]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[8]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[7]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[6]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[5]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[4]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[3]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[2]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[1]"
+                                            },
+                                            {
+                                                "name": "rCrc_Computed[0]"
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -163,6 +359,38 @@
                                 "portIndex": 5,
                                 "nets": [
                                     {
+                                        "name": "eth_rx_ctrl_inst/Crc_Valid0",
+                                        "isBus": false
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe6",
+                                "id": 6,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 6,
+                                "nets": [
+                                    {
+                                        "name": "rByte_Rdy",
+                                        "isBus": false
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "probe7",
+                                "id": 7,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": false,
+                                "leftIndex": 0,
+                                "rightIndex": 0,
+                                "portIndex": 7,
+                                "nets": [
+                                    {
                                         "name": "eth_rx_ctrl_inst/Rx_En_i_1_n_0",
                                         "isBus": false
                                     }
@@ -173,7 +401,7 @@
                 ],
                 "parent_nets": [
                     {
-                        "id": 0,
+                        "id": 42,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
                         "state_reg": [
                             {
@@ -216,7 +444,7 @@
                         ]
                     },
                     {
-                        "id": 1,
+                        "id": 43,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
                         "state_reg": [
                             {
@@ -259,7 +487,7 @@
                         ]
                     },
                     {
-                        "id": 2,
+                        "id": 44,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
                         "state_reg": [
                             {

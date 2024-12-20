@@ -11,7 +11,7 @@ module eth_rx_ctrl (
   input wire [1:0]  Rxd,
   input wire        Byte_Rdy,
   input wire [7:0]  Byte,
-  input wire [31:0] Crc_Recv,
+  input wire [31:0] Crc_Computed,
   output reg        Rx_En,
   output reg        Crc_En,
   output reg        Crc_Valid
@@ -271,7 +271,7 @@ module eth_rx_ctrl (
         begin
           rByte_Ctrl_Cnt <= rByte_Ctrl_Cnt + 1;
 
-          if (rCrc_Recv == Crc_Recv)
+          if (rCrc_Recv == Crc_Computed)
             Crc_Valid <= 1;
           
           if (rByte_Ctrl_Cnt == pIPG_Cnt)

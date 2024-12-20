@@ -41,7 +41,7 @@ module eth_rx (
   wire            wCrc_En;
   wire            wCrc_Req;
   wire [31:0]     wCrc;
-  reg  [31:0]     rCrc_Recv;
+  reg  [31:0]     rCrc_Computed;
 
   //==========================================
   // eth_rx_ctrl
@@ -54,7 +54,7 @@ module eth_rx (
     .Rxd            (Rxd),
     .Byte_Rdy       (rByte_Rdy),
     .Byte           (rByte),
-    .Crc_Recv       (rCrc_Recv),
+    .Crc_Computed   (rCrc_Computed),
     .Rx_En          (wRx_Req),
     .Crc_En         (wCrc_Req),
     .Crc_Valid      (Crc_Valid)
@@ -114,7 +114,7 @@ module eth_rx (
   always @(posedge Clk)
   begin
     if (wCrc_En) begin
-      rCrc_Recv <= wCrc;
+      rCrc_Computed <= wCrc;
     end
   end
 
