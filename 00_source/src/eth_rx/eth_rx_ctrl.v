@@ -27,6 +27,9 @@ module eth_rx_ctrl (
   // shift to conver bytes to bits
   localparam pBytes_To_Bits = 3;
 
+  // preamble count
+  localparam pPreamble_Cnt      = 8'h20;
+
   // eth_rx_ctrl_fsm
   localparam RX_IDLE            = 2'h0;
   localparam RX_PREAMBLE        = 2'h1;
@@ -47,13 +50,16 @@ module eth_rx_ctrl (
   localparam pLen_Type_Bytes    = 16'h2;
   localparam pPayload_Len_Bytes = 16'h4;
   localparam pFCS_Len_Bytes     = 16'h4;
-  localparam pIPG_Bytes         = 16'h12;
+  localparam pIPG_Bytes         = 16'hC;
 
   // bit counts
   localparam pIPG_Bits          = pIPG_Bytes << pBytes_To_Bits;
   
-  // serial counts (# iterations to process data given some MII width)
+  // serial counts (# iterations to process data given some MII width)     = 
   localparam pIPG_Cnt           = pIPG_Bits >> (pMII_WIDTH >> 1);
+
+  // IP packet type
+  localparam pIp_Len_Type       = 16'h0800;
 
   //==========================================
   // Wires/Registers
@@ -65,23 +71,28 @@ module eth_rx_ctrl (
 
   // fsm/control
   reg [1:0]     rRx_Ctrl_FSM_State;
+  reg [7:0]     rRx_Ctrl_Cnt;
   reg [2:0]     rByte_Ctrl_FSM_State;
   reg [15:0]    rByte_Ctrl_Cnt;
   reg [15:0]    rByte_Cnt;
   reg           rByte_Ctrl_Done;
 
   // parsed
+  reg [15:0]    rLen_Type;
   reg [15:0]    rTot_Payload_Bytes;
   reg [31:0]    rCrc_Recv;
 
   //==========================================
   // eth_rx_ctrl_fsm
   //==========================================
+  // monitor read-in of bits from PHY
+
   always @(posedge Clk)
   begin
     if (Rst) begin
-      rRx_Ctrl_FSM_State <= RX_IDLE;
       Rx_En <= 0;
+      rRx_Ctrl_Cnt <= 0;
+      rRx_Ctrl_FSM_State <= RX_IDLE;
     end
     else begin
 
@@ -93,8 +104,11 @@ module eth_rx_ctrl (
         RX_IDLE:
         begin
           Rx_En <= 0;
-          if (Rxd == 2'b01)
+          rRx_Ctrl_Cnt <= 0;
+          if (Rxd == 2'b01) begin
+            rRx_Ctrl_Cnt <= rRx_Ctrl_Cnt + 1;
             rRx_Ctrl_FSM_State <= RX_PREAMBLE;
+          end
         end
 
         //================
@@ -102,10 +116,14 @@ module eth_rx_ctrl (
         //================
         RX_PREAMBLE:
         begin
-          if (Rxd == 2'b11) begin
+          if (Rxd == 2'b01)
+            rRx_Ctrl_Cnt <= rRx_Ctrl_Cnt + 1;
+          else if (Rxd == 2'b11 & rRx_Ctrl_Cnt == pPreamble_Cnt-1) begin
             Rx_En <= 1;
             rRx_Ctrl_FSM_State <= RX_DATA;
           end
+          else
+            rRx_Ctrl_FSM_State <= RX_IDLE;
         end
 
         //================
@@ -131,6 +149,7 @@ module eth_rx_ctrl (
   //==========================================
   // eth_byte_ctrl_fsm
   //==========================================
+  // monitor formed bytes for packet content
 
   // register input data
   always @(posedge Clk)
@@ -146,6 +165,7 @@ module eth_rx_ctrl (
       rByte_Ctrl_Cnt <= 0;
       rByte_Cnt <= 0;
       rByte_Ctrl_Done <= 0;
+      rLen_Type <= 0;
       rTot_Payload_Bytes <= 0;
       Crc_Valid <= 0;
     end
@@ -162,6 +182,7 @@ module eth_rx_ctrl (
           rByte_Ctrl_Cnt <= 0;
           rByte_Cnt <= 0;
           rByte_Ctrl_Done <= 0;
+          rLen_Type <= 0;
           rTot_Payload_Bytes <= 0;
           Crc_En <= 0;
           Crc_Valid <= 0;
@@ -195,6 +216,7 @@ module eth_rx_ctrl (
             rByte_Cnt <= rByte_Cnt + 1;
 
             if (rByte_Cnt == pMAC_Addr_Bytes-1) begin
+              rLen_Type <= {rLen_Type[7:0], Byte};
               rByte_Cnt <= 0;
               rByte_Ctrl_FSM_State <= LEN_TYPE;
             end
@@ -204,15 +226,25 @@ module eth_rx_ctrl (
         //================
         // LEN_TYPE (3)
         //================
+        // parse ethertype, only proceed with IP packets, else return to IDLE
+
         LEN_TYPE:
         begin
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
 
             if (rByte_Cnt == pLen_Type_Bytes-1) begin
-              rByte_Cnt <= 0;
-              rByte_Ctrl_FSM_State <= PAYLOAD_LEN;
+              if (rLen_Type == pIp_Len_Type) begin
+                rByte_Cnt <= 0;
+                rByte_Ctrl_FSM_State <= PAYLOAD_LEN;
+              end
+              else begin
+                rByte_Ctrl_Done <= 1;
+                rByte_Ctrl_FSM_State <= IDLE;
+              end
             end
+            else
+              rLen_Type <= {rLen_Type[7:0], Byte};
           end
         end
 
@@ -279,7 +311,6 @@ module eth_rx_ctrl (
         end
 
       endcase
-      
     end
   end
 endmodule
