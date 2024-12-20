@@ -102,15 +102,17 @@ module eth_rx (
     rByte_d1 <= rByte;
   end
 
-  assign wCrc_En = rByte_Rdy_d1 & wCrc_Req; // only update when a byte is ready
   eth_crc_gen2 eth_crc_gen2_inst (
     .Clk      (Clk),
     .Rst      (Rst),
-    .Crc_En   (wCrc_En),
-    .Data     (rByte_d1),
+    .Crc_Req  (wCrc_Req),
+    .Byte_Rdy (rByte_Rdy_d1),
+    .Byte     (rByte_d1),
     .Crc_Out  (wCrc)
   );
 
+  // only update {rCrc_Computed} when byte is ready
+  assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
   always @(posedge Clk)
   begin
     if (wCrc_En) begin

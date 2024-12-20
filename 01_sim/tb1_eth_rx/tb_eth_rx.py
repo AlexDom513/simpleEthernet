@@ -5,9 +5,6 @@
 # 12/10/24
 #====================================================================
 
-# NOTE: Rxd[1:0] in eth_rx.gtkw has bit order reversed
-# http://ebook.pldworld.com/_eBook/-Telecommunications,Networks-/TCPIP/RMII/rmii_rev12.pdf
-
 import tb_eth_frame_gen as frame_gen
 import cocotb
 from cocotb.binary import BinaryValue
@@ -45,10 +42,15 @@ async def tb_eth_rx(dut):
     dut.Rxd.value = 0
     await(Timer(5, 'us'))
 
+    # apply input stimulus (again)
+    input_vec = frame_gen.frame_gen()
+    vec = BinaryValue()
+    for rx in input_vec:
+        await(RisingEdge(dut.Clk))
+        binstr = str(rx[1]) + str(rx[0])
+        vec.binstr = binstr
+        dut.Rxd.value = vec
 
-
-
-  
-  
-
-
+    await(RisingEdge(dut.Clk))
+    dut.Rxd.value = 0
+    await(Timer(5, 'us'))

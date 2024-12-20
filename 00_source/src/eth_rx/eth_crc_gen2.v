@@ -11,7 +11,7 @@
 // WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
 // SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
-// RESULTING FROM LOSS OF USE, Data OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+// RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 // NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 // USE OR PERFORMANCE OF THIS SOFTWARE.
 
@@ -24,8 +24,9 @@
 module eth_crc_gen2 (
   input         Clk,
   input         Rst,
-  input         Crc_En,
-  input [7:0]   Data,
+  input         Crc_Req,
+  input         Byte_Rdy,
+  input [7:0]   Byte,
   output [31:0] Crc_Out
 );
 
@@ -37,47 +38,49 @@ module eth_crc_gen2 (
     if (Rst)
       Lfsr_Q <= 32'hFFFFFFFF;
     else begin
-      if (Crc_En)
-        Lfsr_Q <= Lfsr_C;
-      // else
-      //   Lfsr_Q <= 32'hFFFFFFFF;
+      if (Crc_Req) begin
+        if (Byte_Rdy)
+          Lfsr_Q <= Lfsr_C;
+      end
+      else
+        Lfsr_Q <= 32'hFFFFFFFF;
     end
   end
 
   // post complement
   assign Crc_Out = Lfsr_C ^ 32'hFFFFFFFF;
 
-  assign Lfsr_C[0] = Lfsr_Q[2] ^ Lfsr_Q[8] ^ Data[2];
-  assign Lfsr_C[1] = Lfsr_Q[0] ^ Lfsr_Q[3] ^ Lfsr_Q[9] ^ Data[0] ^ Data[3];
-  assign Lfsr_C[2] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[4] ^ Lfsr_Q[10] ^ Data[0] ^ Data[1] ^ Data[4];
-  assign Lfsr_C[3] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[5] ^ Lfsr_Q[11] ^ Data[1] ^ Data[2] ^ Data[5];
-  assign Lfsr_C[4] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[6] ^ Lfsr_Q[12] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[6];
-  assign Lfsr_C[5] = Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[7] ^ Lfsr_Q[13] ^ Data[1] ^ Data[3] ^ Data[4] ^ Data[7];
-  assign Lfsr_C[6] = Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[14] ^ Data[4] ^ Data[5];
-  assign Lfsr_C[7] = Lfsr_Q[0] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[15] ^ Data[0] ^ Data[5] ^ Data[6];
-  assign Lfsr_C[8] = Lfsr_Q[1] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[16] ^ Data[1] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[9] = Lfsr_Q[7] ^ Lfsr_Q[17] ^ Data[7];
-  assign Lfsr_C[10] = Lfsr_Q[2] ^ Lfsr_Q[18] ^ Data[2];
-  assign Lfsr_C[11] = Lfsr_Q[3] ^ Lfsr_Q[19] ^ Data[3];
-  assign Lfsr_C[12] = Lfsr_Q[0] ^ Lfsr_Q[4] ^ Lfsr_Q[20] ^ Data[0] ^ Data[4];
-  assign Lfsr_C[13] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[5] ^ Lfsr_Q[21] ^ Data[0] ^ Data[1] ^ Data[5];
-  assign Lfsr_C[14] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[6] ^ Lfsr_Q[22] ^ Data[1] ^ Data[2] ^ Data[6];
-  assign Lfsr_C[15] = Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[7] ^ Lfsr_Q[23] ^ Data[2] ^ Data[3] ^ Data[7];
-  assign Lfsr_C[16] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[24] ^ Data[0] ^ Data[2] ^ Data[3] ^ Data[4];
-  assign Lfsr_C[17] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[25] ^ Data[0] ^ Data[1] ^ Data[3] ^ Data[4] ^ Data[5];
-  assign Lfsr_C[18] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[26] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[6];
-  assign Lfsr_C[19] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[27] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[20] = Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[28] ^ Data[3] ^ Data[4] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[21] = Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Lfsr_Q[29] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[7];
-  assign Lfsr_C[22] = Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[30] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[6];
-  assign Lfsr_C[23] = Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[31] ^ Data[3] ^ Data[4] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[24] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Data[0] ^ Data[2] ^ Data[4] ^ Data[5] ^ Data[7];
-  assign Lfsr_C[25] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[5] ^ Data[6];
-  assign Lfsr_C[26] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Data[0] ^ Data[1] ^ Data[2] ^ Data[3] ^ Data[4] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[27] = Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Data[1] ^ Data[3] ^ Data[4] ^ Data[5] ^ Data[7];
-  assign Lfsr_C[28] = Lfsr_Q[0] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Data[0] ^ Data[4] ^ Data[5] ^ Data[6];
-  assign Lfsr_C[29] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Data[0] ^ Data[1] ^ Data[5] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[30] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Data[0] ^ Data[1] ^ Data[6] ^ Data[7];
-  assign Lfsr_C[31] = Lfsr_Q[1] ^ Lfsr_Q[7] ^ Data[1] ^ Data[7];
+  assign Lfsr_C[0] = Lfsr_Q[2] ^ Lfsr_Q[8] ^ Byte[2];
+  assign Lfsr_C[1] = Lfsr_Q[0] ^ Lfsr_Q[3] ^ Lfsr_Q[9] ^ Byte[0] ^ Byte[3];
+  assign Lfsr_C[2] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[4] ^ Lfsr_Q[10] ^ Byte[0] ^ Byte[1] ^ Byte[4];
+  assign Lfsr_C[3] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[5] ^ Lfsr_Q[11] ^ Byte[1] ^ Byte[2] ^ Byte[5];
+  assign Lfsr_C[4] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[6] ^ Lfsr_Q[12] ^ Byte[0] ^ Byte[2] ^ Byte[3] ^ Byte[6];
+  assign Lfsr_C[5] = Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[7] ^ Lfsr_Q[13] ^ Byte[1] ^ Byte[3] ^ Byte[4] ^ Byte[7];
+  assign Lfsr_C[6] = Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[14] ^ Byte[4] ^ Byte[5];
+  assign Lfsr_C[7] = Lfsr_Q[0] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[15] ^ Byte[0] ^ Byte[5] ^ Byte[6];
+  assign Lfsr_C[8] = Lfsr_Q[1] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[16] ^ Byte[1] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[9] = Lfsr_Q[7] ^ Lfsr_Q[17] ^ Byte[7];
+  assign Lfsr_C[10] = Lfsr_Q[2] ^ Lfsr_Q[18] ^ Byte[2];
+  assign Lfsr_C[11] = Lfsr_Q[3] ^ Lfsr_Q[19] ^ Byte[3];
+  assign Lfsr_C[12] = Lfsr_Q[0] ^ Lfsr_Q[4] ^ Lfsr_Q[20] ^ Byte[0] ^ Byte[4];
+  assign Lfsr_C[13] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[5] ^ Lfsr_Q[21] ^ Byte[0] ^ Byte[1] ^ Byte[5];
+  assign Lfsr_C[14] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[6] ^ Lfsr_Q[22] ^ Byte[1] ^ Byte[2] ^ Byte[6];
+  assign Lfsr_C[15] = Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[7] ^ Lfsr_Q[23] ^ Byte[2] ^ Byte[3] ^ Byte[7];
+  assign Lfsr_C[16] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[24] ^ Byte[0] ^ Byte[2] ^ Byte[3] ^ Byte[4];
+  assign Lfsr_C[17] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[25] ^ Byte[0] ^ Byte[1] ^ Byte[3] ^ Byte[4] ^ Byte[5];
+  assign Lfsr_C[18] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[26] ^ Byte[0] ^ Byte[1] ^ Byte[2] ^ Byte[4] ^ Byte[5] ^ Byte[6];
+  assign Lfsr_C[19] = Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[27] ^ Byte[1] ^ Byte[2] ^ Byte[3] ^ Byte[5] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[20] = Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[28] ^ Byte[3] ^ Byte[4] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[21] = Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Lfsr_Q[29] ^ Byte[2] ^ Byte[4] ^ Byte[5] ^ Byte[7];
+  assign Lfsr_C[22] = Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[30] ^ Byte[2] ^ Byte[3] ^ Byte[5] ^ Byte[6];
+  assign Lfsr_C[23] = Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Lfsr_Q[31] ^ Byte[3] ^ Byte[4] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[24] = Lfsr_Q[0] ^ Lfsr_Q[2] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Byte[0] ^ Byte[2] ^ Byte[4] ^ Byte[5] ^ Byte[7];
+  assign Lfsr_C[25] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Byte[0] ^ Byte[1] ^ Byte[2] ^ Byte[3] ^ Byte[5] ^ Byte[6];
+  assign Lfsr_C[26] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[2] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Byte[0] ^ Byte[1] ^ Byte[2] ^ Byte[3] ^ Byte[4] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[27] = Lfsr_Q[1] ^ Lfsr_Q[3] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[7] ^ Byte[1] ^ Byte[3] ^ Byte[4] ^ Byte[5] ^ Byte[7];
+  assign Lfsr_C[28] = Lfsr_Q[0] ^ Lfsr_Q[4] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Byte[0] ^ Byte[4] ^ Byte[5] ^ Byte[6];
+  assign Lfsr_C[29] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[5] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Byte[0] ^ Byte[1] ^ Byte[5] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[30] = Lfsr_Q[0] ^ Lfsr_Q[1] ^ Lfsr_Q[6] ^ Lfsr_Q[7] ^ Byte[0] ^ Byte[1] ^ Byte[6] ^ Byte[7];
+  assign Lfsr_C[31] = Lfsr_Q[1] ^ Lfsr_Q[7] ^ Byte[1] ^ Byte[7];
 
 endmodule
