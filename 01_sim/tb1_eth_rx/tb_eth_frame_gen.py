@@ -1,6 +1,6 @@
 import zlib
 import numpy as np
-from scapy.all import Ether, IP, UDP
+from scapy.all import Ether, IP, UDP, raw
 
 # https://crccalc.com/?crc=123456789&method=&datatype=hex&outtype=hex
 
@@ -27,6 +27,7 @@ def frame_gen():
     #     file.write(str(hex(zlib.crc32(bin_data))))
 
     # create crc, FCS is sent most significant bit first
+    bin_data = raw(frame)
     crc32_bytes = zlib.crc32(bin_data).to_bytes(4, byteorder='big')
     crc32_binary = np.unpackbits(np.frombuffer(crc32_bytes, dtype=np.uint8))
     crc32_binary = crc32_binary.reshape(-1, 8)[:, ::-1].flatten() # Reverse bits within each byte
