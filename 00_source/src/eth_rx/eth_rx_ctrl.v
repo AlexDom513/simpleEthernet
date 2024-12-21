@@ -167,6 +167,7 @@ module eth_rx_ctrl (
       rByte_Ctrl_Done <= 0;
       rLen_Type <= 0;
       rTot_Payload_Bytes <= 0;
+      rCrc_Recv <= 0;
       Crc_Valid <= 0;
     end
     else begin
@@ -183,6 +184,7 @@ module eth_rx_ctrl (
           rByte_Ctrl_Done <= 0;
           rLen_Type <= 0;
           rTot_Payload_Bytes <= 0;
+          rCrc_Recv <= 0;
           Crc_En <= 0;
           Crc_Valid <= 0;
           if (Byte_Rdy) begin
