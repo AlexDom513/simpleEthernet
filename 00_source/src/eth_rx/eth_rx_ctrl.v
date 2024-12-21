@@ -178,7 +178,6 @@ module eth_rx_ctrl (
         //================
         IDLE:
         begin
-          rByte_Ctrl_FSM_State <= 0;
           rByte_Ctrl_Cnt <= 0;
           rByte_Cnt <= 0;
           rByte_Ctrl_Done <= 0;

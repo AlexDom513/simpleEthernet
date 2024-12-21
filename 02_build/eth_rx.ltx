@@ -31,50 +31,8 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 7,
-                                "portIndex": 0,
-                                "nets": [
-                                    {
-                                        "name": "rByte",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "rByte[7]"
-                                            },
-                                            {
-                                                "name": "rByte[6]"
-                                            },
-                                            {
-                                                "name": "rByte[5]"
-                                            },
-                                            {
-                                                "name": "rByte[4]"
-                                            },
-                                            {
-                                                "name": "rByte[3]"
-                                            },
-                                            {
-                                                "name": "rByte[2]"
-                                            },
-                                            {
-                                                "name": "rByte[1]"
-                                            },
-                                            {
-                                                "name": "rByte[0]"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe1",
-                                "id": 1,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
                                 "rightIndex": 31,
-                                "portIndex": 1,
+                                "portIndex": 0,
                                 "nets": [
                                     {
                                         "name": "eth_rx_ctrl_inst/rCrc_Recv",
@@ -181,24 +139,72 @@
                                 ]
                             },
                             {
+                                "name": "probe1",
+                                "id": 1,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 2,
+                                "portIndex": 1,
+                                "nets": [
+                                    {
+                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
+                                                "parentNetId": 32
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
+                                                "parentNetId": 33
+                                            },
+                                            {
+                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
+                                                "parentNetId": 34
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe2",
                                 "id": 2,
                                 "type": "DATA_TRIGGER",
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 1,
+                                "rightIndex": 7,
                                 "portIndex": 2,
                                 "nets": [
                                     {
-                                        "name": "eth_rx_ctrl_inst/Rxd_IBUF",
+                                        "name": "rByte_d1",
                                         "isBus": true,
                                         "subnets": [
                                             {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[1]"
+                                                "name": "rByte_d1[7]"
                                             },
                                             {
-                                                "name": "eth_rx_ctrl_inst/Rxd_IBUF[0]"
+                                                "name": "rByte_d1[6]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[5]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[4]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[3]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[2]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[1]"
+                                            },
+                                            {
+                                                "name": "rByte_d1[0]"
                                             }
                                         ]
                                     }
@@ -211,38 +217,8 @@
                                 "direction": "IN",
                                 "isVector": true,
                                 "leftIndex": 0,
-                                "rightIndex": 2,
-                                "portIndex": 3,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0",
-                                        "isBus": true,
-                                        "subnets": [
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
-                                                "parentNetId": 42
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
-                                                "parentNetId": 43
-                                            },
-                                            {
-                                                "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
-                                                "parentNetId": 44
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "probe4",
-                                "id": 4,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": true,
-                                "leftIndex": 0,
                                 "rightIndex": 31,
-                                "portIndex": 4,
+                                "portIndex": 3,
                                 "nets": [
                                     {
                                         "name": "rCrc_Computed",
@@ -349,6 +325,30 @@
                                 ]
                             },
                             {
+                                "name": "probe4",
+                                "id": 4,
+                                "type": "DATA_TRIGGER",
+                                "direction": "IN",
+                                "isVector": true,
+                                "leftIndex": 0,
+                                "rightIndex": 1,
+                                "portIndex": 4,
+                                "nets": [
+                                    {
+                                        "name": "Rxd_IBUF",
+                                        "isBus": true,
+                                        "subnets": [
+                                            {
+                                                "name": "Rxd_IBUF[1]"
+                                            },
+                                            {
+                                                "name": "Rxd_IBUF[0]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 "name": "probe5",
                                 "id": 5,
                                 "type": "DATA_TRIGGER",
@@ -379,45 +379,29 @@
                                         "isBus": false
                                     }
                                 ]
-                            },
-                            {
-                                "name": "probe7",
-                                "id": 7,
-                                "type": "DATA_TRIGGER",
-                                "direction": "IN",
-                                "isVector": false,
-                                "leftIndex": 0,
-                                "rightIndex": 0,
-                                "portIndex": 7,
-                                "nets": [
-                                    {
-                                        "name": "eth_rx_ctrl_inst/Rx_En_i_1_n_0",
-                                        "isBus": false
-                                    }
-                                ]
                             }
                         ]
                     }
                 ],
                 "parent_nets": [
                     {
-                        "id": 42,
+                        "id": 32,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[2]",
                         "state_reg": [
                             {
                                 "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[2]",
                                 "states": [
                                     {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
+                                    {
                                         "name": "SRC_ADDR",
                                         "val": "010"
                                     },
                                     {
                                         "name": "LEN_TYPE",
                                         "val": "011"
-                                    },
-                                    {
-                                        "name": "PAYLOAD_LEN",
-                                        "val": "100"
                                     },
                                     {
                                         "name": "PAYLOAD",
@@ -428,8 +412,8 @@
                                         "val": "110"
                                     },
                                     {
-                                        "name": "DEST_ADDR",
-                                        "val": "001"
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
                                     },
                                     {
                                         "name": "IDLE",
@@ -444,23 +428,23 @@
                         ]
                     },
                     {
-                        "id": 43,
+                        "id": 33,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[1]",
                         "state_reg": [
                             {
                                 "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[1]",
                                 "states": [
                                     {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
+                                    {
                                         "name": "SRC_ADDR",
                                         "val": "010"
                                     },
                                     {
                                         "name": "LEN_TYPE",
                                         "val": "011"
-                                    },
-                                    {
-                                        "name": "PAYLOAD_LEN",
-                                        "val": "100"
                                     },
                                     {
                                         "name": "PAYLOAD",
@@ -471,8 +455,8 @@
                                         "val": "110"
                                     },
                                     {
-                                        "name": "DEST_ADDR",
-                                        "val": "001"
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
                                     },
                                     {
                                         "name": "IDLE",
@@ -487,12 +471,16 @@
                         ]
                     },
                     {
-                        "id": 44,
+                        "id": 34,
                         "name": "eth_rx_ctrl_inst/rByte_Ctrl_FSM_State__0[0]",
                         "state_reg": [
                             {
                                 "name": "eth_rx_ctrl_inst/FSM_sequential_rByte_Ctrl_FSM_State_reg[0]",
                                 "states": [
+                                    {
+                                        "name": "DEST_ADDR",
+                                        "val": "001"
+                                    },
                                     {
                                         "name": "SRC_ADDR",
                                         "val": "010"
@@ -500,10 +488,6 @@
                                     {
                                         "name": "LEN_TYPE",
                                         "val": "011"
-                                    },
-                                    {
-                                        "name": "PAYLOAD_LEN",
-                                        "val": "100"
                                     },
                                     {
                                         "name": "PAYLOAD",
@@ -514,8 +498,8 @@
                                         "val": "110"
                                     },
                                     {
-                                        "name": "DEST_ADDR",
-                                        "val": "001"
+                                        "name": "PAYLOAD_LEN",
+                                        "val": "100"
                                     },
                                     {
                                         "name": "IDLE",
