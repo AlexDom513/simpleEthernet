@@ -21,4 +21,3 @@ run: clean
 
 wave: run
 	$(GTKWAVE) dump.fst $(CURDIR)/eth_rx.gtkw
-

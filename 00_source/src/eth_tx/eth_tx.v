@@ -1,11 +1,11 @@
 //====================================================================
 // 02_simple_ethernet
-// eth_packet_former.v
-// Forms packets according to ethernet standard
+// eth_tx.v
+// Ethernet RMII transmit module
 // 7/4/24
 //====================================================================
 
-module eth_packet_former (
+module eth_tx (
   input  wire         Clk,
   input  wire         Rst,
   output wire         Dat_Rdy,
