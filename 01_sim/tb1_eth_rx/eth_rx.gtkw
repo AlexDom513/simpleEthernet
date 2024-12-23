@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Dec 20 22:40:30 2024
+[*] Mon Dec 23 16:34:59 2024
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.fst"
-[dumpfile_mtime] "Fri Dec 20 22:39:57 2024"
-[dumpfile_size] 4807
+[dumpfile_mtime] "Mon Dec 23 16:25:09 2024"
+[dumpfile_size] 4692
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
-[timestart] 1554000
+[timestart] 0
 [size] 1440 1243
 [pos] -1548 -698
-*-17.797615 2000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-22.276062 9440000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] .
 [treeopen] .eth_rx.
 [sst_width] 233
@@ -29,9 +29,7 @@ Crc_Valid
 @200
 -
 @800200
--eth_rx_fsm
-@24
-eth_rx.eth_rx_ctrl_inst.rRx_Ctrl_FSM_State[1:0]
+-eth_rx_ctrl_fsm
 @c00028
 eth_rx.Rxd[1:0]
 @28
@@ -39,51 +37,65 @@ eth_rx.Rxd[1:0]
 (1)eth_rx.Rxd[1:0]
 @1401200
 -group_end
+@24
+[color] 3
+eth_rx.eth_rx_ctrl_inst.rRx_Ctrl_FSM_State[1:0]
 @22
 eth_rx.eth_rx_ctrl_inst.rRx_Ctrl_Cnt[7:0]
 @28
 eth_rx.eth_rx_ctrl_inst.Rx_En
 eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Done
+@1000200
+-eth_rx_ctrl_fsm
 @200
 -
+@800200
+-eth_byte_ctrl_fsm
+@24
+[color] 3
+eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_FSM_State[2:0]
 @22
 eth_rx.eth_rx_ctrl_inst.Byte[7:0]
 @28
 eth_rx.eth_rx_ctrl_inst.Byte_Rdy
-@24
-[color] 3
-eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_FSM_State[2:0]
-@23
-eth_rx.eth_rx_ctrl_inst.rLen_Type[15:0]
+@22
+eth_rx.eth_rx_ctrl_inst.rByte[7:0]
 @28
-[color] 2
 eth_rx.eth_rx_ctrl_inst.rByte_Rdy
 @22
-[color] 2
-eth_rx.eth_rx_ctrl_inst.rByte[7:0]
+eth_rx.eth_rx_ctrl_inst.rLen_Type[15:0]
+eth_rx.eth_rx_ctrl_inst.rTot_Payload_Bytes[15:0]
 eth_rx.eth_rx_ctrl_inst.rCrc_Recv[31:0]
 eth_rx.eth_rx_ctrl_inst.Crc_Computed[31:0]
+@28
+eth_rx.eth_rx_ctrl_inst.Crc_Valid
 @1000200
--eth_rx_fsm
+-eth_byte_ctrl_fsm
 @200
 -
-@c00200
+@800200
 -byte_rx
 @22
 eth_rx.wByte_Rx[7:0]
 eth_rx.rByte_Rx[7:0]
 @28
 eth_rx.wByte_Rdy
-@1401200
+@1000200
 -byte_rx
 @200
 -
 @800200
 -crc
 @28
-eth_rx.eth_crc_gen2_inst.Crc_En
+eth_rx.eth_crc_gen2_inst.Crc_Req
 @22
-eth_rx.eth_crc_gen2_inst.Data[7:0]
+eth_rx.eth_crc_gen2_inst.Byte[7:0]
+@28
+eth_rx.eth_crc_gen2_inst.Byte_Rdy
+@22
+eth_rx.eth_crc_gen2_inst.Crc_Out[31:0]
+@23
+eth_rx.rCrc_Computed[31:0]
 @1000200
 -crc
 [pattern_trace] 1
