@@ -3,6 +3,7 @@ TOPLEVEL_LANG = verilog
 GTKWAVE = gtkwave
 
 VERILOG_SOURCE_DIR = $(PWD)/../../00_source/src/eth_tx
+VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx_pkg.vh
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx.v
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx_ctrl.v
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/crc_gen.v
