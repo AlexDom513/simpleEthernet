@@ -9,7 +9,7 @@ VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_crc_gen2.v
 
 VERILATOR_FLAGS = -j 0 -Wall
 COMPILE_ARGS += $(VERILATOR_FLAGS)
-EXTRA_ARGS += --trace-fst --trace-structs
+EXTRA_ARGS += --trace --trace-structs
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
 

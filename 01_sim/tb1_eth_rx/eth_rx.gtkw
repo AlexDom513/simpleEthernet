@@ -1,102 +1,82 @@
 [*]
-[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Dec 23 16:34:59 2024
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon Dec 23 22:54:48 2024
 [*]
-[dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.fst"
-[dumpfile_mtime] "Mon Dec 23 16:25:09 2024"
-[dumpfile_size] 4692
-[savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
+[dumpfile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb1_eth_rx/dump.vcd"
+[dumpfile_mtime] "Mon Dec 23 22:40:36 2024"
+[dumpfile_size] 111965
+[savefile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
 [timestart] 0
-[size] 1440 1243
-[pos] -1548 -698
-*-22.276062 9440000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[treeopen] .
-[treeopen] .eth_rx.
-[sst_width] 233
-[signals_width] 342
+[size] 1850 1016
+[pos] -27 -24
+*-21.571800 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] eth_rx.
+[sst_width] 279
+[signals_width] 230
 [sst_expanded] 1
-[sst_vpaned_height] 368
+[sst_vpaned_height] 215
 @800200
--Ports
+-eth_rx_ports
 @28
 eth_rx.Clk
 eth_rx.Rst
-Rxd[1:0]
-Rx_Req
-Crc_Valid
+eth_rx.Rxd[1:0]
+eth_rx.Rx_Req
+eth_rx.Crc_Valid
 @1000200
--Ports
+-eth_rx_ports
 @200
 -
 @800200
--eth_rx_ctrl_fsm
-@c00028
-eth_rx.Rxd[1:0]
+-Rx_Ctrl_FSM
 @28
-(0)eth_rx.Rxd[1:0]
-(1)eth_rx.Rxd[1:0]
-@1401200
--group_end
+eth_rx.eth_rx_ctrl_inst.Rxd[1:0]
 @24
-[color] 3
 eth_rx.eth_rx_ctrl_inst.rRx_Ctrl_FSM_State[1:0]
 @22
 eth_rx.eth_rx_ctrl_inst.rRx_Ctrl_Cnt[7:0]
 @28
 eth_rx.eth_rx_ctrl_inst.Rx_En
-eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Done
 @1000200
--eth_rx_ctrl_fsm
+-Rx_Ctrl_FSM
 @200
 -
 @800200
--eth_byte_ctrl_fsm
+-Byte_Ctrl_FSM
 @24
-[color] 3
 eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_FSM_State[2:0]
 @22
-eth_rx.eth_rx_ctrl_inst.Byte[7:0]
+eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Cnt[15:0]
+@c00024
+eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
 @28
-eth_rx.eth_rx_ctrl_inst.Byte_Rdy
-@22
-eth_rx.eth_rx_ctrl_inst.rByte[7:0]
+(0)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(1)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(2)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(3)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(4)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(5)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(6)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(7)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(8)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(9)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(10)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(11)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(12)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(13)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(14)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+(15)eth_rx.eth_rx_ctrl_inst.rByte_Cnt[15:0]
+@1401200
+-group_end
 @28
-eth_rx.eth_rx_ctrl_inst.rByte_Rdy
+eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Done
 @22
 eth_rx.eth_rx_ctrl_inst.rLen_Type[15:0]
 eth_rx.eth_rx_ctrl_inst.rTot_Payload_Bytes[15:0]
-eth_rx.eth_rx_ctrl_inst.rCrc_Recv[31:0]
-eth_rx.eth_rx_ctrl_inst.Crc_Computed[31:0]
-@28
-eth_rx.eth_rx_ctrl_inst.Crc_Valid
+eth_rx.eth_rx_ctrl_inst.Byte[7:0]
+@29
+eth_rx.eth_rx_ctrl_inst.Byte_Rdy
 @1000200
--eth_byte_ctrl_fsm
-@200
--
-@800200
--byte_rx
-@22
-eth_rx.wByte_Rx[7:0]
-eth_rx.rByte_Rx[7:0]
-@28
-eth_rx.wByte_Rdy
-@1000200
--byte_rx
-@200
--
-@800200
--crc
-@28
-eth_rx.eth_crc_gen2_inst.Crc_Req
-@22
-eth_rx.eth_crc_gen2_inst.Byte[7:0]
-@28
-eth_rx.eth_crc_gen2_inst.Byte_Rdy
-@22
-eth_rx.eth_crc_gen2_inst.Crc_Out[31:0]
-@23
-eth_rx.rCrc_Computed[31:0]
-@1000200
--crc
+-Byte_Ctrl_FSM
 [pattern_trace] 1
 [pattern_trace] 0
