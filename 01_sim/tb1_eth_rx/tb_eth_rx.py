@@ -11,6 +11,8 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
+NUM_PACKETS = 2
+
 @cocotb.test()
 async def tb_eth_rx(dut):
 
@@ -30,27 +32,15 @@ async def tb_eth_rx(dut):
         await(RisingEdge(dut.Clk))
 
     # apply input stimulus
-    input_vec = frame_gen.frame_gen()
-    vec = BinaryValue()
-    for rx in input_vec:
+    for _ in range(NUM_PACKETS):
+        input_vec = frame_gen.frame_gen()
+        vec = BinaryValue()
+        for rx in input_vec:
+            await(RisingEdge(dut.Clk))
+            binstr = str(rx[1]) + str(rx[0])
+            vec.binstr = binstr
+            dut.Rxd.value = vec
+
         await(RisingEdge(dut.Clk))
-        binstr = str(rx[1]) + str(rx[0])
-        vec.binstr = binstr
-        dut.Rxd.value = vec
-
-    await(RisingEdge(dut.Clk))
-    dut.Rxd.value = 0
-    await(Timer(5, 'us'))
-
-    # apply input stimulus (again)
-    input_vec = frame_gen.frame_gen()
-    vec = BinaryValue()
-    for rx in input_vec:
-        await(RisingEdge(dut.Clk))
-        binstr = str(rx[1]) + str(rx[0])
-        vec.binstr = binstr
-        dut.Rxd.value = vec
-
-    await(RisingEdge(dut.Clk))
-    dut.Rxd.value = 0
-    await(Timer(5, 'us'))
+        dut.Rxd.value = 0
+        await(Timer(5, 'us'))

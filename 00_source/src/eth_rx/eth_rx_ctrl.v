@@ -55,7 +55,7 @@ module eth_rx_ctrl (
   // bit counts
   localparam pIPG_Bits          = pIPG_Bytes << pBytes_To_Bits;
   
-  // serial counts (# iterations to process data given some MII width)     = 
+  // serial counts (# iterations to process data given some MII width)
   localparam pIPG_Cnt           = pIPG_Bits >> (pMII_WIDTH >> 1);
 
   // IP packet type
