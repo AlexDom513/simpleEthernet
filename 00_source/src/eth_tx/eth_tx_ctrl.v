@@ -5,136 +5,141 @@
 // 12/23/24
 //====================================================================
 
-module eth_tx_ctrl (
-  input wire      Clk,
-  input wire      Rst,
-  output wire     Tx_Ctrl_FSM_State      
-);
+// https://v2kparse.sourceforge.net/includes.pdf
+`include "eth_tx_pkg.vh"
 
-  // import constants
-  `include "eth_tx_pkg.vh"
+module eth_tx_ctrl (
+  input wire        Clk,
+  input wire        Rst,
+  output reg [3:0]  Tx_Ctrl_FSM_State,
+  output reg        Tx_En,
+  output reg        Crc_En
+);
 
   //==========================================
   // Wires/Registers
   //==========================================
 
   // fsm/control
-  reg [3:0]       rTx_Ctrl_FSM_State;
+  reg  [9:0]  rTx_Ctrl_Cnt;
+  reg         rCtrl_Done;
+  reg  [9:0]  rDat_Cnt; // count of how many data bytes were read out of FIFO
+  reg  [2:0]  rPad_Delay;
 
   //==========================================
   // eth_tx_ctrl_fsm
   //==========================================
   // control read-out of bits to PHY
 
-  assign Tx_Ctrl_FSM_State = rTx_Ctrl_FSM_State;
+  assign Tx_En = Tx_En;
 
   always @(posedge Clk)
   begin
     if (Rst) begin
-      rTx_Ctrl_FSM_State <= IDLE;
-      rTx_En <= 0;
-      rCrc_En <= 0;
+      Tx_Ctrl_FSM_State <= `IDLE;
+      Tx_En <= 0;
+      Crc_En <= 0;
     end 
     else begin
 
-      case(rTx_Ctrl_FSM_State)
+      case(Tx_Ctrl_FSM_State)
 
       //================
       // IDLE (0)
       //================
-        IDLE:
+        `IDLE:
         begin
-          rTx_En <= 0;
-          rCrc_En <= 0;
-          rCtrl_Cnt <= 0;
+          Tx_En <= 0;
+          Crc_En <= 0;
+          rTx_Ctrl_Cnt <= 0;
           rCtrl_Done <= 0;
           rDat_Cnt <= 0;
           rPad_Delay <= 0;
           if (rEth_En) begin
-            rTx_En <= 1;
-            rTx_Ctrl_FSM_State <= PREAMBLE;
+            Tx_En <= 1;
+            Tx_Ctrl_FSM_State <= `PREAMBLE;
           end
         end
 
       //================
       // PREAMBLE (1)
       //================
-        PREAMBLE:
+        `PREAMBLE:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pPreamble_Cnt-1) begin
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= SFD;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == `pPreamble_Cnt-1) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `SFD;
           end
         end
 
       //================
       // SFD (2)
       //================
-        SFD:
+        `SFD:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pSFD_Cnt-1) begin
-            rCrc_En <= 1;
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= DEST_ADDR;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == pSFD_Cnt-1) begin
+            Crc_En <= 1;
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `DEST_ADDR;
           end 
         end
 
       //================
       // DEST_ADDR (3)
       //================
-        DEST_ADDR:
+        `DEST_ADDR:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pDest_Addr_Cnt-1) begin
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= SRC_ADDR;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == pDest_Addr_Cnt-1) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `SRC_ADDR;
           end
         end
 
       //================
       // SRC_ADDR (4)
       //================
-        SRC_ADDR:
+        `SRC_ADDR:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pSrc_Addr_Cnt-1) begin
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= LEN_TYPE;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == pSrc_Addr_Cnt-1) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `LEN_TYPE;
           end
         end
 
       //================
       // LEN_TYPE (5)
       //================
-        LEN_TYPE:
+        `LEN_TYPE:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pLen_Type_Cnt-3) begin
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == pLen_Type_Cnt-3) begin
             rFifo_Rd <= 1;
           end
-          if (rCtrl_Cnt == pLen_Type_Cnt-2)
+          if (rTx_Ctrl_Cnt == pLen_Type_Cnt-2)
             rFifo_Rd <= 0;
-          else if (rCtrl_Cnt == pLen_Type_Cnt-1) begin
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= DATA;
+          else if (rTx_Ctrl_Cnt == pLen_Type_Cnt-1) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `DATA;
           end
         end
 
       //================
       // DATA (6)
       //================
-        DATA:
+        `DATA:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
 
           // increment data count
           if (rFifo_Rd_d1)
             rDat_Cnt <= rDat_Cnt + 1;
 
           // fifo read
-          if (rCtrl_Cnt[1:0] == 2'b01 & ~wFifo_Empty) begin
+          if (rTx_Ctrl_Cnt[1:0] == 2'b01 & ~wFifo_Empty) begin
             rFifo_Rd <= 1;
           end
           else
@@ -145,8 +150,8 @@ module eth_tx_ctrl (
             rFifo_Empty <= {rFifo_Empty[2:0], wFifo_Empty};
             if (rFifo_Empty[3]) begin
               rDat_Cnt <= rDat_Cnt + 1;
-              rCtrl_Cnt <= 0;
-              rTx_Ctrl_FSM_State <= PAD;
+              rTx_Ctrl_Cnt <= 0;
+              Tx_Ctrl_FSM_State <= `PAD;
             end
           end
         end
@@ -154,20 +159,20 @@ module eth_tx_ctrl (
       //================
       // PAD (7)
       //================
-        PAD:
+        `PAD:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt[1:0] == 2'b11 & rDat_Cnt < pPayload_Bytes-1)
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt[1:0] == 2'b11 & rDat_Cnt < pPayload_Bytes-1)
             rDat_Cnt <= rDat_Cnt + 1;
 
           if (rDat_Cnt == pPayload_Bytes-1) begin
             rPad_Delay <= {rPad_Delay[1:0], 1'b1};
             if (rPad_Delay[1] & ~rPad_Delay[2])
-              rCrc_En <= 0;
+              Crc_En <= 0;
             else if (rPad_Delay[2]) begin
               rDat_Cnt <= 0;
-              rCtrl_Cnt <= 0;
-              rTx_Ctrl_FSM_State <= FCS;
+              rTx_Ctrl_Cnt <= 0;
+              Tx_Ctrl_FSM_State <= `FCS;
             end
           end 
         end
@@ -175,20 +180,20 @@ module eth_tx_ctrl (
       //================
       // FCS (8)
       //================
-        FCS:
+        `FCS:
         begin
-          rCtrl_Cnt <= rCtrl_Cnt + 1;
-          if (rCtrl_Cnt == pFCS_Cnt-2)
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == pFCS_Cnt-2)
             rCtrl_Done <= 1;
-          else if (rCtrl_Cnt == pFCS_Cnt-1) begin
+          else if (rTx_Ctrl_Cnt == pFCS_Cnt-1) begin
             rCtrl_Done <= 0;
-            rCtrl_Cnt <= 0;
-            rTx_Ctrl_FSM_State <= IDLE;
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `IDLE;
           end
         end
 
         default:
-          rTx_Ctrl_FSM_State <= IDLE;
+          Tx_Ctrl_FSM_State <= `IDLE;
 
       endcase
     end

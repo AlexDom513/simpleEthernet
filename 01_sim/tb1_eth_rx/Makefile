@@ -20,4 +20,4 @@ run: clean
 	$(MAKE) TOPLEVEL=eth_rx MODULE=tb_eth_rx
 
 wave: run
-	$(GTKWAVE) dump.fst $(CURDIR)/eth_rx.gtkw
+	$(GTKWAVE) dump.vcd $(CURDIR)/eth_rx.gtkw
