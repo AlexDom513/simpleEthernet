@@ -23,8 +23,7 @@ module eth_tx_ctrl (
 
   // fsm/control
   reg  [9:0]  rTx_Ctrl_Cnt;
-  reg         rCtrl_Done;
-  reg  [9:0]  rDat_Cnt; // count of how many data bytes were read out of FIFO
+  reg  [9:0]  rDat_Cnt;
   reg  [2:0]  rPad_Delay;
 
   //==========================================
@@ -51,7 +50,6 @@ module eth_tx_ctrl (
           Tx_En         <= 0;
           Crc_En        <= 0;
           rTx_Ctrl_Cnt  <= 0;
-          rCtrl_Done    <= 0;
           rDat_Cnt      <= 0;
           rPad_Delay    <= 0;
           if (Eth_En) begin

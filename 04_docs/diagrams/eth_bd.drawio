@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/25.0.1 Chrome/128.0.6613.186 Electron/32.2.6 Safari/537.36" version="25.0.1" pages="2">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/25.0.1 Chrome/128.0.6613.186 Electron/32.2.6 Safari/537.36" version="25.0.1" pages="3">
   <diagram id="IunJ7AEL2okmQQ0jTJB4" name="Pinout">
     <mxGraphModel dx="2004" dy="1203" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
@@ -318,6 +318,32 @@
           <mxGeometry x="-0.6232" y="-1" relative="1" as="geometry">
             <mxPoint x="3" as="offset" />
           </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="LpmTQ5da19J74chJbPvQ" name="Eth-Tx">
+    <mxGraphModel dx="1364" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="FyS6se_lODpQEFv1_bmd-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="145" y="270" width="560" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="4mysmNioPKMGz5f0fZgu-1" value="eth_tx_ctrl" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="320" y="380" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4mysmNioPKMGz5f0fZgu-2" value="eth_data_fifo" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="520" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4mysmNioPKMGz5f0fZgu-3" value="eth_data_mux" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="640" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gr_nTiTpS-jTPfxI9Ynj-1" value="eth_tx" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="145" y="270" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gr_nTiTpS-jTPfxI9Ynj-2" value="eth_crc_gen" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="280" y="520" width="80" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

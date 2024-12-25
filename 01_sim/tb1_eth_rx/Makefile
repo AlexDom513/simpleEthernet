@@ -3,8 +3,9 @@ TOPLEVEL_LANG = verilog
 GTKWAVE = gtkwave
 
 VERILOG_COMMON_DIR = $(PWD)/../../00_source/src/common
-VERILOG_SOURCE_DIR = $(PWD)/../../00_source/src/eth_rx
 VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/eth_crc_gen.v
+
+VERILOG_SOURCE_DIR = $(PWD)/../../00_source/src/eth_rx
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_rx.v
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_rx_ctrl.v
 
