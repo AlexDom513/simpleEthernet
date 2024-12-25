@@ -47,4 +47,11 @@
 `define pLen_Type_Cnt       (`pLen_Type_Bits    >> (`pMII_WIDTH >> 1))
 `define pFCS_Cnt            (`pFCS_Bits         >> (`pMII_WIDTH >> 1))
 
+// data constants (little endian)
+`define pPreamble           56'h55555555555555; // 0101_0101 ... 7x, read out as 1010_1010 ...
+`define pSFD                8'hD5;              // 1101_0101 ... read out as 1010_1011
+`define pDest_Addr          48'hFFFFFFFFFFFF;   // broadcast address
+`define pSrc_Addr           48'h020000000001;   // locally administered address for testing
+`define pLen_Type           16'h0800;           // indicate IPV4
+
 `endif

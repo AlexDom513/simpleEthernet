@@ -28,5 +28,11 @@ async def tb_eth_tx(dut):
   for _ in range(5):
     await(RisingEdge(dut.Clk))
 
+  # apply input stimulus
+  await(RisingEdge(dut.Clk))
+  dut.Eth_En.value = 1
+
+  await(RisingEdge(dut.Clk))
+  dut.Eth_En.value = 0
 
   await(Timer(5, 'us'))
