@@ -21,7 +21,7 @@
 // crc shift direction:         right (little endian)
 // Input word width:            8 bits
 
-module eth_crc_gen2 (
+module eth_crc_gen (
   input         Clk,
   input         Rst,
   input         Crc_Req,

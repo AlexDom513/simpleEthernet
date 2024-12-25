@@ -102,7 +102,7 @@ module eth_rx (
     rByte_d1 <= rByte;
   end
 
-  eth_crc_gen2 eth_crc_gen2_inst (
+  eth_crc_gen eth_crc_gen_inst (
     .Clk      (Clk),
     .Rst      (Rst),
     .Crc_Req  (wCrc_Req),
