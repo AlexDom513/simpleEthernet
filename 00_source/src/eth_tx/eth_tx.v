@@ -164,61 +164,31 @@ module eth_tx (
   begin
 
     case(rTx_Ctrl_FSM_State)
-
       `IDLE:
-      begin
         rTx_Data = 0;
-      end
-
       `PREAMBLE:
-      begin
         rTx_Data = rPreamble_Buf[`pMII_WIDTH-1:0];
-      end
-      
       `SFD:
-      begin
-        rTx_Data = rSFD_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
+        rTx_Data = rSFD_Buf[`pMII_WIDTH-1:0];
       `DEST_ADDR:
-      begin
-        rTx_Data = rDest_Addr_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
+        rTx_Data = rDest_Addr_Buf[`pMII_WIDTH-1:0];
       `SRC_ADDR:
-      begin
         rTx_Data = rSrc_Addr_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
       `LEN_TYPE:
-      begin
-        rTx_Data = rLen_Type_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
+        rTx_Data = rLen_Type_Buf[`pMII_WIDTH-1:0];
       `DATA:
-      begin
-        rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
+        rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
       `PAD:
-      begin
-        rTx_Data = rPad_Buf[`pMII_WIDTH-1:0]; 
-      end
-      
+        rTx_Data = rPad_Buf[`pMII_WIDTH-1:0];
       `FCS:
-      begin
-        rTx_Data = rFCS_Buf[`pMII_WIDTH-1:0]; 
-      end
-
+        rTx_Data = rFCS_Buf[`pMII_WIDTH-1:0];
       default:
         rTx_Data = 0;
-      
     endcase
   end
 
   //==========================================
   // crc
   //==========================================
-
 
 endmodule
