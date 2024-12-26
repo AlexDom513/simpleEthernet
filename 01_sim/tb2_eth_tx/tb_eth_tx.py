@@ -5,6 +5,7 @@
 # 12/23/24
 #====================================================================
 
+import tb_eth_packet_gen as packet_gen
 import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
@@ -32,7 +33,7 @@ async def tb_eth_tx(dut):
   await(RisingEdge(dut.Clk))
   dut.Eth_En.value = 1
 
-  await(RisingEdge(dut.Clk))
-  dut.Eth_En.value = 0
+  input_vec = packet_gen.packet_gen()
+  vec = BinaryValue()
 
   await(Timer(5, 'us'))

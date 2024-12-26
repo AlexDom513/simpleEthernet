@@ -61,6 +61,24 @@ module eth_tx (
   );
 
   //==========================================
+  // data_fifo
+  //==========================================
+  async_fifo async_fifo_inst (
+    .wclk     (Clk),
+    .wrst_n   (~Rst),
+    .winc     (0),
+    .wdata    (0),
+    .wfull    (),
+    .awfull   (),
+    .rclk     (Clk),
+    .rrst_n   (~Rst),
+    .rinc     (0),
+    .rdata    (),
+    .rempty   (),
+    .arempty  ()
+  );
+
+  //==========================================
   // eth_buffer_regs
   //==========================================
   // in register, shift right by pMII_WIDTH to make
