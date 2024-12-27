@@ -35,13 +35,17 @@ module eth_tx (
   reg         rTx_En;
   reg         rFifo_Empty;
   reg         rCrc_En;
+  reg         rCrc_En_d1;
+  reg [1:0]   rCrc_Bits_Cnt;
 
   // data
   reg [1:0]   rTx_Data;
   reg         rFifo_Rd_Valid;
   reg [7:0]   rFifo_Rd_Data;
   reg         rFifo_Rd_Valid_d1;
-
+  reg [7:0]   rCrc_Byte;
+  wire        wCrc_Byte_Valid;
+  wire [31:0] wCrc;
 
   // buffer regs
   reg [55:0]  rPreamble_Buf;
@@ -83,8 +87,8 @@ module eth_tx (
     .rrst_n   (~Rst),
     .rinc     (rFifo_Rd_Valid),
     .rdata    (rFifo_Rd_Data),
-    .rempty   (),
-    .arempty  (rFifo_Empty)
+    .rempty   (rFifo_Empty),
+    .arempty  ()
   );
 
   always @(posedge Clk)
@@ -188,7 +192,6 @@ module eth_tx (
 
   always @(*)
   begin
-
     case(rTx_Ctrl_FSM_State)
       `IDLE:
         rTx_Data = 0;
@@ -216,5 +219,52 @@ module eth_tx (
   //==========================================
   // crc
   //==========================================
+
+
+
+  // we may need to pipeline overall output data to
+  // accomodate formation of CRC
+
+
+
+  // pipelin crc_en
+  always @(posedge Clk)
+  begin
+    if (Rst)
+      rCrc_En_d1 <= 0;
+    else
+      rCrc_En_d1 <= rCrc_En;
+  end
+
+  // indicate when formed crc byte is valid
+  assign wCrc_Byte_Valid = (rCrc_Bits_Cnt == 0) & (rCrc_En_d1 != 0);
+
+  // form up bytes for crc
+  always @(posedge Clk)
+  begin
+    if (Rst)
+      rCrc_Byte <= 0;
+    else begin
+      if (rCrc_En) begin
+        rCrc_Bits_Cnt <= rCrc_Bits_Cnt + 1;
+        rCrc_Byte <= {rTx_Data, rCrc_Byte[7:2]};
+      end
+      else begin
+        rCrc_Bits_Cnt <= 0;
+        rCrc_Byte <= 0;
+      end
+    end
+  end
+
+  eth_crc_gen eth_crc_gen_inst (
+    .Clk      (Clk),
+    .Rst      (Rst),
+    .Crc_Req  (rCrc_En),
+    .Byte_Rdy (wCrc_Byte_Valid),
+    .Byte     (rCrc_Byte),
+    .Crc_Out  (wCrc)
+  );
+
+  //
 
 endmodule

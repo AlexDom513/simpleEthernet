@@ -139,17 +139,22 @@ module eth_tx_ctrl (
             Fifo_Rd <= 0;
 
           // transition when fifo is empty
+          // assume pad is skipped
           if (Fifo_Empty) begin
             rTx_Ctrl_Cnt <= 0;
-            Tx_Ctrl_FSM_State <= `PAD;
+            if (1) begin
+              Crc_En <= 0;
+              Tx_Ctrl_FSM_State <= `FCS;
+            end
+            else
+              Tx_Ctrl_FSM_State <= `PAD;
           end
         end
 
       //================
       // PAD (7)
       //================
-
-        // standard ethernet frame has minimum of 64 bytes total!
+        // standard ethernet frame has minimum of 64 bytes total
 
         `PAD:
         begin
