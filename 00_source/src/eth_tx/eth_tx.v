@@ -10,7 +10,9 @@
 module eth_tx (
   input  wire         Clk,
   input  wire         Rst,
-  input  wire         Eth_En,
+  input  wire [7:0]   Eth_Byte,
+  input  wire         Eth_Byte_Valid,
+  input  wire         Eth_Pkt_Rdy,
   output wire [1:0]   Tx_Data, // bit[0] ('first')
   output wire         Tx_En
 );
@@ -31,11 +33,15 @@ module eth_tx (
   // fsm/control
   reg [3:0]   rTx_Ctrl_FSM_State;
   reg         rTx_En;
+  reg         rFifo_Empty;
   reg         rCrc_En;
 
   // data
   reg [1:0]   rTx_Data;
-  reg         rFifo_Rd;
+  reg         rFifo_Rd_Valid;
+  reg [7:0]   rFifo_Rd_Data;
+  reg         rFifo_Rd_Valid_d1;
+
 
   // buffer regs
   reg [55:0]  rPreamble_Buf;
@@ -53,30 +59,41 @@ module eth_tx (
   eth_tx_ctrl eth_tx_ctrl_inst (
     .Clk                (Clk),
     .Rst                (Rst),
-    .Eth_En             (Eth_En),
+    .Eth_Pkt_Rdy        (Eth_Pkt_Rdy),
     .Tx_Ctrl_FSM_State  (rTx_Ctrl_FSM_State),
     .Tx_En              (rTx_En),
-    .Fifo_Rd            (rFifo_Rd),
+    .Fifo_Empty         (rFifo_Empty),
+    .Fifo_Rd            (rFifo_Rd_Valid),
     .Crc_En             (rCrc_En)
   );
 
   //==========================================
   // data_fifo
   //==========================================
+  // holds payload bytes prior to transmission
+
   async_fifo async_fifo_inst (
     .wclk     (Clk),
     .wrst_n   (~Rst),
-    .winc     (0),
-    .wdata    (0),
+    .winc     (Eth_Byte_Valid),
+    .wdata    (Eth_Byte),
     .wfull    (),
     .awfull   (),
     .rclk     (Clk),
     .rrst_n   (~Rst),
-    .rinc     (0),
-    .rdata    (),
+    .rinc     (rFifo_Rd_Valid),
+    .rdata    (rFifo_Rd_Data),
     .rempty   (),
-    .arempty  ()
+    .arempty  (rFifo_Empty)
   );
+
+  always @(posedge Clk)
+  begin
+    if (Rst)
+      rFifo_Rd_Valid_d1 <= 0;
+    else
+      rFifo_Rd_Valid_d1 <= rFifo_Rd_Valid;
+  end
 
   //==========================================
   // eth_buffer_regs
@@ -139,6 +156,15 @@ module eth_tx (
         `LEN_TYPE:
         begin
           rLen_Type_Buf <= rLen_Type_Buf >> `pMII_WIDTH;
+          rPayload_Buf <= rFifo_Rd_Data;
+        end
+
+        `DATA:
+        begin
+          if (rFifo_Rd_Valid_d1)
+            rPayload_Buf <= rFifo_Rd_Data;
+          else
+            rPayload_Buf <= rPayload_Buf >> `pMII_WIDTH;
         end
 
         default:
@@ -177,7 +203,10 @@ module eth_tx (
       `LEN_TYPE:
         rTx_Data = rLen_Type_Buf[`pMII_WIDTH-1:0];
       `DATA:
-        rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
+        if (rFifo_Rd_Valid_d1)
+          rTx_Data = rFifo_Rd_Data[`pMII_WIDTH-1:0];
+        else
+          rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
       `PAD:
         rTx_Data = rPad_Buf[`pMII_WIDTH-1:0];
       `FCS:

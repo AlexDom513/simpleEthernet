@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Dec 25 21:33:10 2024
+[*] Fri Dec 27 00:13:27 2024
 [*]
 [dumpfile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
-[dumpfile_mtime] "Wed Dec 25 21:30:34 2024"
-[dumpfile_size] 17516
+[dumpfile_mtime] "Fri Dec 27 00:11:00 2024"
+[dumpfile_size] 117494
 [savefile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
-[timestart] 0
+[timestart] 2600000
 [size] 1850 1016
 [pos] -27 -24
-*-20.134022 1800600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-17.723610 3460000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -46,9 +46,11 @@
 @28
 eth_tx.Clk
 eth_tx.Rst
-eth_tx.Eth_En
+@22
+eth_tx.Eth_Byte[7:0]
+@28
+eth_tx.Eth_Byte_Valid
 eth_tx.Tx_Data[1:0]
-@29
 eth_tx.Tx_En
 @1000200
 -eth_tx_ports
@@ -60,18 +62,48 @@ eth_tx.Tx_En
 eth_tx.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
 @24
 eth_tx.eth_tx_ctrl_inst.rTx_Ctrl_Cnt[9:0]
+@28
+eth_tx.eth_tx_ctrl_inst.Eth_Pkt_Rdy
+eth_tx.eth_tx_ctrl_inst.Fifo_Empty
 @1000200
 -eth_tx_ctrl
 @200
 -
 @800200
+-async_fifo
+@28
+eth_tx.async_fifo_inst.awfull
+eth_tx.async_fifo_inst.wfull
+@22
+eth_tx.async_fifo_inst.wdata[7:0]
+@28
+eth_tx.async_fifo_inst.winc
+eth_tx.async_fifo_inst.arempty
+eth_tx.async_fifo_inst.rempty
+@22
+eth_tx.async_fifo_inst.rdata[7:0]
+@28
+eth_tx.async_fifo_inst.rinc
+@1000200
+-async_fifo
+@200
+-
+@800200
 -eth_buffer_regs
+@28
+Clk
 @22
 eth_tx.rPreamble_Buf[55:0]
 eth_tx.rSFD_Buf[7:0]
 eth_tx.rDest_Addr_Buf[47:0]
 eth_tx.rSrc_Addr_Buf[47:0]
 eth_tx.rLen_Type_Buf[15:0]
+@23
+[color] 3
+eth_tx.rPayload_Buf[7:0]
+@28
+eth_tx.rFifo_Rd_Valid_d1
+Tx_Data[1:0]
 @1000200
 -eth_buffer_regs
 @200

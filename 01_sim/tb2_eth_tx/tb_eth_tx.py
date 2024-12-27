@@ -30,10 +30,21 @@ async def tb_eth_tx(dut):
     await(RisingEdge(dut.Clk))
 
   # apply input stimulus
-  await(RisingEdge(dut.Clk))
-  dut.Eth_En.value = 1
-
   input_vec = packet_gen.packet_gen()
-  vec = BinaryValue()
+  for byte in input_vec:
+    await(RisingEdge(dut.Clk))
+    dut.Eth_Byte.value = BinaryValue(int(byte), n_bits=8)
+    dut.Eth_Byte_Valid.value = 1
 
-  await(Timer(5, 'us'))
+  # disable input stimulus
+  await(RisingEdge(dut.Clk))
+  dut.Eth_Byte.value = BinaryValue(0, n_bits=8)
+  dut.Eth_Byte_Valid.value = 0
+
+  # strobe packet ready
+  await(RisingEdge(dut.Clk))
+  dut.Eth_Pkt_Rdy.value = 1
+  await(RisingEdge(dut.Clk))
+  dut.Eth_Pkt_Rdy.value = 0
+
+  await(Timer(10, 'us'))

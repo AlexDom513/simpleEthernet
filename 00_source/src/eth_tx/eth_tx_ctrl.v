@@ -10,9 +10,10 @@
 module eth_tx_ctrl (
   input wire        Clk,
   input wire        Rst,
-  input wire        Eth_En,
+  input wire        Eth_Pkt_Rdy,
   output reg [3:0]  Tx_Ctrl_FSM_State,
   output reg        Tx_En,
+  input wire        Fifo_Empty,
   output reg        Fifo_Rd,
   output reg        Crc_En
 );
@@ -52,7 +53,7 @@ module eth_tx_ctrl (
           rTx_Ctrl_Cnt  <= 0;
           rDat_Cnt      <= 0;
           rPad_Delay    <= 0;
-          if (Eth_En) begin
+          if (Eth_Pkt_Rdy) begin
             Tx_En <= 1;
             Tx_Ctrl_FSM_State <= `PREAMBLE;
           end
@@ -124,16 +125,24 @@ module eth_tx_ctrl (
       //================
         `DATA:
         begin
-          Tx_Ctrl_FSM_State <= `PAD;
-          // rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          Fifo_Rd <= 0;
 
-          // continue incrementing data count while FIFO is not empty
+          // ready for read
+          if (rTx_Ctrl_Cnt == 2) begin
+            Fifo_Rd <= 1;
+            rTx_Ctrl_Cnt <= 0;
+          end
+          // if (rTx_Ctrl_Cnt == 3) begin
+          //   Fifo_Rd <= 0;
+          //   rTx_Ctrl_Cnt <= 0;
+          // end
 
-          // // increment data count
-          // if (rFifo_Rd_d1)
-          //   rDat_Cnt <= rDat_Cnt + 1;
-
-          // // transition to pad when fifo is empty
+          // transition when fifo is empty
+          if (Fifo_Empty) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `PAD;
+          end
         end
 
       //================

@@ -12,11 +12,10 @@ def packet_gen():
     # Combine the layers
     udp_packet = ip_layer / udp_layer / data
 
-    return udp_packet
+    return raw(udp_packet)
 
 if __name__ == "__main__":
     packet = packet_gen()
-    packet.show()
 
-    for byte in raw(packet):
+    for byte in packet:
         print(hex(byte))
