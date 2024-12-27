@@ -1,16 +1,16 @@
 import zlib
 import numpy as np
-from scapy.all import IP, UDP, raw
+from scapy.all import Ether, IP, UDP, raw
 
 def packet_gen():
 
     # create layers of packet
-    ip_layer = IP(src="192.168.1.1", dst="192.168.1.2")  # Source and destination IP addresses
-    udp_layer = UDP(sport=1234, dport=5678)              # Source and destination ports
-    data = "Hello, this is a test UDP packet!"           # Payload (raw data)
+    ip_layer = IP(dst="192.168.1.1", src="192.168.1.100")
+    udp_layer = UDP(dport=12345, sport=54321)
+    payload = "Hello, UDP!"
 
-    # Combine the layers
-    udp_packet = ip_layer / udp_layer / data
+    # combine the layers
+    udp_packet = ip_layer / udp_layer / payload
 
     return raw(udp_packet)
 

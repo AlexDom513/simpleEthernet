@@ -111,13 +111,12 @@ module eth_rx (
     .Crc_Out  (wCrc)
   );
 
-  // only update {rCrc_Computed} when byte is ready
+  // only update rCrc_Computed when byte is ready
   assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
   always @(posedge Clk)
   begin
-    if (wCrc_En) begin
+    if (wCrc_En)
       rCrc_Computed <= wCrc;
-    end
   end
 
 endmodule

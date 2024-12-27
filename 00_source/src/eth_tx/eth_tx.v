@@ -22,8 +22,8 @@ module eth_tx (
   //==========================================
   localparam pPreamble  = 56'h55555555555555; // 0101_0101 ... 7x, read out as 1010_1010 ...
   localparam pSFD       = 8'hD5;              // 1101_0101 ... read out as 1010_1011
-  localparam pDest_Addr = 48'hFFFFFFFFFFFF;   // broadcast address
-  localparam pSrc_Addr  = 48'h020000000001;   // locally administered address for testing
+  localparam pDest_Addr = 48'hF0A0FFFFFFFF;   // broadcast address
+  localparam pSrc_Addr  = 48'h000000000000;   // locally administered address for testing
   localparam pLen_Type  = 16'h0800;           // IPv4
 
   //==========================================
@@ -46,6 +46,8 @@ module eth_tx (
   reg [7:0]   rCrc_Byte;
   wire        wCrc_Byte_Valid;
   wire [31:0] wCrc;
+  wire [31:0] wCrc_Computed;
+  reg [31:0]  rCrc_Computed;
 
   // buffer regs
   reg [55:0]  rPreamble_Buf;
@@ -171,6 +173,8 @@ module eth_tx (
             rPayload_Buf <= rPayload_Buf >> `pMII_WIDTH;
         end
 
+        `FCS
+
         default:
         begin
           rPreamble_Buf <= 0;
@@ -265,6 +269,12 @@ module eth_tx (
     .Crc_Out  (wCrc)
   );
 
-  //
-
+  // only update rCrc_Computed when byte is ready
+  assign wCrc_Computed = (wCrc_Byte_Valid) ? wCrc : rCrc_Computed;
+  always @(posedge Clk)
+  begin
+    if (wCrc_Byte_Valid)
+      rCrc_Computed <= wCrc;
+  end
+    
 endmodule

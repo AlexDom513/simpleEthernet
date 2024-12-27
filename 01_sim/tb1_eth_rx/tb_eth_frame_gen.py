@@ -16,15 +16,15 @@ def frame_gen():
     frame       = eth_layer / ip_layer / udp_layer / payload
 
     # write frame bytes/info to file
-    # with open('expected.txt', 'w') as file:
-    #     bin_data = raw(frame)
-    #     hex_data = bin_data.hex()
-    #     for i in range(0, len(hex_data), 2):
-    #         file.write(hex_data[i:i+2] + '\n')
-    #     file.write('\n')
-    #     file.write(hex_data)
-    #     file.write('\n')
-    #     file.write(str(hex(zlib.crc32(bin_data))))
+    with open('expected.txt', 'w') as file:
+        bin_data = raw(frame)
+        hex_data = bin_data.hex()
+        for i in range(0, len(hex_data), 2):
+            file.write(hex_data[i:i+2] + '\n')
+        file.write('\n')
+        file.write(hex_data)
+        file.write('\n')
+        file.write(str(hex(zlib.crc32(bin_data))))
 
     # create crc, FCS is sent most significant bit first
     bin_data = raw(frame)

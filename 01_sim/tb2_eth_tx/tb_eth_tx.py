@@ -33,7 +33,7 @@ async def tb_eth_tx(dut):
   input_vec = packet_gen.packet_gen()
   for byte in input_vec:
     await(RisingEdge(dut.Clk))
-    dut.Eth_Byte.value = BinaryValue(int(byte), n_bits=8)
+    dut.Eth_Byte.value = byte
     dut.Eth_Byte_Valid.value = 1
 
   # disable input stimulus
