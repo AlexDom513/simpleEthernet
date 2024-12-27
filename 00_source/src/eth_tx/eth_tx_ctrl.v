@@ -129,14 +129,14 @@ module eth_tx_ctrl (
           Fifo_Rd <= 0;
 
           // ready for read
-          if (rTx_Ctrl_Cnt == 2) begin
+          if (rTx_Ctrl_Cnt == 1)
             Fifo_Rd <= 1;
+          else if (rTx_Ctrl_Cnt == 3) begin
+            Fifo_Rd <= 0;
             rTx_Ctrl_Cnt <= 0;
           end
-          // if (rTx_Ctrl_Cnt == 3) begin
-          //   Fifo_Rd <= 0;
-          //   rTx_Ctrl_Cnt <= 0;
-          // end
+          else
+            Fifo_Rd <= 0;
 
           // transition when fifo is empty
           if (Fifo_Empty) begin

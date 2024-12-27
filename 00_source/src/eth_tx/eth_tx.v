@@ -203,10 +203,7 @@ module eth_tx (
       `LEN_TYPE:
         rTx_Data = rLen_Type_Buf[`pMII_WIDTH-1:0];
       `DATA:
-        if (rFifo_Rd_Valid_d1)
-          rTx_Data = rFifo_Rd_Data[`pMII_WIDTH-1:0];
-        else
-          rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
+        rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
       `PAD:
         rTx_Data = rPad_Buf[`pMII_WIDTH-1:0];
       `FCS:
