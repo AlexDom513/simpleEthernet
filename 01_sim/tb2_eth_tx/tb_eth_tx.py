@@ -11,6 +11,8 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
+NUM_PACKETS = 2
+
 @cocotb.test()
 async def tb_eth_tx(dut):
 
@@ -30,21 +32,22 @@ async def tb_eth_tx(dut):
     await(RisingEdge(dut.Clk))
 
   # apply input stimulus
-  input_vec = packet_gen.packet_gen()
-  for byte in input_vec:
+  for _ in range(NUM_PACKETS):
+    input_vec = packet_gen.packet_gen()
+    for byte in input_vec:
+      await(RisingEdge(dut.Clk))
+      dut.Eth_Byte.value = byte
+      dut.Eth_Byte_Valid.value = 1
+
+    # disable input stimulus
     await(RisingEdge(dut.Clk))
-    dut.Eth_Byte.value = byte
-    dut.Eth_Byte_Valid.value = 1
+    dut.Eth_Byte.value = BinaryValue(0, n_bits=8)
+    dut.Eth_Byte_Valid.value = 0
 
-  # disable input stimulus
-  await(RisingEdge(dut.Clk))
-  dut.Eth_Byte.value = BinaryValue(0, n_bits=8)
-  dut.Eth_Byte_Valid.value = 0
-
-  # strobe packet ready
-  await(RisingEdge(dut.Clk))
-  dut.Eth_Pkt_Rdy.value = 1
-  await(RisingEdge(dut.Clk))
-  dut.Eth_Pkt_Rdy.value = 0
-
-  await(Timer(10, 'us'))
+    # strobe packet ready
+    await(RisingEdge(dut.Clk))
+    dut.Eth_Pkt_Rdy.value = 1
+    await(RisingEdge(dut.Clk))
+    dut.Eth_Pkt_Rdy.value = 0
+    await(Timer(10, 'us'))
+    

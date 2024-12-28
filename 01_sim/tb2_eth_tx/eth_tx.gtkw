@@ -1,41 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sat Dec 28 16:24:18 2024
+[*] Sat Dec 28 16:51:13 2024
 [*]
 [dumpfile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
-[dumpfile_mtime] "Sat Dec 28 16:19:14 2024"
-[dumpfile_size] 136995
+[dumpfile_mtime] "Sat Dec 28 16:48:33 2024"
+[dumpfile_size] 265709
 [savefile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
-[timestart] 5746900
+[timestart] 0
 [size] 1850 1016
 [pos] -27 -24
-*-15.686947 5920000 3240000 3320000 3400000 3480000 3560000 0 8120000 2120000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-[markername] AA
-[markername] BB
-[markername] CC
-[markername] DD
-[markername] EE
-[markername] FF
-[markername] GG
-[markername] HH
-[markername] II
-[markername] JJ
-[markername] KK
-[markername] LL
-[markername] MM
-[markername] NN
-[markername] OO
-[markername] PP
-[markername] QQ
-[markername] RR
-[markername] SS
-[markername] TT
-[markername] UU
-[markername] VV
-[markername] WW
-[markername] XX
-[markername] YY
-[markername] ZZ
+*-21.672499 4930000 0 3320000 3400000 3480000 3560000 0 8120000 2120000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [treeopen] eth_tx.
 [sst_width] 279
 [signals_width] 245
@@ -56,17 +30,17 @@ eth_tx.Tx_En
 -eth_tx_ports
 @200
 -
-@800200
+@800201
 -eth_tx_ctrl
-@22
+@23
 eth_tx.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
-@24
+@25
 eth_tx.eth_tx_ctrl_inst.rTx_Ctrl_Cnt[9:0]
-@28
+@29
 eth_tx.eth_tx_ctrl_inst.Eth_Pkt_Rdy
 eth_tx.eth_tx_ctrl_inst.Fifo_Empty
 eth_tx.rCrc_En
-@1000200
+@1000201
 -eth_tx_ctrl
 @200
 -
@@ -117,7 +91,6 @@ eth_tx.rCrc_Byte[7:0]
 eth_tx.wCrc_Byte_Valid
 @22
 eth_tx.rCrc_Computed[31:0]
-@23
 eth_tx.wCrc_Computed_Tx[31:0]
 @1000200
 -crc

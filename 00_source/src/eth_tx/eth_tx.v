@@ -42,13 +42,11 @@ module eth_tx (
 
   // data
   reg [1:0]   rTx_Data;
-  reg [1:0]   rTx_Data_d1;
-  reg [1:0]   rTx_Data_d2;
-
   reg         rFifo_Rd_Valid;
   reg         rFifo_Rd_Valid_d1;
   reg [7:0]   rFifo_Rd_Data;
 
+  // crc
   reg [7:0]   rCrc_Byte;
   wire        wCrc_Byte_Valid;
   wire [31:0] wCrc_Out;
@@ -300,7 +298,7 @@ module eth_tx (
       rCrc_Computed <= wCrc_Out;
   end
 
-  // flip byte order for transmission
+  // flip crc byte order for transmission
   assign wCrc_Computed_Tx = {wCrc_Computed[7:0], wCrc_Computed[15:8],
                              wCrc_Computed[23:16], wCrc_Computed[31:24]};
     
