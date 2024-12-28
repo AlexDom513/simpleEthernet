@@ -32,22 +32,29 @@ module eth_tx (
 
   // fsm/control
   reg [3:0]   rTx_Ctrl_FSM_State;
+  reg [3:0]   rTx_Ctrl_FSM_State_d1;
   reg         rTx_En;
   reg         rFifo_Empty;
   reg         rCrc_En;
   reg         rCrc_En_d1;
+  reg         rCrc_En_d2;
   reg [1:0]   rCrc_Bits_Cnt;
 
   // data
   reg [1:0]   rTx_Data;
+  reg [1:0]   rTx_Data_d1;
+  reg [1:0]   rTx_Data_d2;
+
   reg         rFifo_Rd_Valid;
-  reg [7:0]   rFifo_Rd_Data;
   reg         rFifo_Rd_Valid_d1;
+  reg [7:0]   rFifo_Rd_Data;
+
   reg [7:0]   rCrc_Byte;
   wire        wCrc_Byte_Valid;
-  wire [31:0] wCrc;
+  wire [31:0] wCrc_Out;
   wire [31:0] wCrc_Computed;
   reg [31:0]  rCrc_Computed;
+  wire [31:0] wCrc_Computed_Tx;
 
   // buffer regs
   reg [55:0]  rPreamble_Buf;
@@ -72,6 +79,12 @@ module eth_tx (
     .Fifo_Rd            (rFifo_Rd_Valid),
     .Crc_En             (rCrc_En)
   );
+
+  // register previous state
+  always @(posedge Clk)
+  begin
+    rTx_Ctrl_FSM_State_d1 <= rTx_Ctrl_FSM_State;
+  end
 
   //==========================================
   // data_fifo
@@ -173,7 +186,13 @@ module eth_tx (
             rPayload_Buf <= rPayload_Buf >> `pMII_WIDTH;
         end
 
-        `FCS
+        `FCS:
+        begin
+          if (rTx_Ctrl_FSM_State_d1 == `DATA)
+            rFCS_Buf <= (wCrc_Computed_Tx >> `pMII_WIDTH);
+          else
+            rFCS_Buf <= rFCS_Buf >> `pMII_WIDTH;
+        end
 
         default:
         begin
@@ -191,6 +210,7 @@ module eth_tx (
   //==========================================
   // eth_data_mux
   //==========================================
+  // muxes data to be transmitted
 
   assign Tx_Data = rTx_Data;
 
@@ -214,7 +234,11 @@ module eth_tx (
       `PAD:
         rTx_Data = rPad_Buf[`pMII_WIDTH-1:0];
       `FCS:
-        rTx_Data = rFCS_Buf[`pMII_WIDTH-1:0];
+        if (rTx_Ctrl_FSM_State_d1 == `DATA)
+          rTx_Data = wCrc_Computed_Tx[`pMII_WIDTH-1:0];
+        else
+          rTx_Data = rFCS_Buf[`pMII_WIDTH-1:0];
+
       default:
         rTx_Data = 0;
     endcase
@@ -223,27 +247,24 @@ module eth_tx (
   //==========================================
   // crc
   //==========================================
+  // computes 32-bit CRC for transmitted data
 
-
-
-  // we may need to pipeline overall output data to
-  // accomodate formation of CRC
-
-
-
-  // pipelin crc_en
+  // pipeline crc_en
   always @(posedge Clk)
   begin
-    if (Rst)
+    if (Rst) begin
       rCrc_En_d1 <= 0;
-    else
+      rCrc_En_d2 <= 0;
+    end 
+    else begin
       rCrc_En_d1 <= rCrc_En;
+      rCrc_En_d2 <= rCrc_En_d1;
+    end
   end
 
-  // indicate when formed crc byte is valid
+  // form up bytes for crc, indicate when formed byte is valid
   assign wCrc_Byte_Valid = (rCrc_Bits_Cnt == 0) & (rCrc_En_d1 != 0);
 
-  // form up bytes for crc
   always @(posedge Clk)
   begin
     if (Rst)
@@ -260,21 +281,27 @@ module eth_tx (
     end
   end
 
+  // instantiate crc generator
   eth_crc_gen eth_crc_gen_inst (
     .Clk      (Clk),
     .Rst      (Rst),
     .Crc_Req  (rCrc_En),
     .Byte_Rdy (wCrc_Byte_Valid),
     .Byte     (rCrc_Byte),
-    .Crc_Out  (wCrc)
+    .Crc_Out  (wCrc_Out)
   );
 
   // only update rCrc_Computed when byte is ready
-  assign wCrc_Computed = (wCrc_Byte_Valid) ? wCrc : rCrc_Computed;
+  assign wCrc_Computed = (wCrc_Byte_Valid) ? wCrc_Out : rCrc_Computed;
+
   always @(posedge Clk)
   begin
-    if (wCrc_Byte_Valid)
-      rCrc_Computed <= wCrc;
+    if (wCrc_Byte_Valid & rCrc_En_d2)
+      rCrc_Computed <= wCrc_Out;
   end
+
+  // flip byte order for transmission
+  assign wCrc_Computed_Tx = {wCrc_Computed[7:0], wCrc_Computed[15:8],
+                             wCrc_Computed[23:16], wCrc_Computed[31:24]};
     
 endmodule

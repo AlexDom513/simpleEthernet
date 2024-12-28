@@ -155,7 +155,6 @@ module eth_tx_ctrl (
       // PAD (7)
       //================
         // standard ethernet frame has minimum of 64 bytes total
-
         `PAD:
         begin
           Tx_Ctrl_FSM_State <= `FCS;
@@ -164,11 +163,13 @@ module eth_tx_ctrl (
       //================
       // FCS (8)
       //================
-      // 4 bytes of CRC
-
         `FCS:
         begin
-          Tx_Ctrl_FSM_State <= `IDLE;
+          rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+          if (rTx_Ctrl_Cnt == `pFCS_Cnt-1) begin
+            rTx_Ctrl_Cnt <= 0;
+            Tx_Ctrl_FSM_State <= `IDLE;
+          end
         end
 
         default:
