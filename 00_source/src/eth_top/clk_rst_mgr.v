@@ -5,11 +5,11 @@
 // 8/17/24
 //====================================================================
 
-module clk_rst_mgr(
+module clk_rst_mgr (
   input  wire  Clk,
   input  wire  Rstn,
-  output wire  Clk_MDC,
-  output wire  Rst_MDC
+  output wire  MDC_Clk,
+  output wire  MDC_Rst
 );
 
   // NOTE: 
@@ -22,8 +22,8 @@ module clk_rst_mgr(
   //==========================================
   localparam  CLK_DIV_CNT = 50;
   reg   [6:0] rClk_Cnt;
-  reg         rClk_MDC = 1;
-  wire        wClk_MDC;
+  reg         rMDC_Clk = 1;
+  wire        wMDC_Clk;
 
   always @(posedge Clk)
   begin
@@ -39,26 +39,26 @@ module clk_rst_mgr(
   always @(posedge Clk)
     begin
       if (rClk_Cnt == CLK_DIV_CNT-1)
-        rClk_MDC <= ~rClk_MDC;
+        rMDC_Clk <= ~rMDC_Clk;
     end
 
-  assign wClk_MDC = rClk_MDC;
-  assign Clk_MDC  = wClk_MDC;
+  assign wMDC_Clk = rMDC_Clk;
+  assign MDC_Clk  = wMDC_Clk;
 
   //==========================================
   // Reset Management
   //==========================================
-  reg rRst_MDC;
+  reg rMDC_Rst;
 
-  always @(posedge wClk_MDC)
+  always @(posedge wMDC_Clk)
   begin
     if (~Rstn) begin
-      rRst_MDC <= 1;
+      rMDC_Rst <= 1;
     end
     else begin
-      rRst_MDC <= 0;
+      rMDC_Rst <= 0;
     end
   end
-  assign Rst_MDC = rRst_MDC;
+  assign MDC_Rst = rMDC_Rst;
 
 endmodule

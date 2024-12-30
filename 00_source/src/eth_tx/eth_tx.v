@@ -13,7 +13,7 @@ module eth_tx (
   input  wire [7:0]   Eth_Byte,
   input  wire         Eth_Byte_Valid,
   input  wire         Eth_Pkt_Rdy,
-  output wire [1:0]   Tx_Data, // bit[0] ('first')
+  output wire [1:0]   Txd, // bit[0] ('first')
   output wire         Tx_En
 );
 
@@ -210,7 +210,7 @@ module eth_tx (
   //==========================================
   // muxes data to be transmitted
 
-  assign Tx_Data = rTx_Data;
+  assign Txd = rTx_Data;
 
   always @(*)
   begin

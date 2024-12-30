@@ -45,12 +45,12 @@
 
 //====================================================================
 
-module eth_regs(
+module eth_regs (
 
-  input wire Clk_Usr,
-  input wire Rstn_Usr,
-  input wire Clk_MDC,
-  input wire Rst_MDC,
+  input wire AXI_Clk,
+  input wire AXI_Rstn,
+  input wire MDC_Clk,
+  input wire MDC_Rst,
 
   // AXI write addressing
   input  wire         AXI_Master_awalid,    // master indicates if the provided address is valid           (s_axi_ctrl_awalid)
@@ -210,9 +210,9 @@ module eth_regs(
   //==========================================
   // handles AXI Transactions
 
-  always @(posedge(Clk_Usr))
+  always @(posedge(AXI_Clk))
   begin
-  if (~Rstn_Usr) begin
+  if (~AXI_Rstn) begin
     rCtrl_Fsm_State <= IDLE;
     rWrite_Reg      <= 0;
     rRead_Addr      <= 0;
@@ -294,9 +294,9 @@ module eth_regs(
   // control data for interacting with MDIO
   // can be configured for read/write operations
 
-  always @(posedge(Clk_Usr))
+  always @(posedge(AXI_Clk))
   begin
-  if (~Rstn_Usr)
+  if (~AXI_Rstn)
     rMDIO_USR_CTRL_REG <= 32'h00000000;
   else begin
     if (wWrite_Addr == pMDIO_USR_CTRL_ADDR && rWrite_Reg) begin
@@ -310,9 +310,9 @@ module eth_regs(
   //==========================================
   // data to write to specific MDIO registers
 
-  always @(posedge(Clk_Usr))
+  always @(posedge(AXI_Clk))
   begin
-  if (~Rstn_Usr)
+  if (~AXI_Rstn)
     rMDIO_USR_WRITE_REG <= 32'h00000000;
   else begin
     if (wWrite_Addr == pMDIO_USR_WRITE_ADDR && rWrite_Reg) begin
@@ -328,9 +328,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_CTRL_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_CTRL_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_CTRL_ADDR && MDIO_Data_Valid_Recv) begin
@@ -342,9 +342,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_STAT_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_STAT_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_STAT_ADDR && MDIO_Data_Valid_Recv) begin
@@ -356,9 +356,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_IDENT_1_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_IDENT_1_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -370,9 +370,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_IDENT_2_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_IDENT_2_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -384,9 +384,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_ANA_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_ANA_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -398,9 +398,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_ANLP_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_ANLP_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -412,9 +412,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_ANE_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_ANE_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -426,9 +426,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_MODE_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_MODE_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -440,9 +440,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_SPEC_MD_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_SPEC_MD_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -454,9 +454,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_SYM_ERR_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_SYM_ERR_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -468,9 +468,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_INDC_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_INDC_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -482,9 +482,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_INTR_SRC_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_INTR_SRC_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -496,9 +496,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_INTR_MSK_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_INTR_MSK_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin
@@ -510,9 +510,9 @@ module eth_regs(
   //==========================================
   // MDIO_PHY_SPEC_CTRL_REG
   //==========================================
-  always @(posedge(Clk_MDC))
+  always @(posedge(MDC_Clk))
   begin
-  if (Rst_MDC)
+  if (MDC_Rst)
     rMDIO_PHY_SPEC_CTRL_REG <= 32'h00000000;
   else begin
     if (MDIO_Reg_Addr_Recv == pMDIO_PHY_IDENT_1_ADDR && MDIO_Data_Valid_Recv) begin

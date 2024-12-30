@@ -5,11 +5,11 @@
 // 6/30/24
 //====================================================================
 
-module eth_top(
+module eth_top (
 
   // AXI-Lite Interface
-  input  wire         Clk_AXI,
-  input  wire         Rstn_AXI,
+  input  wire         AXI_Clk,
+  input  wire         AXI_Rstn,
   input  wire         AXI_Master_awalid,
   output wire         AXI_Slave_awready,
   input  wire [31:0]  AXI_Master_awaddr,
@@ -34,17 +34,15 @@ module eth_top(
   input  wire         AXIS_Master_tvalid,
 
   // MDIO Interface
-  output wire         Clk_MDC,
+  output wire         MDC_Clk,
   inout  wire         MDIO,
 
   // Ethernet Interface
-  input  wire         Clk_Eth,
-  input  wire         Rst_Eth,
-  output wire [1:0]   Tx_Data,
-  output wire         Tx_En,
-
-  // Debug LED
-  output reg [3:0]    Led
+  input  wire         Eth_Clk,
+  input  wire         Eth_Rst,
+  input  wire         Rxd,
+  output wire [1:0]   Txd,
+  output wire         Tx_En
 );
 
   //==========================================
@@ -57,8 +55,8 @@ module eth_top(
   //==========================================
 
   // Clock Enable (for 1 MHz MDC Clock)
-  wire wClk_MDC;
-  wire wRst_MDC;
+  wire wMDC_Clk;
+  wire wMDC_Rst;
 
   // MDIO DMA
   wire [4:0]  wMDIO_Phy_Addr_Req;
@@ -70,43 +68,48 @@ module eth_top(
   wire        wMDIO_Data_Valid_Recv;
   wire [31:0] wMDIO_Data_Recv;
 
-  // led monitor
-  reg  [3:0]  rLed_d1;
-  reg  [29:0] rLed_Cnt;
-
   //==========================================
   // clk_rst_mgr
   //==========================================
   clk_rst_mgr  clk_rst_mgr_inst (
-    .Clk        (Clk_AXI),
-    .Rstn       (Rstn_AXI),
-    .Clk_MDC    (wClk_MDC),
-    .Rst_MDC    (wRst_MDC)
+    .Clk        (AXI_Clk),
+    .Rstn       (AXI_Rstn),
+    .MDC_Clk    (wMDC_Clk),
+    .MDC_Rst    (wMDC_Rst)
   );
-  assign Clk_MDC = wClk_MDC;
+  assign MDC_Clk = wMDC_Clk;
 
   //==========================================
-  // eth_packet_former
+  // eth_rx
   //==========================================
-  eth_packet_former eth_packet_former(
-    .Clk        (Clk_Eth),
-    .Rst        (Rst_Eth),
-    .Dat_Rdy    (AXIS_Slave_tready),
-    .Dat_En     (AXIS_Master_tvalid), // valid signal for data, currently coming from Zynq
-    .Data       (AXIS_Master_tdata),  // data we want to send, currently coming from Zynq
-    .Data_Last  (AXIS_Master_tlast),
-    .Tx_Data    (Tx_Data),
-    .Tx_En      (Tx_En)
+  eth_rx  eth_rx_inst (
+    .Clk        (Eth_Clk),
+    .Rst        (Eth_Rst),
+    .Rxd        (Rxd),
+    .Crc_Valid  ()
+  );
+
+  //==========================================
+  // eth_tx
+  //==========================================
+  eth_tx eth_tx_inst (
+    .Clk            (Eth_Clk),
+    .Rst            (Eth_Rst),
+    .Eth_Byte       (0), // data we want to send, currently coming from Zynq
+    .Eth_Byte_Valid (0), // valid signal for data, currently coming from Zynq
+    .Eth_Pkt_Rdy    (0), // indicate when we are ready to send packet
+    .Txd            (Tx_Data),
+    .Tx_En          (Tx_En)
   );
 
   //==========================================
   // eth_regs
   //==========================================
-  eth_regs eth_regs(
-    .Clk_Usr              (Clk_AXI),
-    .Rstn_Usr             (Rstn_AXI),
-    .Clk_MDC              (wClk_MDC),
-    .Rst_MDC              (wRst_MDC),
+  eth_regs eth_regs_inst (
+    .AXI_Clk             (AXI_Clk),
+    .AXI_Rstn             (AXI_Rstn),
+    .MDC_Clk              (wMDC_Clk),
+    .MDC_Rst              (wMDC_Rst),
     .AXI_Master_awalid    (AXI_Master_awalid), 
     .AXI_Slave_awready    (AXI_Slave_awready),
     .AXI_Master_awaddr    (AXI_Master_awaddr), 
@@ -137,8 +140,8 @@ module eth_top(
   // eth_mdio
   //==========================================
   eth_mdio  eth_mdio_inst(
-    .Clk                    (wClk_MDC),
-    .Rst                    (wRst_MDC),
+    .Clk                    (wMDC_Clk),
+    .Rst                    (wMDC_Rst),
     .MDIO                   (MDIO),
     .MDIO_Phy_Addr_Recv     (wMDIO_Phy_Addr_Req),
     .MDIO_Reg_Addr_Recv     (wMDIO_Reg_Addr_Req),
@@ -149,26 +152,5 @@ module eth_top(
     .MDIO_Data_Valid        (wMDIO_Data_Valid_Recv),
     .MDIO_Data              (wMDIO_Data_Recv)
   );
-
-  //==========================================
-  // debug_led
-  //==========================================
-  // after first packet is sent, all following
-  // packets will be sent when we blink led
-
-  always @(posedge Clk_Eth)
-  begin
-    if (Rst_Eth) begin
-      Led <= 0;
-      rLed_Cnt <= 0;
-    end
-    else begin
-      rLed_Cnt <= rLed_Cnt + 1;
-      if (rLed_Cnt == LED_PERIOD-1) begin
-        Led[0] <= ~Led[0];
-        rLed_Cnt <= 0;
-      end
-    end
-  end
 
 endmodule

@@ -9,7 +9,6 @@ module eth_rx (
   input wire        Clk,
   input wire        Rst,
   input wire [1:0]  Rxd,
-  output wire       Rx_Req, // placeholder, output required
   output wire       Crc_Valid
 );
 
@@ -46,8 +45,6 @@ module eth_rx (
   //==========================================
   // eth_rx_ctrl
   //==========================================
-
-  assign Rx_Req = wRx_Req;
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk            (Clk),
     .Rst            (Rst),
