@@ -24,8 +24,6 @@ module eth_tx_ctrl (
 
   // fsm/control
   reg  [9:0]  rTx_Ctrl_Cnt;
-  reg  [9:0]  rDat_Cnt;
-  reg  [2:0]  rPad_Delay;
 
   //==========================================
   // eth_tx_ctrl_fsm
@@ -51,8 +49,6 @@ module eth_tx_ctrl (
           Tx_En         <= 0;
           Crc_En        <= 0;
           rTx_Ctrl_Cnt  <= 0;
-          rDat_Cnt      <= 0;
-          rPad_Delay    <= 0;
           if (Eth_Pkt_Rdy) begin
             Tx_En <= 1;
             Tx_Ctrl_FSM_State <= `PREAMBLE;

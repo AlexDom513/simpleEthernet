@@ -39,7 +39,7 @@ module eth_rx (
   // crc
   wire            wCrc_En;
   wire            wCrc_Req;
-  wire [31:0]     wCrc;
+  wire [31:0]     wCrc_Out;
   reg  [31:0]     rCrc_Computed;
 
   //==========================================
@@ -105,7 +105,7 @@ module eth_rx (
     .Crc_Req  (wCrc_Req),
     .Byte_Rdy (rByte_Rdy_d1),
     .Byte     (rByte_d1),
-    .Crc_Out  (wCrc)
+    .Crc_Out  (wCrc_Out)
   );
 
   // only update rCrc_Computed when byte is ready
@@ -113,7 +113,7 @@ module eth_rx (
   always @(posedge Clk)
   begin
     if (wCrc_En)
-      rCrc_Computed <= wCrc;
+      rCrc_Computed <= wCrc_Out;
   end
 
 endmodule

@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Mon Dec 23 22:54:48 2024
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue Dec 31 17:40:15 2024
 [*]
-[dumpfile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb1_eth_rx/dump.vcd"
-[dumpfile_mtime] "Mon Dec 23 22:40:36 2024"
-[dumpfile_size] 111965
-[savefile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
+[dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.vcd"
+[dumpfile_mtime] "Tue Dec 31 17:39:59 2024"
+[dumpfile_size] 111877
+[savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
 [timestart] 0
-[size] 1850 1016
-[pos] -27 -24
-*-21.571800 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[size] 1440 1016
+[pos] -1 -1
+*-22.163321 3940000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_rx.
 [sst_width] 279
 [signals_width] 230
@@ -21,7 +21,6 @@
 eth_rx.Clk
 eth_rx.Rst
 eth_rx.Rxd[1:0]
-eth_rx.Rx_Req
 eth_rx.Crc_Valid
 @1000200
 -eth_rx_ports

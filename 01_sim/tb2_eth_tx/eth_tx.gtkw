@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sat Dec 28 16:51:13 2024
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Tue Dec 31 17:41:15 2024
 [*]
-[dumpfile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
-[dumpfile_mtime] "Sat Dec 28 16:48:33 2024"
-[dumpfile_size] 265709
-[savefile] "/home/flan/dev/proj/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
+[dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
+[dumpfile_mtime] "Tue Dec 31 17:40:38 2024"
+[dumpfile_size] 265701
+[savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
 [timestart] 0
-[size] 1850 1016
-[pos] -27 -24
-*-21.672499 4930000 0 3320000 3400000 3480000 3560000 0 8120000 2120000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[size] 1440 1016
+[pos] -1 -1
+*-22.272430 6200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_tx.
 [sst_width] 279
 [signals_width] 245
@@ -24,13 +24,12 @@ eth_tx.Rst
 eth_tx.Eth_Byte[7:0]
 @28
 eth_tx.Eth_Byte_Valid
-eth_tx.Tx_Data[1:0]
 eth_tx.Tx_En
 @1000200
 -eth_tx_ports
 @200
 -
-@800201
+@800200
 -eth_tx_ctrl
 @23
 eth_tx.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
@@ -40,7 +39,7 @@ eth_tx.eth_tx_ctrl_inst.rTx_Ctrl_Cnt[9:0]
 eth_tx.eth_tx_ctrl_inst.Eth_Pkt_Rdy
 eth_tx.eth_tx_ctrl_inst.Fifo_Empty
 eth_tx.rCrc_En
-@1000201
+@1000200
 -eth_tx_ctrl
 @200
 -

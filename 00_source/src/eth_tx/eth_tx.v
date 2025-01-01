@@ -46,13 +46,18 @@ module eth_tx (
   reg         rFifo_Rd_Valid_d1;
   reg [7:0]   rFifo_Rd_Data;
 
+  // placeholder
+  wire        wFifo_Full;
+  wire        wFifo_Afull;
+  wire        wFifo_Aempty;
+
   // crc
   reg [7:0]   rCrc_Byte;
-  wire        wCrc_Byte_Valid;
-  wire [31:0] wCrc_Out;
-  wire [31:0] wCrc_Computed;
   reg [31:0]  rCrc_Computed;
+  wire [31:0] wCrc_Computed;
+  wire [31:0] wCrc_Out;
   wire [31:0] wCrc_Computed_Tx;
+  wire        wCrc_Byte_Valid;
 
   // buffer regs
   reg [55:0]  rPreamble_Buf;
@@ -94,14 +99,14 @@ module eth_tx (
     .wrst_n   (~Rst),
     .winc     (Eth_Byte_Valid),
     .wdata    (Eth_Byte),
-    .wfull    (),
-    .awfull   (),
+    .wfull    (wFifo_Full),
+    .awfull   (wFifo_Afull),
     .rclk     (Clk),
     .rrst_n   (~Rst),
     .rinc     (rFifo_Rd_Valid),
     .rdata    (rFifo_Rd_Data),
     .rempty   (rFifo_Empty),
-    .arempty  ()
+    .arempty  (wFifo_Aempty)
   );
 
   always @(posedge Clk)
