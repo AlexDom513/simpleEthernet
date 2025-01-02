@@ -21,4 +21,5 @@ run: clean
 	$(MAKE) TOPLEVEL=eth_top MODULE=tb_eth_top
 
 wave: run
-	$(GTKWAVE) dump.vcd $(CURDIR)/eth_top.gtkw
+	$(GTKWAVE) dump.vcd --script $(CURDIR)/wave.tcl
+#	$(GTKWAVE) dump.vcd $(CURDIR)/eth_top.gtkw

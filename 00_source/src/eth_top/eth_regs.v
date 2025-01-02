@@ -53,7 +53,7 @@ module eth_regs (
   input wire MDC_Rst,
 
   // AXI write addressing
-  input  wire         AXI_Master_awvalid,    // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
+  input  wire         AXI_Master_awvalid,   // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
   output reg          AXI_Slave_awready,    // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
   input  wire [31:0]  AXI_Master_awaddr,    // write address provided by master                            (s_axi_ctrl_awaddr)
 
@@ -154,7 +154,7 @@ module eth_regs (
 //====================================================================
 
   //==========================================
-  // mdio_assignements
+  // mdio_assignments
   //==========================================
   assign MDIO_Reg_Addr_Req      = rMDIO_USR_CTRL_REG[11:7];
   assign MDIO_Phy_Addr_Req      = rMDIO_USR_CTRL_REG[6:2];
