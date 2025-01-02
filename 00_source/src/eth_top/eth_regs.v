@@ -210,6 +210,9 @@ module eth_regs (
   //==========================================
   // handles AXI Transactions
 
+  // MIGHT BE ABLE TO SIMPLIFY THIS AFTER TESTING WITH THE
+  // NEW TB STIMULUS!!!!!
+
   always @(posedge(AXI_Clk))
   begin
   if (~AXI_Rstn) begin
