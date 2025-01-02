@@ -53,7 +53,7 @@ module eth_regs (
   input wire MDC_Rst,
 
   // AXI write addressing
-  input  wire         AXI_Master_awalid,    // master indicates if the provided address is valid           (s_axi_ctrl_awalid)
+  input  wire         AXI_Master_awvalid,    // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
   output reg          AXI_Slave_awready,    // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
   input  wire [31:0]  AXI_Master_awaddr,    // write address provided by master                            (s_axi_ctrl_awaddr)
 
@@ -231,7 +231,7 @@ module eth_regs (
         AXI_Slave_wready      <= 0;
         
         // write slave
-        if (AXI_Master_awalid && AXI_Master_wvalid) begin
+        if (AXI_Master_awvalid && AXI_Master_wvalid) begin
           AXI_Slave_awready   <= 1;
           AXI_Slave_wready    <= 1;
           rWrite_Reg          <= 1;

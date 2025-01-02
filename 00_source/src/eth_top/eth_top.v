@@ -10,11 +10,11 @@ module eth_top (
   // AXI-Lite Interface
   input  wire         AXI_Clk,
   input  wire         AXI_Rstn,
-  input  wire         AXI_awalid,
+  input  wire         AXI_awvalid,
   output wire         AXI_awready,
   input  wire [31:0]  AXI_awaddr,
   input  wire         AXI_wvalid,
-  output wire         AXI_wready, 
+  output wire         AXI_wready,
   input  wire [31:0]  AXI_wdata,
   output wire         AXI_bvalid,
   output wire [1:0]   AXI_bresp,
@@ -44,11 +44,6 @@ module eth_top (
   output wire [1:0]   Txd,
   output wire         Tx_En
 );
-
-  //==========================================
-  // Constants
-  //==========================================
-  parameter LED_PERIOD  = 30'h2FAF080;
 
   //==========================================
   // Wires/Registers
@@ -110,7 +105,7 @@ module eth_top (
     .AXI_Rstn             (AXI_Rstn),
     .MDC_Clk              (wMDC_Clk),
     .MDC_Rst              (wMDC_Rst),
-    .AXI_Master_awalid    (AXI_awalid), 
+    .AXI_Master_awvalid   (AXI_awvalid),
     .AXI_Slave_awready    (AXI_awready),
     .AXI_Master_awaddr    (AXI_awaddr), 
     .AXI_Master_wvalid    (AXI_wvalid), 

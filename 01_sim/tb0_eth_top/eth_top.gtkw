@@ -1,0 +1,57 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu Jan  2 21:18:48 2025
+[*]
+[dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb0_eth_top/dump.vcd"
+[dumpfile_mtime] "Thu Jan  2 21:09:23 2025"
+[dumpfile_size] 65436
+[savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb0_eth_top/eth_top.gtkw"
+[timestart] 0
+[size] 1440 1243
+[pos] -1548 -698
+*-16.648638 124300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 233
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 368
+@800200
+-AXI_ports
+@28
+eth_top.AXI_Clk
+eth_top.AXI_Rstn
+@200
+-
+@28
+eth_top.AXI_awvalid
+eth_top.AXI_awready
+@22
+eth_top.AXI_awaddr[31:0]
+@28
+eth_top.AXI_wready
+eth_top.AXI_wvalid
+@22
+eth_top.AXI_wdata[31:0]
+@201
+-
+@28
+eth_top.AXI_arvalid
+eth_top.AXI_arready
+@22
+eth_top.AXI_araddr[31:0]
+@28
+eth_top.AXI_rready
+eth_top.AXI_rvalid
+@22
+eth_top.AXI_rdata[31:0]
+@28
+eth_top.AXI_rresp[1:0]
+@200
+-
+@28
+eth_top.AXI_bvalid
+eth_top.AXI_bready
+eth_top.AXI_bresp[1:0]
+@1000200
+-AXI_ports
+[pattern_trace] 1
+[pattern_trace] 0
