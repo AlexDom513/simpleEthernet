@@ -13,3 +13,6 @@ class Stim_Gen_Mdio:
 
     def __init__(self, dut):
         self.dut = dut
+
+    def mdio_read_response(self):
+        pass
