@@ -26,6 +26,32 @@ class Stim_Gen_Axi:
         await RisingEdge(self.dut.AXI_Clk)
         self.dut.AXI_Rstn.value = 1
 
+    async def axi_wait_cycles(self, cycles):
+        for i in range(cycles):
+            await RisingEdge(self.dut.AXI_Clk)
+
     async def axi_reg_read(self, addr):
         await RisingEdge(self.dut.AXI_Clk)
-        data = await self.Axi_Lite_Master.read(addr, 1)
+        data = await self.Axi_Lite_Master.read_dword(addr)
+
+    async def axi_reg_write(self, addr, data):
+        await RisingEdge(self.dut.AXI_Clk)
+        await self.Axi_Lite_Master.write_dword(addr, data)
+
+    # issue command via axi write to read phy regs via MDIO
+    async def phy_regs_read_sim(self):
+
+        # reference eth_regs.h for HW offsets
+        # bits ------ -> {phy reg addr}    | {phy addr} | {Rd/Wr =0/1}  | {Enable}
+        # value = ("MDIO_PHY_REG_HW" << 7) | (0x1 << 2) | (0x0 << 1)    | 0x1
+
+        # issue axi command to read phy ctrl reg
+        value = (0x00 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
+        await self.axi_reg_write(0x0, value)
+        await self.axi_wait_cycles(5)
+
+        # issue axi command to read phy status reg
+        value = (0x01 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
+        await self.axi_reg_write(0x4, value)
+        await self.axi_wait_cycles(5)
+        

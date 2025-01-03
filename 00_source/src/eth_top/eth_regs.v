@@ -1,7 +1,8 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // eth_regs.v
-// regs module using AXI4-Lite, eth_regs denoted as slave
+// Regs module using AXI4-Lite, eth_regs denoted as slave
+// 1/3/25
 //====================================================================
 
 // AXI4Lite:

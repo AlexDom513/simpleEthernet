@@ -19,8 +19,9 @@ async def tb_eth_top(dut):
 
     # sync reset
     await stim_gen_axi.axi_sync_reset()
-
     await(Timer(1, 'us'))
-    await stim_gen_axi.axi_reg_read(0x0)
+
+    # eth_regs tests
+    await stim_gen_axi.phy_regs_read_sim()
 
     await(Timer(10, 'us'))

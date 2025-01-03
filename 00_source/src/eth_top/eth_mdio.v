@@ -1,5 +1,5 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // eth_mdio.v
 // MDIO Interface to Ethernet PHY
 // 8/2/24

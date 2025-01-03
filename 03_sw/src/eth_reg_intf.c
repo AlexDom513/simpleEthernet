@@ -1,7 +1,8 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // eth_reg_intf.c
 // helper functions to simplify ETH PHY register readout/display
+// 9/20/24
 //====================================================================
 
 #include <stdio.h>

@@ -1,5 +1,5 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // eth_top.v
 // Experiment implementing simple ethernet communication
 // 6/30/24
