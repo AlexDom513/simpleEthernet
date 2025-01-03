@@ -54,30 +54,30 @@ module eth_regs (
   input wire MDC_Rst,
 
   // AXI write addressing
-  input  wire         AXI_Master_awvalid,   // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
-  output reg          AXI_Slave_awready,    // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
-  input  wire [31:0]  AXI_Master_awaddr,    // write address provided by master                            (s_axi_ctrl_awaddr)
+  input  wire         AXI_awvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
+  output reg          AXI_awready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
+  input  wire [31:0]  AXI_awaddr,           // write address provided by master                            (s_axi_ctrl_awaddr)
 
   // AXI write data
-  input  wire         AXI_Master_wvalid,    // master indicates if the write data is avaliable             (s_axi_ctrl_wvalid)
-  output reg          AXI_Slave_wready,     // slave indicates that it can acccept write data              (s_axi_ctrl_wready)
-  input  wire [31:0]  AXI_Master_wdata,     // write data provided to slave                                (s_axi_ctrl_wdata)
+  input  wire         AXI_wvalid,           // master indicates if the write data is avaliable             (s_axi_ctrl_wvalid)
+  output reg          AXI_wready,           // slave indicates that it can acccept write data              (s_axi_ctrl_w      ready)
+  input  wire [31:0]  AXI_wdata,            // write data provided to slave                                (s_axi_ctrl_w      data)
 
   // AXI write response
-  output reg          AXI_Slave_bvalid,     // slave indicates it is signaling a valid write response      (s_axi_ctrl_bvalid)
-  output reg [1:0]    AXI_Slave_bresp,      // slave's write response to master                            (s_axi_ctrl_bresp)
-  input  wire         AXI_Master_bready,    // master indicates that it accepts write response             (s_axi_ctrl_bready)
+  output reg          AXI_bvalid,           // slave indicates it is signaling a valid write response      (s_axi_ctrl_bvalid)
+  output reg [1:0]    AXI_bresp,            // slave's write response to master                            (s_axi_ctrl_bresp)
+  input  wire         AXI_bready,           // master indicates that it accepts write response             (s_axi_ctrl_bready)
 
   // AXI read addressing
-  input  wire         AXI_Master_arvalid,   // master indicates if the provided address is valid           (s_axi_ctrl_arvalid)
-  output reg          AXI_Slave_arready,    // slave indicates if it is ready to accept an address         (s_axi_ctrl_arready)
-  input  wire [31:0]  AXI_Master_araddr,    // read address provided by master                             (s_axi_ctrl_araddr)
+  input  wire         AXI_arvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_arvalid)
+  output reg          AXI_arready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_arready)
+  input  wire [31:0]  AXI_araddr,           // read address provided by master                             (s_axi_ctrl_araddr)
 
   // AXI read data
-  input  wire         AXI_Master_rready,    // master indicates that it can accept read data and status    (s_axi_ctrl_rready)
-  output reg [31:0]   AXI_Slave_rdata,      // read data provided to master                                (s_axi_ctrl_rdata)
-  output reg          AXI_Slave_rvalid,     // slave indicates if the read data is valid                   (s_axi_ctrl_rvalid)
-  output reg [1:0]    AXI_Slave_rresp,      // slave indicates status of read transfer                     (s_axi_ctrl_rresp)
+  input  wire         AXI_rready,           // master indicates that it can accept read data and status    (s_axi_ctrl_rready)
+  output reg [31:0]   AXI_rdata,            // read data provided to master                                (s_axi_ctrl_rdata)
+  output reg          AXI_rvalid,           // slave indicates if the read data is valid                   (s_axi_ctrl_rvalid)
+  output reg [1:0]    AXI_rresp,            // slave indicates status of read transfer                     (s_axi_ctrl_rresp)
 
   // To MDIO
   output wire [4:0]   MDIO_Phy_Addr_Req,    // phy address
@@ -176,7 +176,7 @@ module eth_regs (
   // if we do Xil_In32(0x40000004) --> [3:2] == "01"
   // ... more bits --> more addresses
 
-  assign wWrite_Addr = AXI_Master_awaddr[7:2];
+  assign wWrite_Addr = AXI_awaddr[7:2];
 
   //==========================================
   // read_mux
@@ -186,23 +186,23 @@ module eth_regs (
   always @(*)
   begin
   case(rRead_Addr)
-    pMDIO_PHY_CTRL_ADDR      : AXI_Slave_rdata = rMDIO_PHY_CTRL_REG;
-    pMDIO_PHY_STAT_ADDR      : AXI_Slave_rdata = rMDIO_PHY_STAT_REG;
-    pMDIO_PHY_IDENT_1_ADDR   : AXI_Slave_rdata = rMDIO_PHY_IDENT_1_REG;
-    pMDIO_PHY_IDENT_2_ADDR   : AXI_Slave_rdata = rMDIO_PHY_IDENT_2_REG;
-    pMDIO_PHY_ANA_ADDR       : AXI_Slave_rdata = rMDIO_PHY_ANA_REG;
-    pMDIO_PHY_ANLP_ADDR      : AXI_Slave_rdata = rMDIO_PHY_ANLP_REG;
-    pMDIO_PHY_ANE_ADDR       : AXI_Slave_rdata = rMDIO_PHY_ANE_REG;
-    pMDIO_PHY_MODE_ADDR      : AXI_Slave_rdata = rMDIO_PHY_MODE_REG;
-    pMDIO_PHY_SPEC_MD_ADDR   : AXI_Slave_rdata = rMDIO_PHY_SPEC_MD_REG;
-    pMDIO_PHY_SYM_ERR_ADDR   : AXI_Slave_rdata = rMDIO_PHY_SYM_ERR_REG;
-    pMDIO_PHY_INDC_ADDR      : AXI_Slave_rdata = rMDIO_PHY_INDC_REG;
-    pMDIO_PHY_INTR_SRC_ADDR  : AXI_Slave_rdata = rMDIO_PHY_INTR_SRC_REG;
-    pMDIO_PHY_INTR_MSK_ADDR  : AXI_Slave_rdata = rMDIO_PHY_INTR_MSK_REG;
-    pMDIO_PHY_SPEC_CTRL_ADDR : AXI_Slave_rdata = rMDIO_PHY_SPEC_CTRL_REG;
-    pMDIO_USR_CTRL_ADDR      : AXI_Slave_rdata = rMDIO_USR_CTRL_REG;
-    pMDIO_USR_WRITE_ADDR     : AXI_Slave_rdata = rMDIO_USR_WRITE_REG;
-    default                  : AXI_Slave_rdata = 32'h00000000;
+    pMDIO_PHY_CTRL_ADDR      : AXI_rdata = rMDIO_PHY_CTRL_REG;
+    pMDIO_PHY_STAT_ADDR      : AXI_rdata = rMDIO_PHY_STAT_REG;
+    pMDIO_PHY_IDENT_1_ADDR   : AXI_rdata = rMDIO_PHY_IDENT_1_REG;
+    pMDIO_PHY_IDENT_2_ADDR   : AXI_rdata = rMDIO_PHY_IDENT_2_REG;
+    pMDIO_PHY_ANA_ADDR       : AXI_rdata = rMDIO_PHY_ANA_REG;
+    pMDIO_PHY_ANLP_ADDR      : AXI_rdata = rMDIO_PHY_ANLP_REG;
+    pMDIO_PHY_ANE_ADDR       : AXI_rdata = rMDIO_PHY_ANE_REG;
+    pMDIO_PHY_MODE_ADDR      : AXI_rdata = rMDIO_PHY_MODE_REG;
+    pMDIO_PHY_SPEC_MD_ADDR   : AXI_rdata = rMDIO_PHY_SPEC_MD_REG;
+    pMDIO_PHY_SYM_ERR_ADDR   : AXI_rdata = rMDIO_PHY_SYM_ERR_REG;
+    pMDIO_PHY_INDC_ADDR      : AXI_rdata = rMDIO_PHY_INDC_REG;
+    pMDIO_PHY_INTR_SRC_ADDR  : AXI_rdata = rMDIO_PHY_INTR_SRC_REG;
+    pMDIO_PHY_INTR_MSK_ADDR  : AXI_rdata = rMDIO_PHY_INTR_MSK_REG;
+    pMDIO_PHY_SPEC_CTRL_ADDR : AXI_rdata = rMDIO_PHY_SPEC_CTRL_REG;
+    pMDIO_USR_CTRL_ADDR      : AXI_rdata = rMDIO_USR_CTRL_REG;
+    pMDIO_USR_WRITE_ADDR     : AXI_rdata = rMDIO_USR_WRITE_REG;
+    default                  : AXI_rdata = 32'h00000000;
   endcase
   end
 
@@ -227,39 +227,39 @@ module eth_regs (
       begin
 
         // default: slave is not ready to read/write
-        AXI_Slave_arready     <= 0;
-        AXI_Slave_awready     <= 0;
-        AXI_Slave_wready      <= 0;
+        AXI_arready     <= 0;
+        AXI_awready     <= 0;
+        AXI_wready      <= 0;
         
         // write slave
-        if (AXI_Master_awvalid && AXI_Master_wvalid) begin
-          AXI_Slave_awready   <= 1;
-          AXI_Slave_wready    <= 1;
+        if (AXI_awvalid && AXI_wvalid) begin
+          AXI_awready   <= 1;
+          AXI_wready    <= 1;
           rWrite_Reg          <= 1;
           rCtrl_Fsm_State     <= WRITE;
         end
 
         // read slave
-        else if (AXI_Master_arvalid) begin
-          rRead_Addr          <= AXI_Master_araddr[7:2];
-          AXI_Slave_arready   <= 1;
+        else if (AXI_arvalid) begin
+          rRead_Addr          <= AXI_araddr[7:2];
+          AXI_arready   <= 1;
           rCtrl_Fsm_State     <= READ;
         end
       end
 
       READ:
       begin
-        AXI_Slave_arready     <= 0;
-        AXI_Slave_rvalid      <= 1;
+        AXI_arready     <= 0;
+        AXI_rvalid      <= 1;
         rCtrl_Fsm_State       <= ACK;
       end
 
       WRITE:
       begin
-        AXI_Slave_bvalid     <= 1;
-        AXI_Slave_bresp      <= 2'b00;
-        AXI_Slave_awready    <= 0;
-        AXI_Slave_wready     <= 0;
+        AXI_bvalid     <= 1;
+        AXI_bresp      <= 2'b00;
+        AXI_awready    <= 0;
+        AXI_wready     <= 0;
         rWrite_Reg           <= 0;
         rCtrl_Fsm_State      <= ACK;
       end
@@ -268,14 +268,14 @@ module eth_regs (
       begin
 
         // master acknowledges write response
-        if (AXI_Master_bready) begin
-          AXI_Slave_bvalid   <= 0;
+        if (AXI_bready) begin
+          AXI_bvalid   <= 0;
           rCtrl_Fsm_State    <= IDLE;
         end
 
         // master acknowleges read response
-        if (AXI_Master_rready) begin
-          AXI_Slave_rvalid    <= 0;
+        if (AXI_rready) begin
+          AXI_rvalid    <= 0;
           rCtrl_Fsm_State     <= IDLE;
         end;
       end
@@ -304,7 +304,7 @@ module eth_regs (
     rMDIO_USR_CTRL_REG <= 32'h00000000;
   else begin
     if (wWrite_Addr == pMDIO_USR_CTRL_ADDR && rWrite_Reg) begin
-      rMDIO_USR_CTRL_REG <= AXI_Master_wdata;
+      rMDIO_USR_CTRL_REG <= AXI_wdata;
     end
   end
   end
@@ -320,7 +320,7 @@ module eth_regs (
     rMDIO_USR_WRITE_REG <= 32'h00000000;
   else begin
     if (wWrite_Addr == pMDIO_USR_WRITE_ADDR && rWrite_Reg) begin
-      rMDIO_USR_WRITE_REG <= AXI_Master_wdata;
+      rMDIO_USR_WRITE_REG <= AXI_wdata;
     end
   end
   end
