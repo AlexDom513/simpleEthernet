@@ -38,7 +38,7 @@ class Stim_Gen_Axi:
         await RisingEdge(self.dut.AXI_Clk)
         await self.Axi_Lite_Master.write_dword(addr, data)
 
-    # issue command via axi write to read phy regs via MDIO
+    # issue commands via axi write to read phy regs via MDIO
     async def phy_regs_read_sim(self):
 
         # reference eth_regs.h for HW offsets
@@ -47,11 +47,14 @@ class Stim_Gen_Axi:
 
         # issue axi command to read phy ctrl reg
         value = (0x00 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
-        await self.axi_reg_write(0x0, value)
+        await self.axi_reg_write(0x80, value)
         await self.axi_wait_cycles(5)
 
         # issue axi command to read phy status reg
-        value = (0x01 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
-        await self.axi_reg_write(0x4, value)
-        await self.axi_wait_cycles(5)
-        
+        # value = (0x01 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
+        # await self.axi_reg_write(0x84, value)
+        # await self.axi_wait_cycles(5)
+
+    # issue commands via axi read to write phy regs via MDIO
+    async def phy_regs_write_sim(self):
+        pass

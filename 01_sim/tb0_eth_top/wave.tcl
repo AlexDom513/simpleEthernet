@@ -22,16 +22,7 @@ lappend axi_ports eth_top.AXI_rvalid
 lappend axi_ports eth_top.AXI_rresp
 gtkwave::addSignalsFromList $axi_ports
 gtkwave::/Edit/Create_Group "AXI_Ports" $axi_ports
-gtkwave::/Edit/Toggle_Group_Open|Close "AXI_Ports"
-
-# mdio ports
-gtkwave::/Edit/Insert_Blank
-set mdio_ports [list]
-lappend mdio_ports eth_top.MDC_Clk
-lappend mdio_ports eth_top.MDIO
-gtkwave::addSignalsFromList $mdio_ports
-gtkwave::/Edit/Create_Group "MDIO_Ports" $mdio_ports
-gtkwave::/Edit/Toggle_Group_Open|Close "MDIO_Ports"
+#gtkwave::/Edit/Toggle_Group_Open|Close "AXI_Ports"
 
 # eth ports
 gtkwave::/Edit/Insert_Blank
@@ -61,5 +52,36 @@ lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_CTRL_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_STAT_REG
 gtkwave::addSignalsFromList $eth_regs
 gtkwave::/Edit/Create_Group "ETH_Regs" $eth_regs
-gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Regs"
+#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Regs"
 
+# eth mdio
+gtkwave::/Edit/Insert_Blank
+set eth_mdio [list]
+lappend eth_mdio eth_top.eth_mdio_inst.Clk
+lappend eth_mdio eth_top.eth_mdio_inst.Rst
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Phy_Addr_Recv
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Reg_Addr_Recv
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_En_Recv
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Wr_Dat_Recv
+
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_En_Recv_meta
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_En_Recv
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_En_Recv_d1
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_Start
+lappend eth_mdio eth_top.eth_mdio_inst.rCtrl_Fsm_State
+
+lappend eth_mdio eth_top.eth_mdio_inst.rPhy_Addr
+lappend eth_mdio eth_top.eth_mdio_inst.rReg_Addr
+lappend eth_mdio eth_top.eth_mdio_inst.rReg_Addr_hold
+lappend eth_mdio eth_top.eth_mdio_inst.rTransc_Type
+lappend eth_mdio eth_top.eth_mdio_inst.rWr_Dat
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_Output_En
+lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_Wr
+
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Reg_Addr
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Data_Valid
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Data
+gtkwave::addSignalsFromList $eth_mdio
+gtkwave::/Edit/Create_Group "ETH_MDIO" $eth_mdio
+#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_MDIO"

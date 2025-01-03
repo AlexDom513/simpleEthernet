@@ -24,4 +24,4 @@ async def tb_eth_top(dut):
     # eth_regs tests
     await stim_gen_axi.phy_regs_read_sim()
 
-    await(Timer(10, 'us'))
+    await(Timer(1, 'ms'))
