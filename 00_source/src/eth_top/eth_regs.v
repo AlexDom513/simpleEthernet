@@ -89,7 +89,8 @@ module eth_regs (
   // From MDIO
   input  wire [5:0]   MDIO_Reg_Addr_Recv,   // address of register targeted by MDIO DMA
   input  wire         MDIO_Data_Valid_Recv, // indicates when data from MDIO DMA is valid
-  input  wire [31:0]  MDIO_Data_Recv        // data from MDIO DMA
+  input  wire [31:0]  MDIO_Data_Recv,       // data from MDIO DMA
+  input  wire         MDIO_Busy_Recv        // indicates when MDIO read/write is in progress
 );
 
   // PHY Registers (read-only, match datasheet register map)
@@ -119,12 +120,16 @@ module eth_regs (
   localparam ACK    = 4'h3;
   reg [3:0] rCtrl_Fsm_State;
 
+  // cdc read data valid (from eth_mdio)
+  reg        rMDIO_Busy_Recv_meta;
+  reg        rMDIO_Busy_Recv;
+
   // control & truncated addresses
   wire [5:0] wWrite_Addr;
   reg  [5:0] rRead_Addr;
   reg        rWrite_Reg;
 
-  // registers
+  // registers (from PHY)
   reg [31:0] rMDIO_PHY_CTRL_REG;
   reg [31:0] rMDIO_PHY_STAT_REG;
   reg [31:0] rMDIO_PHY_IDENT_1_REG;
@@ -139,20 +144,10 @@ module eth_regs (
   reg [31:0] rMDIO_PHY_INTR_SRC_REG;
   reg [31:0] rMDIO_PHY_INTR_MSK_REG;
   reg [31:0] rMDIO_PHY_SPEC_CTRL_REG;
-  
+
+  // registers (used to set communication with PHY)
   reg [31:0] rMDIO_USR_CTRL_REG;
   reg [31:0] rMDIO_USR_WRITE_REG;
-
-// Custom Register Descriptions (eth_mdio)
-// (0)  MDIO Control Register
-//        - bit(s) {11:7}   - Register Address
-//        - bit(s) {6:2}    - PHY Address
-//        - bit(s) {1}      - Read (== 0) / Write (== 1)
-//        - bit(s) {0}      - Enable
-// (1)  MDIO Write Register
-//        - bit(s) {15:0}   - Write Data
-
-//====================================================================
 
   //==========================================
   // mdio_assignments
@@ -207,12 +202,26 @@ module eth_regs (
   end
 
   //==========================================
+  // CDC for MDIO_Busy_Recv
+  //==========================================
+  // cross MDIO_Busy_Recv into domain used by AXI
+
+  always @(posedge(AXI_Clk))
+  begin
+    if (~AXI_Rstn) begin
+      rMDIO_Busy_Recv_meta <= 0;
+      rMDIO_Busy_Recv <= 0;
+    end
+    else begin
+      rMDIO_Busy_Recv_meta <= MDIO_Busy_Recv;
+      rMDIO_Busy_Recv <= rMDIO_Busy_Recv_meta;
+    end
+  end
+
+  //==========================================
   // ctrl_fsm
   //==========================================
   // handles AXI Transactions
-
-  // MIGHT BE ABLE TO SIMPLIFY THIS AFTER TESTING WITH THE
-  // NEW TB STIMULUS!!!!!
 
   always @(posedge(AXI_Clk))
   begin
@@ -223,45 +232,46 @@ module eth_regs (
   end
   else begin
     case(rCtrl_Fsm_State)
+
       IDLE:
       begin
 
         // default: slave is not ready to read/write
-        AXI_arready     <= 0;
-        AXI_awready     <= 0;
-        AXI_wready      <= 0;
+        AXI_arready       <= 0;
+        AXI_awready       <= 0;
+        AXI_wready        <= 0;
         
         // write slave
-        if (AXI_awvalid && AXI_wvalid) begin
-          AXI_awready   <= 1;
-          AXI_wready    <= 1;
-          rWrite_Reg          <= 1;
-          rCtrl_Fsm_State     <= WRITE;
+        if (AXI_awvalid && AXI_wvalid & ~rMDIO_Busy_Recv) begin
+          AXI_awready     <= 1;
+          AXI_wready      <= 1;
+          rWrite_Reg      <= 1;
+          rCtrl_Fsm_State <= WRITE;
         end
 
         // read slave
-        else if (AXI_arvalid) begin
-          rRead_Addr          <= AXI_araddr[7:2];
-          AXI_arready   <= 1;
-          rCtrl_Fsm_State     <= READ;
+        else if (AXI_arvalid & ~rMDIO_Busy_Recv) begin
+          rRead_Addr      <= AXI_araddr[7:2];
+          AXI_arready     <= 1;
+          rCtrl_Fsm_State <= READ;
         end
       end
 
       READ:
       begin
-        AXI_arready     <= 0;
-        AXI_rvalid      <= 1;
-        rCtrl_Fsm_State       <= ACK;
+        AXI_arready       <= 0;
+        AXI_rvalid        <= 1;
+        rCtrl_Fsm_State   <= ACK;
       end
 
       WRITE:
       begin
-        AXI_bvalid     <= 1;
-        AXI_bresp      <= 2'b00;
-        AXI_awready    <= 0;
-        AXI_wready     <= 0;
-        rWrite_Reg           <= 0;
-        rCtrl_Fsm_State      <= ACK;
+        AXI_bvalid        <= 1;
+        AXI_bresp         <= 2'b00;
+        AXI_awready       <= 0;
+        AXI_wready        <= 0;
+        rWrite_Reg        <= 0;
+        rCtrl_Fsm_State   <= ACK;
       end
 
       ACK:
@@ -269,14 +279,14 @@ module eth_regs (
 
         // master acknowledges write response
         if (AXI_bready) begin
-          AXI_bvalid   <= 0;
-          rCtrl_Fsm_State    <= IDLE;
+          AXI_bvalid      <= 0;
+          rCtrl_Fsm_State <= IDLE;
         end
 
         // master acknowleges read response
         if (AXI_rready) begin
-          AXI_rvalid    <= 0;
-          rCtrl_Fsm_State     <= IDLE;
+          AXI_rvalid      <= 0;
+          rCtrl_Fsm_State <= IDLE;
         end;
       end
 

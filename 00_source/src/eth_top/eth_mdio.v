@@ -27,7 +27,8 @@ module eth_mdio #(parameter SIM_MODE = 1) (
   // to eth_regs
   output wire [5:0]   MDIO_Reg_Addr,
   output wire         MDIO_Data_Valid, 
-  output wire [31:0]  MDIO_Data
+  output wire [31:0]  MDIO_Data,
+  output reg          MDIO_Busy
 );
 
   // constants
@@ -52,43 +53,43 @@ module eth_mdio #(parameter SIM_MODE = 1) (
   localparam ACK          = 4'hA;
 
   // Control
-  reg   [3:0]   rCtrl_Fsm_State;
-  reg   [4:0]   rFsm_State_Cnt;
-  reg           rMDIO_En_Recv_meta;
-  reg           rMDIO_En_Recv;
-  reg           rMDIO_En_Recv_d1;
-  reg           rMDIO_Start;
+  reg [3:0]   rCtrl_Fsm_State;
+  reg [4:0]   rFsm_State_Cnt;
+  reg         rMDIO_En_Recv_meta;
+  reg         rMDIO_En_Recv;
+  reg         rMDIO_En_Recv_d1;
+  reg         rMDIO_Start;
 
   // MDIO Transaction Parameters
-  reg   [4:0]   rPhy_Addr;
-  reg   [4:0]   rReg_Addr;
-  reg   [4:0]   rReg_Addr_hold;
-  reg           rTransc_Type;
-  reg   [15:0]  rWr_Dat;
+  reg [4:0]   rPhy_Addr;
+  reg [4:0]   rReg_Addr;
+  reg [4:0]   rReg_Addr_hold;
+  reg         rTransc_Type;
+  reg [15:0]  rWr_Dat;
 
   // Serial MDIO Data Handling
-  reg           rMDIO_Output_En;
-  reg           rMDIO_Wr;
-  wire          wMDIO_Rd;
-  wire          wMDIO_In_TB;
+  reg         rMDIO_Output_En;
+  reg         rMDIO_Wr;
+  wire        wMDIO_Rd;
+  wire        wMDIO_In_TB;
 
   // Read Data Capture
-  wire  [15:0]  wMDIO_Rd_Dat;
-  reg   [15:0]  rMDIO_Rd_Dat;
-  reg           rMDIO_Data_Valid;
+  wire [15:0] wMDIO_Rd_Dat;
+  reg  [15:0] rMDIO_Rd_Dat;
+  reg         rMDIO_Data_Valid;
 
   //==========================================
   // mdio_assignments
   //==========================================
 
   // Serial MDIO Data Handling
-  assign MDIO             = (rMDIO_Output_En) ? rMDIO_Wr : 1'bz;
+  assign MDIO = (rMDIO_Output_En) ? rMDIO_Wr : 1'bz;
   generate
     if (SIM_MODE) begin : sim_gen
-      assign wMDIO_Rd     = wMDIO_In_TB;
+      assign wMDIO_Rd = wMDIO_In_TB;
     end
     else begin : synth_gen
-      assign wMDIO_Rd     = MDIO;
+      assign wMDIO_Rd = MDIO;
     end
   endgenerate
 
@@ -104,27 +105,35 @@ module eth_mdio #(parameter SIM_MODE = 1) (
 
   // **eth_regs is operating in clock domain different from Clk in MDIO module
   // synchronize start signal into domain used in eth_mdio
+  // add pulse stretch??
   always @(posedge Clk)
   begin
     if (Rst) begin
       rMDIO_En_Recv_meta <= 0;
       rMDIO_En_Recv <= 0;
+      rMDIO_En_Recv_d1 <= 0;
     end
     else begin
       rMDIO_En_Recv_meta <= MDIO_En_Recv;
       rMDIO_En_Recv <= rMDIO_En_Recv_meta;
+      rMDIO_En_Recv_d1 <= rMDIO_En_Recv;
     end
   end
   
   // starting a MDIO transfer requires a rising-edge of rMDIO_En_Recv
   always @(posedge Clk)
   begin
-    if (Rst)
+    if (Rst) begin
+      MDIO_Busy <= 0;
       rMDIO_Start <= 0;
+    end
     else begin
-      rMDIO_En_Recv_d1 <= rMDIO_En_Recv;
-      if (rMDIO_En_Recv && ~rMDIO_En_Recv_d1)
+      if (rMDIO_En_Recv && ~rMDIO_En_Recv_d1) begin
+        MDIO_Busy <= 1;
         rMDIO_Start <= 1;
+      end
+      else if (rCtrl_Fsm_State == ACK)
+        MDIO_Busy <= 0;
       else
         rMDIO_Start <= 0;
     end

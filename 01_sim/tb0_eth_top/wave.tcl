@@ -46,6 +46,10 @@ lappend eth_regs eth_top.eth_regs_inst.rRead_Addr
 lappend eth_regs eth_top.eth_regs_inst.AXI_Slave_rdata
 lappend eth_regs eth_top.eth_regs_inst.wWrite_Addr
 lappend eth_regs eth_top.eth_regs_inst.rWrite_Reg
+lappend eth_regs eth_top.eth_regs_inst.MDIO_Data_Valid_Recv
+lappend eth_regs eth_top.eth_regs_inst.MDIO_Busy_Recv
+lappend eth_regs eth_top.eth_regs_inst.rMDIO_Busy_Recv_meta
+lappend eth_regs eth_top.eth_regs_inst.rMDIO_Busy_Recv
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_USR_CTRL_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_USR_WRITE_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_CTRL_REG
@@ -71,6 +75,10 @@ lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_En_Recv_d1
 lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_Start
 lappend eth_mdio eth_top.eth_mdio_inst.rCtrl_Fsm_State
 
+lappend eth_mdio eth_top.eth_mdio_inst.wMDIO_In_TB
+lappend eth_mdio eth_top.eth_mdio_inst.wMDIO_Rd
+lappend eth_mdio eth_top.eth_mdio_inst.wMDIO_Rd_Dat
+
 lappend eth_mdio eth_top.eth_mdio_inst.rPhy_Addr
 lappend eth_mdio eth_top.eth_mdio_inst.rReg_Addr
 lappend eth_mdio eth_top.eth_mdio_inst.rReg_Addr_hold
@@ -82,6 +90,7 @@ lappend eth_mdio eth_top.eth_mdio_inst.rMDIO_Wr
 lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Reg_Addr
 lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Data_Valid
 lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Data
+lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Busy
 gtkwave::addSignalsFromList $eth_mdio
 gtkwave::/Edit/Create_Group "ETH_MDIO" $eth_mdio
 #gtkwave::/Edit/Toggle_Group_Open|Close "ETH_MDIO"

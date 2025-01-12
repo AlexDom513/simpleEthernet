@@ -62,6 +62,7 @@ module eth_top (
   wire [5:0]  wMDIO_Reg_Addr_Recv;
   wire        wMDIO_Data_Valid_Recv;
   wire [31:0] wMDIO_Data_Recv;
+  wire        wMDIO_Busy_Recv;
 
   //==========================================
   // clk_rst_mgr
@@ -128,7 +129,8 @@ module eth_top (
     .MDIO_Wr_Dat_Req      (wMDIO_Wr_Dat_Req),
     .MDIO_Reg_Addr_Recv   (wMDIO_Reg_Addr_Recv),
     .MDIO_Data_Valid_Recv (wMDIO_Data_Valid_Recv),
-    .MDIO_Data_Recv       (wMDIO_Data_Recv)
+    .MDIO_Data_Recv       (wMDIO_Data_Recv),
+    .MDIO_Busy_Recv       (wMDIO_Busy_Recv)
   );
 
   //==========================================
@@ -145,7 +147,8 @@ module eth_top (
     .MDIO_Wr_Dat_Recv       (wMDIO_Wr_Dat_Req),
     .MDIO_Reg_Addr          (wMDIO_Reg_Addr_Recv),
     .MDIO_Data_Valid        (wMDIO_Data_Valid_Recv),
-    .MDIO_Data              (wMDIO_Data_Recv)
+    .MDIO_Data              (wMDIO_Data_Recv),
+    .MDIO_Busy              (wMDIO_Busy_Recv)
   );
 
 endmodule
