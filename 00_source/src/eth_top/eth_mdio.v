@@ -1,5 +1,5 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // eth_mdio.v
 // MDIO Interface to Ethernet PHY
 // 8/2/24
@@ -12,7 +12,7 @@
 // - MDIO is a bi-directional data SMI input/output signal that receives serial data
 //      (commands) from the controller SMC and sends serial data (status) to the SMC
 
-module eth_mdio #(parameter SIM_MODE = 0) (
+module eth_mdio #(parameter SIM_MODE = 1) (
   input  wire         Clk,
   input  wire         Rst,
   inout  wire         MDIO,
@@ -27,7 +27,8 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   // to eth_regs
   output wire [5:0]   MDIO_Reg_Addr,
   output wire         MDIO_Data_Valid, 
-  output wire [31:0]  MDIO_Data
+  output wire [31:0]  MDIO_Data,
+  output reg          MDIO_Busy
 );
 
   // constants
@@ -52,41 +53,43 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   localparam ACK          = 4'hA;
 
   // Control
-  reg   [3:0]   rCtrl_Fsm_State;
-  reg   [4:0]   rFsm_State_Cnt;
-  reg           rMDIO_En_Recv_d1;
-  reg           rMDIO_Start;
+  reg [3:0]   rCtrl_Fsm_State;
+  reg [4:0]   rFsm_State_Cnt;
+  reg         rMDIO_En_Recv_meta;
+  reg         rMDIO_En_Recv;
+  reg         rMDIO_En_Recv_d1;
+  reg         rMDIO_Start;
 
   // MDIO Transaction Parameters
-  reg   [4:0]   rPhy_Addr;
-  reg   [4:0]   rReg_Addr;
-  reg   [4:0]   rReg_Addr_hold;
-  reg           rTransc_Type;
-  reg   [15:0]  rWr_Dat;
+  reg [4:0]   rPhy_Addr;
+  reg [4:0]   rReg_Addr;
+  reg [4:0]   rReg_Addr_hold;
+  reg         rTransc_Type;
+  reg [15:0]  rWr_Dat;
 
   // Serial MDIO Data Handling
-  reg           rMDIO_Output_En;
-  reg           rMDIO_Wr;
-  wire          wMDIO_Rd;
-  wire          wMDIO_In_TB;
+  reg         rMDIO_Output_En;
+  reg         rMDIO_Wr;
+  wire        wMDIO_Rd;
+  wire        wMDIO_In_TB;
 
   // Read Data Capture
-  wire  [15:0]  wMDIO_Rd_Dat;
-  reg   [15:0]  rMDIO_Rd_Dat;
-  reg           rMDIO_Data_Valid;
+  wire [15:0] wMDIO_Rd_Dat;
+  reg  [15:0] rMDIO_Rd_Dat;
+  reg         rMDIO_Data_Valid;
 
   //==========================================
   // mdio_assignments
   //==========================================
 
   // Serial MDIO Data Handling
-  assign MDIO             = (rMDIO_Output_En) ? rMDIO_Wr : 1'bz;
+  assign MDIO = (rMDIO_Output_En) ? rMDIO_Wr : 1'bz;
   generate
     if (SIM_MODE) begin : sim_gen
-      assign wMDIO_Rd     = wMDIO_In_TB;
+      assign wMDIO_Rd = wMDIO_In_TB;
     end
     else begin : synth_gen
-      assign wMDIO_Rd     = MDIO;
+      assign wMDIO_Rd = MDIO;
     end
   endgenerate
 
@@ -99,16 +102,38 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   //==========================================
   // mdio_start
   //==========================================
-  // starting a MDIO transfer requires a rising-edge of MDIO_En_Recv
 
+  // **eth_regs is operating in clock domain different from Clk in MDIO module
+  // synchronize start signal into domain used in eth_mdio
+  // add pulse stretch??
   always @(posedge Clk)
   begin
-    if (Rst)
-      rMDIO_Start <= 0;
+    if (Rst) begin
+      rMDIO_En_Recv_meta <= 0;
+      rMDIO_En_Recv <= 0;
+      rMDIO_En_Recv_d1 <= 0;
+    end
     else begin
-      rMDIO_En_Recv_d1 <= MDIO_En_Recv;
-      if (MDIO_En_Recv && ~rMDIO_En_Recv_d1)
+      rMDIO_En_Recv_meta <= MDIO_En_Recv;
+      rMDIO_En_Recv <= rMDIO_En_Recv_meta;
+      rMDIO_En_Recv_d1 <= rMDIO_En_Recv;
+    end
+  end
+  
+  // starting a MDIO transfer requires a rising-edge of rMDIO_En_Recv
+  always @(posedge Clk)
+  begin
+    if (Rst) begin
+      MDIO_Busy <= 0;
+      rMDIO_Start <= 0;
+    end
+    else begin
+      if (rMDIO_En_Recv && ~rMDIO_En_Recv_d1) begin
+        MDIO_Busy <= 1;
         rMDIO_Start <= 1;
+      end
+      else if (rCtrl_Fsm_State == ACK)
+        MDIO_Busy <= 0;
       else
         rMDIO_Start <= 0;
     end
@@ -173,7 +198,7 @@ module eth_mdio #(parameter SIM_MODE = 0) (
             if (rTransc_Type == 0)
               rCtrl_Fsm_State <= OP_CODE_RD;
             else if (rTransc_Type == 1) begin
-              rMDIO_Wr <= 0;
+              rMDIO_Wr        <= 0;
               rCtrl_Fsm_State <= OP_CODE_WR;
             end
           end
@@ -244,7 +269,7 @@ module eth_mdio #(parameter SIM_MODE = 0) (
       //==========================================
         WAIT:
         begin
-          rFsm_State_Cnt      <= rFsm_State_Cnt + 1;
+          rFsm_State_Cnt        <= rFsm_State_Cnt + 1;
           if (rFsm_State_Cnt == pWait_Len) begin
             if (MDIO_Transc_Type_Recv == 0) begin
               rMDIO_Output_En   <= 0;

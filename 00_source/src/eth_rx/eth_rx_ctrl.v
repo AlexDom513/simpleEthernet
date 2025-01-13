@@ -24,7 +24,7 @@ module eth_rx_ctrl (
   // number of parallel data lines to PHY
   localparam pMII_WIDTH = 2;
 
-  // shift to conver bytes to bits
+  // shift to convert bytes to bits
   localparam pBytes_To_Bits = 3;
 
   // preamble count

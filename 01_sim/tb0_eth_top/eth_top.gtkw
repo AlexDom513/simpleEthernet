@@ -1,0 +1,105 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu Jan  2 22:17:52 2025
+[*]
+[dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb0_eth_top/dump.vcd"
+[dumpfile_mtime] "Thu Jan  2 22:10:40 2025"
+[dumpfile_size] 83111
+[savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb0_eth_top/eth_top.gtkw"
+[timestart] 0
+[size] 1440 1243
+[pos] -1 -1
+*-21.363224 4260000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] eth_top.
+[sst_width] 289
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 368
+@c00200
+-AXI_ports
+@28
+eth_top.AXI_Clk
+eth_top.AXI_Rstn
+@200
+-
+@28
+eth_top.AXI_awvalid
+eth_top.AXI_awready
+@22
+eth_top.AXI_awaddr[31:0]
+@28
+eth_top.AXI_wready
+eth_top.AXI_wvalid
+@22
+eth_top.AXI_wdata[31:0]
+@200
+-
+@28
+eth_top.AXI_arvalid
+eth_top.AXI_arready
+@22
+eth_top.AXI_araddr[31:0]
+@28
+eth_top.AXI_rready
+eth_top.AXI_rvalid
+@22
+eth_top.AXI_rdata[31:0]
+@28
+eth_top.AXI_rresp[1:0]
+@200
+-
+@28
+eth_top.AXI_bvalid
+eth_top.AXI_bready
+eth_top.AXI_bresp[1:0]
+@1401200
+-AXI_ports
+@200
+-
+@800201
+-eth_regs
+@29
+eth_top.eth_regs_inst.AXI_Clk
+eth_top.eth_regs_inst.AXI_Rstn
+eth_top.eth_regs_inst.MDC_Clk
+eth_top.eth_regs_inst.MDC_Rst
+@201
+-
+@29
+eth_top.eth_regs_inst.AXI_Master_awvalid
+eth_top.eth_regs_inst.AXI_Slave_awready
+@23
+eth_top.eth_regs_inst.AXI_Master_awaddr[31:0]
+@201
+-
+@29
+eth_top.eth_regs_inst.AXI_Master_wvalid
+eth_top.eth_regs_inst.AXI_Slave_wready
+@23
+eth_top.eth_regs_inst.AXI_Master_wdata[31:0]
+@201
+-
+@29
+eth_top.eth_regs_inst.AXI_Slave_bvalid
+eth_top.eth_regs_inst.AXI_Slave_bresp[1:0]
+eth_top.eth_regs_inst.AXI_Master_bready
+@201
+-
+@29
+eth_top.eth_regs_inst.AXI_Master_arvalid
+eth_top.eth_regs_inst.AXI_Slave_arready
+@23
+eth_top.eth_regs_inst.AXI_Master_araddr[31:0]
+@201
+-
+@29
+eth_top.eth_regs_inst.AXI_Master_rready
+@23
+eth_top.eth_regs_inst.AXI_Slave_rdata[31:0]
+@29
+eth_top.eth_regs_inst.AXI_Slave_rvalid
+eth_top.eth_regs_inst.AXI_Slave_rresp[1:0]
+@1000201
+-eth_regs
+[pattern_trace] 1
+[pattern_trace] 0

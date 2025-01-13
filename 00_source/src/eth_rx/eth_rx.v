@@ -9,7 +9,6 @@ module eth_rx (
   input wire        Clk,
   input wire        Rst,
   input wire [1:0]  Rxd,
-  output wire       Rx_Req, // placeholder, output required
   output wire       Crc_Valid
 );
 
@@ -40,14 +39,12 @@ module eth_rx (
   // crc
   wire            wCrc_En;
   wire            wCrc_Req;
-  wire [31:0]     wCrc;
+  wire [31:0]     wCrc_Out;
   reg  [31:0]     rCrc_Computed;
 
   //==========================================
   // eth_rx_ctrl
   //==========================================
-
-  assign Rx_Req = wRx_Req;
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk            (Clk),
     .Rst            (Rst),
@@ -102,22 +99,21 @@ module eth_rx (
     rByte_d1 <= rByte;
   end
 
-  eth_crc_gen2 eth_crc_gen2_inst (
+  eth_crc_gen eth_crc_gen_inst (
     .Clk      (Clk),
     .Rst      (Rst),
     .Crc_Req  (wCrc_Req),
     .Byte_Rdy (rByte_Rdy_d1),
     .Byte     (rByte_d1),
-    .Crc_Out  (wCrc)
+    .Crc_Out  (wCrc_Out)
   );
 
-  // only update {rCrc_Computed} when byte is ready
+  // only update rCrc_Computed when byte is ready
   assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
   always @(posedge Clk)
   begin
-    if (wCrc_En) begin
-      rCrc_Computed <= wCrc;
-    end
+    if (wCrc_En)
+      rCrc_Computed <= wCrc_Out;
   end
 
 endmodule
