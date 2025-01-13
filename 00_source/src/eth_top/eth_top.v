@@ -136,7 +136,7 @@ module eth_top (
   //==========================================
   // eth_mdio
   //==========================================
-  eth_mdio  eth_mdio_inst(
+  eth_mdio  eth_mdio_inst (
     .Clk                    (wMDC_Clk),
     .Rst                    (wMDC_Rst),
     .MDIO                   (MDIO),

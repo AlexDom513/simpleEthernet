@@ -51,15 +51,29 @@ class Stim_Gen_Axi:
         await self.axi_reg_write(0x80, value)
         await self.axi_wait_cycles(500)
 
-        # issue axi command to clear axi ctrl reg (while MDIO is operating)
+        # issue axi command to clear phy ctrl reg (while MDIO is operating)
         value = 0x0
         await self.axi_reg_write(0x80, value)
-        await self.axi_wait_cycles(500)
-
-        # issue axi command to read phy ctrl reg
-        value = (0x00 << 7) | (0x1 << 2) | (0x0 << 1) | 0x1
-        await self.axi_reg_write(0x80, value)
+        await self.axi_wait_cycles(100)
 
     # issue commands via axi read to write phy regs via MDIO
     async def phy_regs_write_sim(self):
-        pass
+
+        # reference eth_regs.h for HW offsets
+        # bits ------ -> {phy reg addr}    | {phy addr} | {Rd/Wr =0/1}  | {Enable}
+        # value = ("MDIO_PHY_REG_HW" << 7) | (0x1 << 2) | (0x0 << 1)    | 0x1
+
+        # pre-load data reg
+        value = 0xFFFF
+        await self.axi_reg_write(0x84, value)
+        await self.axi_wait_cycles(100)
+
+        # issue axi commands to write phy ctrl reg
+        value = (0x00 << 7) | (0x1 << 2) | (0x1 << 1) | 0x1
+        await self.axi_reg_write(0x80, value)
+        await self.axi_wait_cycles(500)
+
+        # issue axi command to clear phy ctrl reg (while MDIO is operating)
+        value = 0x0
+        await self.axi_reg_write(0x80, value)
+        await self.axi_wait_cycles(100)
