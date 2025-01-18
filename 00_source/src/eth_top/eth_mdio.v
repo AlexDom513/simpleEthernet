@@ -12,7 +12,7 @@
 // - MDIO is a bi-directional data SMI input/output signal that receives serial data
 //      (commands) from the controller SMC and sends serial data (status) to the SMC
 
-module eth_mdio #(parameter SIM_MODE = 1) (
+module eth_mdio #(parameter SIM_MODE = 0) (
   input  wire         Clk,
   input  wire         Rst,
   inout  wire         MDIO,
