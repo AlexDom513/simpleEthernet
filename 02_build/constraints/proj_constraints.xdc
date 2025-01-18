@@ -14,13 +14,27 @@ create_generated_clock -name mdc_clk \
                         [get_pins eth_top_inst/MDC_Clk_OBUF]
 
 #====================================================================
-# Input Delay Constraints
+# I/O Delay Constraints
 #====================================================================
-# set_input_delay -clock [get_clocks VIRTUAL_eth_top_inst/clk_rst_mgr_inst/Clk_MDC_OBUF] -min 0.000 [get_ports MDIO]
-# set_input_delay -clock [get_clocks VIRTUAL_eth_top_inst/clk_rst_mgr_inst/Clk_MDC_OBUF] -max 200.000 [get_ports MDIO]
+set trce_dly_max  1.000;  # Maximum board trace delay
+set trce_dly_min  0.000;  # Minimum board trace delay
 
-#====================================================================
-# Output Delay Constraints
-#====================================================================
-# set_output_delay -clock [get_clocks VIRTUAL_eth_top_inst/clk_rst_mgr_inst/Clk_MDC_OBUF] -min -10.000 [get_ports MDIO]
-# set_output_delay -clock [get_clocks VIRTUAL_eth_top_inst/clk_rst_mgr_inst/Clk_MDC_OBUF] -max 10.000 [get_ports MDIO]
+# RMII (TX) (REF_CLK OUT MODE)
+set tsu           7.000;  # Destination device setup time requirement
+set thd           2.000;  # Destination device hold time requirement
+set_output_delay -clock eth_clk -max [expr $trce_dly_max + $tsu] [get_ports {Txd[*]}];
+set_output_delay -clock eth_clk -min [expr $trce_dly_min - $thd] [get_ports {Txd[*]}];
+
+# RMII (RX) (REF_CLK OUT MODE)
+set tco_max       5.000;  # Maximum delay after reference clock edge for external device's output to be valid
+set tco_min       1.400;  # Minimum time required for signal to remain stable after clock edge
+set_input_delay -clock eth_clk -max [expr $tco_max + $trce_dly_max] [get_ports {Rxd[*]}];
+set_input_delay -clock eth_clk -min [expr $tco_min + $trce_dly_min] [get_ports {Rxd[*]}];
+
+# Serial Management Interface (SMI)
+set tsu           10.0;   # Destination device setup time requirement
+set thd           10.0;   # Destination device hold time requirement
+set tco_min       0.000;  # Minimum clock to out delay (external device)
+set_output_delay -clock mdc_clk -max [expr $trce_dly_max + $tsu] [get_ports MDIO];
+set_output_delay -clock mdc_clk -min [expr $trce_dly_min - $thd] [get_ports MDIO];
+set_input_delay -clock mdc_clk -min [expr $tco_min + $trce_dly_min] [get_ports MDIO];
