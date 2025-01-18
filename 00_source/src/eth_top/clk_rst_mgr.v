@@ -37,10 +37,10 @@ module clk_rst_mgr (
   end
 
   always @(posedge Clk)
-    begin
-      if (rClk_Cnt == CLK_DIV_CNT-1)
-        rMDC_Clk <= ~rMDC_Clk;
-    end
+  begin
+    if (rClk_Cnt == CLK_DIV_CNT-1)
+      rMDC_Clk <= ~rMDC_Clk;
+  end
 
   assign wMDC_Clk = rMDC_Clk;
   assign MDC_Clk  = wMDC_Clk;
@@ -52,13 +52,11 @@ module clk_rst_mgr (
 
   always @(posedge wMDC_Clk)
   begin
-    if (~Rstn) begin
-      rMDC_Rst <= 1;
-    end
-    else begin
+  if (~Rstn)
+    rMDC_Rst <= 1;
+  else
       rMDC_Rst <= 0;
     end
-  end
   assign MDC_Rst = rMDC_Rst;
 
 endmodule

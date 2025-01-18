@@ -1,6 +1,7 @@
 //====================================================================
-// 02_simple_ethernet
+// simpleEthernet
 // proj_top.v
+// Project top-level
 // 8/9/24
 //====================================================================
 
@@ -30,11 +31,12 @@ module proj_top(
   inout FIXED_IO_ps_srstb,
 
   // Ethernet PHY
-  input  Clk_Eth,
+  input  Eth_Clk,
+  input  Eth_Rst,
+  input  Rxd,
   output Tx_En,
-  output Tx0,
-  output Tx1,
-  output Clk_MDC,
+  output Txd,
+  output MDC_Clk,
   inout  MDIO
 );
 
@@ -62,10 +64,6 @@ module proj_top(
   wire FIXED_IO_ps_clk;
   wire FIXED_IO_ps_porb;
   wire FIXED_IO_ps_srstb;
-  wire [7:0]M_AXIS_0_tdata;
-  wire M_AXIS_0_tlast;
-  wire M_AXIS_0_tready;
-  wire M_AXIS_0_tvalid;
   wire [31:0] M_AXI_0_araddr;
   wire [2:0] M_AXI_0_arprot;
   wire M_AXI_0_arready;
@@ -87,17 +85,11 @@ module proj_top(
   wire M_AXI_0_wvalid;
 
   // Ethernet PHY
-  wire Clk_Eth;
-  wire Rst_Eth;
-  wire Eth_En;
-  wire [1:0] Tx_Data;
+  wire Eth_Clk;
+  wire Eth_Rst;
+  wire [1:0] Rxd;
+  wire [1:0] Txd;
   wire Tx_En;
-
-  // Debug LED
-  wire Led;
-
-  assign Tx0 = Tx_Data[0];
-  assign Tx1 = Tx_Data[1];
 
   bd_wrapper  bd_wrapper_inst (
     .AXI_Clk              (AXI_Clk),
@@ -123,10 +115,6 @@ module proj_top(
     .FIXED_IO_ps_clk      (FIXED_IO_ps_clk),
     .FIXED_IO_ps_porb     (FIXED_IO_ps_porb),
     .FIXED_IO_ps_srstb    (FIXED_IO_ps_srstb),
-    .M_AXIS_0_tdata       (M_AXIS_0_tdata),
-    .M_AXIS_0_tlast       (M_AXIS_0_tlast),
-    .M_AXIS_0_tready      (M_AXIS_0_tready),
-    .M_AXIS_0_tvalid      (M_AXIS_0_tvalid),
     .M_AXI_0_araddr       (M_AXI_0_araddr),
     .M_AXI_0_arprot       (M_AXI_0_arprot),
     .M_AXI_0_arready      (M_AXI_0_arready),
@@ -151,41 +139,35 @@ module proj_top(
   eth_top  eth_top_inst (
 
     // Block Design
-    .Clk_AXI              (AXI_Clk),
-    .Rstn_AXI             (AXI_Rstn),
-    .AXI_Master_awalid    (M_AXI_0_awvalid),
-    .AXI_Slave_awready    (M_AXI_0_awready),
-    .AXI_Master_awaddr    (M_AXI_0_awaddr),
-    .AXI_Master_wvalid    (M_AXI_0_awvalid),
-    .AXI_Slave_wready     (M_AXI_0_wready),
-    .AXI_Master_wdata     (M_AXI_0_wdata),
-    .AXI_Slave_bvalid     (M_AXI_0_bvalid),
-    .AXI_Slave_bresp      (M_AXI_0_bresp),
-    .AXI_Master_bready    (M_AXI_0_bready),
-    .AXI_Master_arvalid   (M_AXI_0_arvalid),
-    .AXI_Slave_arready    (M_AXI_0_arready),
-    .AXI_Master_araddr    (M_AXI_0_araddr),
-    .AXI_Master_rready    (M_AXI_0_rready),
-    .AXI_Slave_rdata      (M_AXI_0_rdata),
-    .AXI_Slave_rvalid     (M_AXI_0_rvalid),
-    .AXI_Slave_rresp      (M_AXI_0_rresp),
-    .AXIS_Master_tdata    (M_AXIS_0_tdata),
-    .AXIS_Master_tlast    (M_AXIS_0_tlast),
-    .AXIS_Slave_tready    (M_AXIS_0_tready),
-    .AXIS_Master_tvalid   (M_AXIS_0_tvalid),
+    .AXI_Clk              (AXI_Clk),
+    .AXI_Rstn             (AXI_Rstn),
+    .AXI_awvalid          (M_AXI_0_awvalid),
+    .AXI_awready          (M_AXI_0_awready),
+    .AXI_awaddr           (M_AXI_0_awaddr),
+    .AXI_wvalid           (M_AXI_0_awvalid),
+    .AXI_wready           (M_AXI_0_wready),
+    .AXI_wdata            (M_AXI_0_wdata),
+    .AXI_bvalid           (M_AXI_0_bvalid),
+    .AXI_bresp            (M_AXI_0_bresp),
+    .AXI_bready           (M_AXI_0_bready),
+    .AXI_arvalid          (M_AXI_0_arvalid),
+    .AXI_arready          (M_AXI_0_arready),
+    .AXI_araddr           (M_AXI_0_araddr),
+    .AXI_rready           (M_AXI_0_rready),
+    .AXI_rdata            (M_AXI_0_rdata),
+    .AXI_rvalid           (M_AXI_0_rvalid),
+    .AXI_rresp            (M_AXI_0_rresp),
     
     // MDIO Interface
-    .Clk_MDC              (Clk_MDC),
+    .MDC_Clk              (MDC_Clk),
     .MDIO                 (MDIO),
 
     // Ethernet Interface
-    .Clk_Eth              (Clk_Eth),          // TODO: NEED TO ADD CDC FOR AXI DATA!!!
-    .Rst_Eth              (Rst_Eth),          // need to tie this to something, maybe reset issued by zynq?
-    .Tx_Data              (Tx_Data),
-    .Tx_En                (Tx_En),
-
-    // Debug LED
-    .Led                  (Led)
+    .Eth_Clk              (Eth_Clk),
+    .Eth_Rst              (Eth_Rst),
+    .Rxd                  (Rxd),
+    .Txd                  (Txd),
+    .Tx_En                (Tx_En)
   );
 
 endmodule

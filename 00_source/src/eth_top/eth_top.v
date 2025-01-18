@@ -27,12 +27,6 @@ module eth_top (
   output wire         AXI_rvalid,
   output wire [1:0]   AXI_rresp,
 
-  // AXI Stream Interface
-  input  wire [7:0]   AXIS_Master_tdata,
-  input  wire         AXIS_Master_tlast,
-  output wire         AXIS_Slave_tready,
-  input  wire         AXIS_Master_tvalid,
-
   // MDIO Interface
   output wire         MDC_Clk,
   inout  wire         MDIO,

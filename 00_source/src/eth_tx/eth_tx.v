@@ -31,20 +31,20 @@ module eth_tx (
   //==========================================
 
   // fsm/control
-  reg [3:0]   rTx_Ctrl_FSM_State;
+  wire [3:0]  wTx_Ctrl_FSM_State;
   reg [3:0]   rTx_Ctrl_FSM_State_d1;
-  reg         rTx_En;
-  reg         rFifo_Empty;
-  reg         rCrc_En;
+  wire        wTx_En;
+  wire        wFifo_Empty;
+  wire        wCrc_En;
   reg         rCrc_En_d1;
   reg         rCrc_En_d2;
   reg [1:0]   rCrc_Bits_Cnt;
 
   // data
   reg [1:0]   rTx_Data;
-  reg         rFifo_Rd_Valid;
+  wire        wFifo_Rd_Valid;
   reg         rFifo_Rd_Valid_d1;
-  reg [7:0]   rFifo_Rd_Data;
+  wire [7:0]  wFifo_Rd_Data;
 
   // placeholder
   wire        wFifo_Full;
@@ -76,17 +76,17 @@ module eth_tx (
     .Clk                (Clk),
     .Rst                (Rst),
     .Eth_Pkt_Rdy        (Eth_Pkt_Rdy),
-    .Tx_Ctrl_FSM_State  (rTx_Ctrl_FSM_State),
-    .Tx_En              (rTx_En),
-    .Fifo_Empty         (rFifo_Empty),
-    .Fifo_Rd            (rFifo_Rd_Valid),
-    .Crc_En             (rCrc_En)
+    .Tx_Ctrl_FSM_State  (wTx_Ctrl_FSM_State),
+    .Tx_En              (wTx_En),
+    .Fifo_Empty         (wFifo_Empty),
+    .Fifo_Rd            (wFifo_Rd_Valid),
+    .Crc_En             (wCrc_En)
   );
 
   // register previous state
   always @(posedge Clk)
   begin
-    rTx_Ctrl_FSM_State_d1 <= rTx_Ctrl_FSM_State;
+    rTx_Ctrl_FSM_State_d1 <= wTx_Ctrl_FSM_State;
   end
 
   //==========================================
@@ -103,9 +103,9 @@ module eth_tx (
     .awfull   (wFifo_Afull),
     .rclk     (Clk),
     .rrst_n   (~Rst),
-    .rinc     (rFifo_Rd_Valid),
-    .rdata    (rFifo_Rd_Data),
-    .rempty   (rFifo_Empty),
+    .rinc     (wFifo_Rd_Valid),
+    .rdata    (wFifo_Rd_Data),
+    .rempty   (wFifo_Empty),
     .arempty  (wFifo_Aempty)
   );
 
@@ -114,7 +114,7 @@ module eth_tx (
     if (Rst)
       rFifo_Rd_Valid_d1 <= 0;
     else
-      rFifo_Rd_Valid_d1 <= rFifo_Rd_Valid;
+      rFifo_Rd_Valid_d1 <= wFifo_Rd_Valid;
   end
 
   //==========================================
@@ -136,7 +136,7 @@ module eth_tx (
       rFCS_Buf       <= 0;
     end
     else begin
-      case (rTx_Ctrl_FSM_State)
+      case (wTx_Ctrl_FSM_State)
 
         `IDLE:
         begin
@@ -178,13 +178,13 @@ module eth_tx (
         `LEN_TYPE:
         begin
           rLen_Type_Buf <= rLen_Type_Buf >> `pMII_WIDTH;
-          rPayload_Buf <= rFifo_Rd_Data;
+          rPayload_Buf <= wFifo_Rd_Data;
         end
 
         `DATA:
         begin
           if (rFifo_Rd_Valid_d1)
-            rPayload_Buf <= rFifo_Rd_Data;
+            rPayload_Buf <= wFifo_Rd_Data;
           else
             rPayload_Buf <= rPayload_Buf >> `pMII_WIDTH;
         end
@@ -219,7 +219,7 @@ module eth_tx (
 
   always @(*)
   begin
-    case(rTx_Ctrl_FSM_State)
+    case(wTx_Ctrl_FSM_State)
       `IDLE:
         rTx_Data = 0;
       `PREAMBLE:
@@ -260,7 +260,7 @@ module eth_tx (
       rCrc_En_d2 <= 0;
     end 
     else begin
-      rCrc_En_d1 <= rCrc_En;
+      rCrc_En_d1 <= wCrc_En;
       rCrc_En_d2 <= rCrc_En_d1;
     end
   end
@@ -273,7 +273,7 @@ module eth_tx (
     if (Rst)
       rCrc_Byte <= 0;
     else begin
-      if (rCrc_En) begin
+      if (wCrc_En) begin
         rCrc_Bits_Cnt <= rCrc_Bits_Cnt + 1;
         rCrc_Byte <= {rTx_Data, rCrc_Byte[7:2]};
       end
@@ -288,7 +288,7 @@ module eth_tx (
   eth_crc_gen eth_crc_gen_inst (
     .Clk      (Clk),
     .Rst      (Rst),
-    .Crc_Req  (rCrc_En),
+    .Crc_Req  (wCrc_En),
     .Byte_Rdy (wCrc_Byte_Valid),
     .Byte     (rCrc_Byte),
     .Crc_Out  (wCrc_Out)

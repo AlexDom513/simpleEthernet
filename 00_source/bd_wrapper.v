@@ -2,8 +2,8 @@
 //Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-//Date        : Sun Oct 20 13:17:27 2024
-//Host        : flan-desktop running 64-bit Ubuntu 22.04.4 LTS
+//Date        : Fri Jan 17 18:47:35 2025
+//Host        : flan-desktop running 64-bit Ubuntu 22.04.5 LTS
 //Command     : generate_target bd_wrapper.bd
 //Design      : bd_wrapper
 //Purpose     : IP block netlist
@@ -34,10 +34,6 @@ module bd_wrapper
     FIXED_IO_ps_clk,
     FIXED_IO_ps_porb,
     FIXED_IO_ps_srstb,
-    M_AXIS_0_tdata,
-    M_AXIS_0_tlast,
-    M_AXIS_0_tready,
-    M_AXIS_0_tvalid,
     M_AXI_0_araddr,
     M_AXI_0_arprot,
     M_AXI_0_arready,
@@ -80,10 +76,6 @@ module bd_wrapper
   inout FIXED_IO_ps_clk;
   inout FIXED_IO_ps_porb;
   inout FIXED_IO_ps_srstb;
-  output [7:0]M_AXIS_0_tdata;
-  output M_AXIS_0_tlast;
-  input M_AXIS_0_tready;
-  output M_AXIS_0_tvalid;
   output [31:0]M_AXI_0_araddr;
   output [2:0]M_AXI_0_arprot;
   input M_AXI_0_arready;
@@ -127,10 +119,6 @@ module bd_wrapper
   wire FIXED_IO_ps_clk;
   wire FIXED_IO_ps_porb;
   wire FIXED_IO_ps_srstb;
-  wire [7:0]M_AXIS_0_tdata;
-  wire M_AXIS_0_tlast;
-  wire M_AXIS_0_tready;
-  wire M_AXIS_0_tvalid;
   wire [31:0]M_AXI_0_araddr;
   wire [2:0]M_AXI_0_arprot;
   wire M_AXI_0_arready;
@@ -175,10 +163,6 @@ module bd_wrapper
         .FIXED_IO_ps_clk(FIXED_IO_ps_clk),
         .FIXED_IO_ps_porb(FIXED_IO_ps_porb),
         .FIXED_IO_ps_srstb(FIXED_IO_ps_srstb),
-        .M_AXIS_0_tdata(M_AXIS_0_tdata),
-        .M_AXIS_0_tlast(M_AXIS_0_tlast),
-        .M_AXIS_0_tready(M_AXIS_0_tready),
-        .M_AXIS_0_tvalid(M_AXIS_0_tvalid),
         .M_AXI_0_araddr(M_AXI_0_araddr),
         .M_AXI_0_arprot(M_AXI_0_arprot),
         .M_AXI_0_arready(M_AXI_0_arready),
