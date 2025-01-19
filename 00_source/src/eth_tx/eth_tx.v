@@ -34,6 +34,7 @@ module eth_tx (
   wire [3:0]  wTx_Ctrl_FSM_State;
   reg [3:0]   rTx_Ctrl_FSM_State_d1;
   wire        wTx_En;
+  reg         rTx_En;
   wire        wFifo_Empty;
   wire        wCrc_En;
   reg         rCrc_En_d1;
@@ -42,6 +43,7 @@ module eth_tx (
 
   // data
   reg [1:0]   rTx_Data;
+  reg [1:0]   rTx_Data_d1;
   wire        wFifo_Rd_Valid;
   reg         rFifo_Rd_Valid_d1;
   wire [7:0]  wFifo_Rd_Data;
@@ -215,7 +217,8 @@ module eth_tx (
   //==========================================
   // muxes data to be transmitted
 
-  assign Txd = rTx_Data;
+  assign Txd = rTx_Data_d1;
+  assign Tx_En = rTx_En;
 
   always @(*)
   begin
@@ -245,6 +248,19 @@ module eth_tx (
       default:
         rTx_Data = 0;
     endcase
+  end
+
+  // pipeline output
+  always @(posedge Clk)
+  begin
+    if (Rst) begin
+      rTx_En <= 0;
+      rTx_Data_d1 <= 0;
+    end
+    else begin
+      rTx_En <= wTx_En;
+      rTx_Data_d1 <= rTx_Data;
+    end
   end
 
   //==========================================

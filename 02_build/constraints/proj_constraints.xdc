@@ -4,9 +4,6 @@
 # Clock Constraints
 #====================================================================
 
-# TODO: generate 50 MHz clock internal to FPGA and modify the PHY such
-# that it accepts the input clock, this allows us to use the relaxed timing constraints!!
-
 # Input Eth Clock
 create_clock -name eth_clk -period 20.0 [get_ports { Eth_Clk }];
 
@@ -23,14 +20,14 @@ set trce_dly_max  1.000;  # Maximum board trace delay
 set trce_dly_min  0.000;  # Minimum board trace delay
 
 # RMII (TX) (REF_CLK OUT MODE)
-set tsu           4.000;  # Destination device setup time requirement
-set thd           1.500;  # Destination device hold time requirement
+set tsu           7.000;  # Destination device setup time requirement
+set thd           2.000;  # Destination device hold time requirement
 set_output_delay -clock eth_clk -max [expr $trce_dly_max + $tsu] [get_ports {Txd[*]}];
 set_output_delay -clock eth_clk -min [expr $trce_dly_min - $thd] [get_ports {Txd[*]}];
 
 # RMII (RX) (REF_CLK OUT MODE)
-set tco_max       14.00;  # Maximum delay after reference clock edge for external device's output to be valid
-set tco_min       3.000;  # Minimum time required for signal to remain stable after clock edge
+set tco_max       5.000;  # Maximum delay after reference clock edge for external device's output to be valid
+set tco_min       1.400;  # Minimum time required for signal to remain stable after clock edge
 set_input_delay -clock eth_clk -max [expr $tco_max + $trce_dly_max] [get_ports {Rxd[*]}];
 set_input_delay -clock eth_clk -min [expr $tco_min + $trce_dly_min] [get_ports {Rxd[*]}];
 
