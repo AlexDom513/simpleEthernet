@@ -47,6 +47,14 @@ module eth_top (
   wire wMDC_Clk;
   wire wMDC_Rst;
 
+  // Test TX Data
+  reg         rEth_Tx_Test_En_meta;
+  reg         rEth_Tx_Test_En;
+  reg         rEth_Tx_Test_Start;
+  reg [7:0]   rEth_Byte_Test;
+  reg         rEth_Byte_Valid_Test;
+  reg         rEth_Pkt_Rdy_Test;
+
   // MDIO DMA
   wire [4:0]  wMDIO_Phy_Addr_Req;
   wire [4:0]  wMDIO_Reg_Addr_Req;
@@ -57,6 +65,7 @@ module eth_top (
   wire        wMDIO_Data_Valid_Recv;
   wire [31:0] wMDIO_Data_Recv;
   wire        wMDIO_Busy_Recv;
+  wire        wEth_Tx_Test_En;
 
   //==========================================
   // clk_rst_mgr
@@ -82,12 +91,65 @@ module eth_top (
   //==========================================
   // eth_tx
   //==========================================
+  // including some test infrastructure
+
+  always @(posedge Eth_Clk)
+  begin
+  if (Eth_Rst) begin
+    rEth_Tx_Test_En_meta <= 0;
+    rEth_Tx_Test_En <= 0;
+  end
+  else begin
+    rEth_Tx_Test_En_meta <= wEth_Tx_Test_En;
+    rEth_Tx_Test_En <= rEth_Tx_Test_En_meta;
+  end
+  end
+
+  always @(posedge Eth_Clk)
+  begin
+    if (Eth_Rst)
+      rEth_Tx_Test_Start <= 0;
+    else
+      rEth_Tx_Test_Start <= rEth_Tx_Test_En;
+  end
+
+  always @(posedge Eth_Clk)
+  begin
+  if (Eth_Rst) begin
+    rEth_Byte_Valid_Test <= 0;
+    rEth_Byte_Test <= 0;
+  end
+  else begin
+    if (rEth_Tx_Test_En && ~rEth_Tx_Test_Start) begin
+      rEth_Byte_Valid_Test <= 1;
+      rEth_Byte_Test <= rEth_Byte_Test + 1;
+    end
+
+    else if (rEth_Tx_Test_En && rEth_Byte_Test > 0 && rEth_Byte_Test < 40) begin
+      rEth_Byte_Valid_Test <= 1;
+      rEth_Byte_Test <= rEth_Byte_Test + 1;
+    end
+
+    else if (rEth_Tx_Test_En && rEth_Byte_Test == 40) begin
+      rEth_Byte_Valid_Test <= 0;
+      rEth_Byte_Test <= 0;
+      rEth_Pkt_Rdy_Test <= 1;
+    end
+
+    else begin
+      rEth_Byte_Valid_Test <= 0;
+      rEth_Byte_Test <= 0;
+      rEth_Pkt_Rdy_Test <= 0;
+    end
+  end
+  end
+
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
     .Rst            (Eth_Rst),
-    .Eth_Byte       (0),
-    .Eth_Byte_Valid (0),
-    .Eth_Pkt_Rdy    (0),
+    .Eth_Byte       (rEth_Byte_Test),
+    .Eth_Byte_Valid (rEth_Byte_Valid_Test),
+    .Eth_Pkt_Rdy    (rEth_Pkt_Rdy_Test),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
   );
@@ -124,7 +186,8 @@ module eth_top (
     .MDIO_Reg_Addr_Recv   (wMDIO_Reg_Addr_Recv),
     .MDIO_Data_Valid_Recv (wMDIO_Data_Valid_Recv),
     .MDIO_Data_Recv       (wMDIO_Data_Recv),
-    .MDIO_Busy_Recv       (wMDIO_Busy_Recv)
+    .MDIO_Busy_Recv       (wMDIO_Busy_Recv),
+    .Eth_Tx_Test_En       (wEth_Tx_Test_En)
   );
 
   //==========================================

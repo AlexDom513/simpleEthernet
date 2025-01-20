@@ -8,7 +8,7 @@
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import Timer, RisingEdge
+from cocotb.triggers import RisingEdge
 from cocotbext.axi import AxiLiteBus, AxiLiteMaster
 
 class Stim_Gen_Axi:
@@ -77,3 +77,10 @@ class Stim_Gen_Axi:
         value = 0x0
         await self.axi_reg_write(0x80, value)
         await self.axi_wait_cycles(100)
+
+    # issue commands via axi read to initiate ethernet tx test
+    async def ethernet_tx_sim(self):
+
+        # issue axi command to write ethernet test reg
+        await self.axi_reg_write(0x88, 0x1)
+        #await self.axi_reg_write(0x88, 0x0)

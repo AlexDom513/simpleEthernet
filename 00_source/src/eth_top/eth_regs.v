@@ -90,7 +90,10 @@ module eth_regs (
   input  wire [5:0]   MDIO_Reg_Addr_Recv,   // address of register targeted by MDIO DMA
   input  wire         MDIO_Data_Valid_Recv, // indicates when data from MDIO DMA is valid
   input  wire [31:0]  MDIO_Data_Recv,       // data from MDIO DMA
-  input  wire         MDIO_Busy_Recv        // indicates when MDIO read/write is in progress
+  input  wire         MDIO_Busy_Recv,       // indicates when MDIO read/write is in progress
+
+  // To Eth Tx Test
+  output wire         Eth_Tx_Test_En        // enable ethernet tx test
 );
 
   // PHY Registers (read-only, match datasheet register map)
@@ -112,6 +115,7 @@ module eth_regs (
   // USER Registers (read/write)
   localparam pMDIO_USR_CTRL_ADDR        = 6'h20;
   localparam pMDIO_USR_WRITE_ADDR       = 6'h21;
+  localparam pETH_TEST_REG_ADDR         = 6'h22;
 
   // rCtrl_Fsm_State
   localparam IDLE   = 4'h0;
@@ -149,14 +153,19 @@ module eth_regs (
   reg [31:0] rMDIO_USR_CTRL_REG;
   reg [31:0] rMDIO_USR_WRITE_REG;
 
+  // registers (ethernet tx test)
+  reg [31:0] rETH_TEST_REG;
+
   //==========================================
-  // mdio_assignments
+  // top-level assignments
   //==========================================
   assign MDIO_Reg_Addr_Req      = rMDIO_USR_CTRL_REG[11:7];
   assign MDIO_Phy_Addr_Req      = rMDIO_USR_CTRL_REG[6:2];
   assign MDIO_Transc_Type_Req   = rMDIO_USR_CTRL_REG[1];
   assign MDIO_En_Req            = rMDIO_USR_CTRL_REG[0];
   assign MDIO_Wr_Dat_Req        = rMDIO_USR_WRITE_REG[15:0];
+
+  assign Eth_Tx_Test_En         = rETH_TEST_REG[0];
 
   //==========================================
   // address_truncation
@@ -331,6 +340,22 @@ module eth_regs (
   else begin
     if (wWrite_Addr == pMDIO_USR_WRITE_ADDR && rWrite_Reg) begin
       rMDIO_USR_WRITE_REG <= AXI_wdata;
+    end
+  end
+  end
+
+  //==========================================
+  // ETH_TEST_REG
+  //==========================================
+  // enable/disable sending of test packets
+
+  always @(posedge(AXI_Clk))
+  begin
+  if (~AXI_Rstn)
+    rETH_TEST_REG <= 32'h00000000;
+  else begin
+    if (wWrite_Addr == pETH_TEST_REG_ADDR && rWrite_Reg) begin
+      rETH_TEST_REG <= AXI_wdata;
     end
   end
   end

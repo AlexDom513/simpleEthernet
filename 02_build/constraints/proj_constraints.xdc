@@ -37,6 +37,7 @@ set_input_delay -clock eth_clk -min [expr $tco_min + $trce_dly_min] [get_ports {
 set tsu           10.0;   # Destination device setup time requirement
 set thd           10.0;   # Destination device hold time requirement
 set tco_min       0.000;  # Minimum clock to out delay (external device)
+set tco_max       0.000;  # Maximum clock to out delay (external device)
 set_output_delay -clock mdc_clk -max [expr $trce_dly_max + $tsu] [get_ports MDIO];
 set_output_delay -clock mdc_clk -min [expr $trce_dly_min - $thd] [get_ports MDIO];
 set_input_delay -clock mdc_clk -min [expr $tco_min + $trce_dly_min] [get_ports MDIO];

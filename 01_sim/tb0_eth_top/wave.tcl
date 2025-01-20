@@ -36,6 +36,20 @@ gtkwave::addSignalsFromList $eth_ports
 gtkwave::/Edit/Create_Group "ETH_Ports" $eth_ports
 gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Ports"
 
+# eth tx test
+gtkwave::/Edit/Insert_Blank
+set eth_tx_test [list]
+lappend eth_tx_test eth_top.wEth_Tx_Test_En
+lappend eth_tx_test eth_top.rEth_Tx_Test_En_meta
+lappend eth_tx_test eth_top.rEth_Tx_Test_En
+lappend eth_tx_test eth_top.rEth_Tx_Test_Start
+lappend eth_tx_test eth_top.rEth_Byte_Test
+lappend eth_tx_test eth_top.rEth_Byte_Valid_Test
+lappend eth_tx_test eth_top.rEth_Pkt_Rdy_Test
+gtkwave::addSignalsFromList $eth_tx_test
+gtkwave::/Edit/Create_Group "ETH_TX_TEST" $eth_tx_test
+gtkwave::/Edit/Toggle_Group_Open|Close "ETH_TX_TEST"
+
 # eth regs
 gtkwave::/Edit/Insert_Blank
 set eth_regs [list]
@@ -54,6 +68,7 @@ lappend eth_regs eth_top.eth_regs_inst.rMDIO_USR_CTRL_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_USR_WRITE_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_CTRL_REG
 lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_STAT_REG
+lappend eth_regs eth_top.eth_regs_inst.rETH_TEST_REG
 gtkwave::addSignalsFromList $eth_regs
 gtkwave::/Edit/Create_Group "ETH_Regs" $eth_regs
 #gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Regs"
