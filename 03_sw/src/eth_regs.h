@@ -5,6 +5,9 @@
 
 #define DELAY_PERIOD                    10000
 
+#define ETH_BASE_ADDR                   0x43C00000
+#define ETH_TX_TEST_OFFSET              0x88
+
 #define MDIO_BASE_ADDR                  0x43C00000
 #define MDIO_PHY_CTRL_OFFSET            0x00
 #define MDIO_PHY_STAT_OFFSET            0x04

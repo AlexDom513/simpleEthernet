@@ -23,8 +23,8 @@ int main() {
     PHY_IDENT_1_REG();
     PHY_IDENT_2_REG();
 
-    // put ethernet packet in FIFO
-    WRITE_DAT_FIFO();
+    // send sample packet
+    ETH_TX_TEST_EN();
 
     cleanup_platform();
     return 0;

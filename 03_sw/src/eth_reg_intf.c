@@ -16,6 +16,12 @@ void delay() {
     }
 }
 
+void ETH_TX_TEST_EN() {
+    Xil_Out32(ETH_BASE_ADDR + ETH_TX_TEST_OFFSET, 0x1);
+    delay();
+    printf("TX Test Enabled!\n");
+}
+
 void READ_PHY_REGS() {
     u32 offsets[] = {
         MDIO_PHY_CTRL_OFFSET_HW,
