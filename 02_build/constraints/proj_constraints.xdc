@@ -14,6 +14,13 @@ create_generated_clock -name mdc_clk \
                         [get_pins eth_top_inst/MDC_Clk_OBUF]
 
 #====================================================================
+# CDC Constraints
+#====================================================================
+
+# NOTE: maybe change to set_max_delay
+set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks eth_clk]
+
+#====================================================================
 # I/O Delay Constraints
 #====================================================================
 set trce_dly_max  1.000;  # Maximum board trace delay
