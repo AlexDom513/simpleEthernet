@@ -14,7 +14,7 @@
 
 WORKSPACE_PATH="/tmp/wrk/workspace"
 SRC_PATH="./src"
-XSA_FILE="../02_build/proj_top.xsa"
+XSA_FILE="../02_build/eth.xsa"
 MODE="gui"
 
 rm -rf /tmp/wrk

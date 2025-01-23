@@ -9,7 +9,6 @@
 #include "xil_io.h"
 #include "xil_types.h"
 #include "eth_regs.h"
-#include "eth_dat_gen.h"
 
 int main() {
     init_platform();
@@ -24,7 +23,11 @@ int main() {
     PHY_IDENT_2_REG();
 
     // send sample packet
-    ETH_TX_TEST_EN();
+    for (int i = 0; i < 10; i++) {
+        ETH_TX_TEST_EN();
+        delay();
+        ETH_TX_TEST_DIS();
+    }
 
     cleanup_platform();
     return 0;

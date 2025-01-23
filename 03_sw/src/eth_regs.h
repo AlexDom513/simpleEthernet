@@ -47,5 +47,7 @@ void BASIC_CTRL_REG();
 void BASIC_STAT_REG();
 void PHY_IDENT_1_REG();
 void PHY_IDENT_2_REG();
+void ETH_TX_TEST_EN();
+void ETH_TX_TEST_DIS();
 
 #endif // ETH_REGS_H
