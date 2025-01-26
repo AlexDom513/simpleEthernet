@@ -33,6 +33,7 @@ module proj_top(
   // Ethernet PHY
   input  Eth_Clk,
   input  Eth_Rst,
+  input  Eth_Tx_Test_En,
   input  Rxd,
   output Tx_En,
   output Txd,
@@ -87,6 +88,7 @@ module proj_top(
   // Ethernet PHY
   wire Eth_Clk;
   wire Eth_Rst;
+  wire Eth_Tx_Test_En;
   wire [1:0] Rxd;
   wire [1:0] Txd;
   wire Tx_En;
@@ -165,6 +167,7 @@ module proj_top(
     // Ethernet Interface
     .Eth_Clk              (Eth_Clk),
     .Eth_Rst              (Eth_Rst),
+    .Eth_Tx_Test_En       (Eth_Tx_Test_En),
     .Rxd                  (Rxd),
     .Txd                  (Txd),
     .Tx_En                (Tx_En)

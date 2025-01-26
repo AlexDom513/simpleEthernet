@@ -8,7 +8,7 @@
 
 ## Switches
 set_property -dict {PACKAGE_PIN M20 IOSTANDARD LVCMOS33} [get_ports Eth_Rst]
-#set_property -dict { PACKAGE_PIN M19  IOSTANDARD LVCMOS33 } [get_ports { sw[1] }]; #IO_L7P_T1_AD2P_35 Sch=SW1
+set_property -dict { PACKAGE_PIN M19  IOSTANDARD LVCMOS33 } [get_ports Eth_Tx_Test_En]
 
 ## RGB LEDs
 #set_property -dict { PACKAGE_PIN L15    IOSTANDARD LVCMOS33 } [get_ports { led4_b }]; #IO_L22N_T3_AD7P_35 Sch=LED4_B

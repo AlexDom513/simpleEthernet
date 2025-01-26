@@ -34,6 +34,7 @@ module eth_top (
   // Ethernet Interface
   input  wire         Eth_Clk,
   input  wire         Eth_Rst,
+  input  wire         Eth_Tx_Test_En,
   input  wire [1:0]   Rxd,
   output wire [1:0]   Txd,
   output wire         Tx_En
@@ -100,7 +101,7 @@ module eth_top (
     rEth_Tx_Test_En <= 0;
   end
   else begin
-    rEth_Tx_Test_En_meta <= wEth_Tx_Test_En;
+    rEth_Tx_Test_En_meta <= Eth_Tx_Test_En;
     rEth_Tx_Test_En <= rEth_Tx_Test_En_meta;
   end
   end

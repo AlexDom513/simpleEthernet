@@ -52,7 +52,20 @@ async def tb_eth_top(dut):
     #==========================================
 
     # ethernet tx test
-    await stim_gen_axi.ethernet_tx_sim()
+    await RisingEdge(dut.Eth_Clk)
+    dut.Eth_Tx_Test_En.value = 1
     await(Timer(100, 'us'))
+    await RisingEdge(dut.Eth_Clk)
+    dut.Eth_Tx_Test_En.value = 0
+    await(Timer(100, 'us'))
+
+    await RisingEdge(dut.Eth_Clk)
+    dut.Eth_Tx_Test_En.value = 1
+    await(Timer(100, 'us'))
+    await RisingEdge(dut.Eth_Clk)
+    dut.Eth_Tx_Test_En.value = 0
+
+    # await stim_gen_axi.ethernet_tx_sim()
+    # await(Timer(100, 'us'))
 
     await(Timer(1, 'ms'))
