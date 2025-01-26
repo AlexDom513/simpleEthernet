@@ -22,8 +22,8 @@ module eth_tx (
   //==========================================
   localparam pPreamble  = 56'h55555555555555; // 0101_0101 ... 7x, read out as 1010_1010 ...
   localparam pSFD       = 8'hD5;              // 1101_0101 ... read out as 1010_1011
-  localparam pDest_Addr = 48'hF0A0FFFFFFFF;   // broadcast address
-  localparam pSrc_Addr  = 48'h000000000000;   // locally administered address for testing
+  localparam pDest_Addr = 48'hFFFFFFFFFFFF;   // broadcast address
+  localparam pSrc_Addr  = 48'h020000000001;   // locally administered address for testing
   localparam pLen_Type  = 16'h0800;           // IPv4
 
   //==========================================
