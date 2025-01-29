@@ -37,7 +37,8 @@ module eth_top (
   input  wire         Eth_Tx_Test_En,
   input  wire [1:0]   Rxd,
   output wire [1:0]   Txd,
-  output wire         Tx_En
+  output wire         Tx_En,
+  output wire         Crc_Valid
 );
 
   //==========================================
@@ -86,7 +87,7 @@ module eth_top (
     .Clk        (Eth_Clk),
     .Rst        (Eth_Rst),
     .Rxd        (Rxd),
-    .Crc_Valid  ()
+    .Crc_Valid  (Crc_Valid)
   );
 
   //==========================================
