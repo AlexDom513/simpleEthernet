@@ -127,12 +127,12 @@ module eth_top (
       rEth_Byte_Test <= rEth_Byte_Test + 1;
     end
 
-    else if (rEth_Tx_Test_En && rEth_Byte_Test > 0 && rEth_Byte_Test < 40) begin
+    else if (rEth_Tx_Test_En && rEth_Byte_Test > 0 && rEth_Byte_Test < 100) begin
       rEth_Byte_Valid_Test <= 1;
       rEth_Byte_Test <= rEth_Byte_Test + 1;
     end
 
-    else if (rEth_Tx_Test_En && rEth_Byte_Test == 40) begin
+    else if (rEth_Tx_Test_En && rEth_Byte_Test == 100) begin
       rEth_Byte_Valid_Test <= 0;
       rEth_Byte_Test <= 0;
       rEth_Pkt_Rdy_Test <= 1;
