@@ -171,7 +171,7 @@ module eth_tx (
 
         `SRC_ADDR:
         begin
-          rSrc_Addr_Buf <= rSrc_Addr_Buf << `pMII_WIDTH;
+          rSrc_Addr_Buf <= rSrc_Addr_Buf >> `pMII_WIDTH;
         end
 
         `LEN_TYPE:

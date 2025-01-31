@@ -5,23 +5,21 @@
 # 1/30/25
 #====================================================================
 
-with open('tx_capture.txt', 'r') as f:
+with open('1_bit_capture.txt', 'r') as f:
     data = f.read().splitlines()
     capture = [int(x) for x in data]
-    print(capture)
 
     byte_list = []
     for i in range(0, len(capture), 8):
         byte_group = capture[i:i+8]
         val = 0
         for j in range(8):
-            val += (2**(j)) * byte_group[j]
+            val += (2**j) * byte_group[j]
         byte_list.append(val)
 
-    print('\n')
-    print(byte_list)
-    print('\n')
-    print(list(map(hex, byte_list)))
+    with open('2_packet_recover.txt', 'w') as f:
+        for byte in byte_list:
+            f.write(hex(byte) + '\n')
 
     # **in Ethernet, LSB is transmitted first!
     # 0x55 --> 0101_0101 --> 01_01_01_01

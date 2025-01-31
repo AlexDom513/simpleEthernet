@@ -164,6 +164,7 @@ module eth_tx_ctrl (
           rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
           if (rTx_Ctrl_Cnt == `pFCS_Cnt-1) begin
             rTx_Ctrl_Cnt <= 0;
+            Tx_En <= 0;
             Tx_Ctrl_FSM_State <= `IDLE;
           end
         end

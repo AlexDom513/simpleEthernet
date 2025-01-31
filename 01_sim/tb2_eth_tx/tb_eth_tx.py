@@ -56,17 +56,14 @@ async def tb_eth_tx(dut):
     await(RisingEdge(dut.Clk))
     while(dut.Tx_En.value == 1):
       binstr = list(dut.Txd.value.binstr)
-      print(binstr)
-      record.append(int(binstr[1])) # Txd[0] (lsb of duet, but later in list)
-      record.append(int(binstr[0])) # Txd[1] (msb of duet, but earlier in list)
+      record.append(binstr[1]) # Txd[0] (lsb of duet, but later in list)
+      record.append(binstr[0]) # Txd[1] (msb of duet, but earlier in list)
       await(RisingEdge(dut.Clk))
 
     # buffer time
     await(Timer(10, 'us'))
 
-  # save capture to file
-  print(len(record))
-  with open('tx_capture.txt', 'w') as f:
+  with open('1_bit_capture.txt', 'w') as f:
     for bit in record:
-      f.write(str(bit) + '\n')
+      f.write(bit + '\n')
     
