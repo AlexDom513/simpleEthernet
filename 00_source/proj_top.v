@@ -34,6 +34,7 @@ module proj_top(
   input  Eth_Clk,
   input  Eth_Rst,
   input  Eth_Tx_Test_En,
+  input  Crs_Dv,
   input  Rxd,
   output Tx_En,
   output Txd,
@@ -90,6 +91,7 @@ module proj_top(
   wire Eth_Clk;
   wire Eth_Rst;
   wire Eth_Tx_Test_En;
+  wire Crs_Dv;
   wire [1:0] Rxd;
   wire [1:0] Txd;
   wire Tx_En;
@@ -170,6 +172,7 @@ module proj_top(
     .Eth_Clk              (Eth_Clk),
     .Eth_Rst              (Eth_Rst),
     .Eth_Tx_Test_En       (Eth_Tx_Test_En),
+    .Crs_Dv               (Crs_Dv),
     .Rxd                  (Rxd),
     .Txd                  (Txd),
     .Tx_En                (Tx_En),

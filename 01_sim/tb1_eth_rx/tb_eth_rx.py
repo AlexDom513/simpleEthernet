@@ -40,7 +40,9 @@ async def tb_eth_rx(dut):
             binstr = str(rx[1]) + str(rx[0])
             vec.binstr = binstr
             dut.Rxd.value = vec
+            dut.Crs_Dv.value = 1
 
         await(RisingEdge(dut.Clk))
         dut.Rxd.value = 0
+        dut.Crs_Dv.value = 0
         await(Timer(5, 'us'))

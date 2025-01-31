@@ -35,6 +35,7 @@ module eth_top (
   input  wire         Eth_Clk,
   input  wire         Eth_Rst,
   input  wire         Eth_Tx_Test_En,
+  input  wire         Crs_Dv,
   input  wire [1:0]   Rxd,
   output wire [1:0]   Txd,
   output wire         Tx_En,
@@ -86,6 +87,7 @@ module eth_top (
   eth_rx  eth_rx_inst (
     .Clk        (Eth_Clk),
     .Rst        (Eth_Rst),
+    .Crs_Dv     (Crs_Dv),
     .Rxd        (Rxd),
     .Crc_Valid  (Crc_Valid)
   );

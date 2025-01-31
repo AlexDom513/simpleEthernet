@@ -1,25 +1,26 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Dec 31 17:40:15 2024
+[*] Fri Jan 31 22:57:05 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/dump.vcd"
-[dumpfile_mtime] "Tue Dec 31 17:39:59 2024"
-[dumpfile_size] 111877
+[dumpfile_mtime] "Fri Jan 31 22:51:52 2025"
+[dumpfile_size] 63315
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb1_eth_rx/eth_rx.gtkw"
-[timestart] 0
-[size] 1440 1016
+[timestart] 5122900
+[size] 1440 1376
 [pos] -1 -1
-*-22.163321 3940000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.253897 5420600 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_rx.
 [sst_width] 279
-[signals_width] 230
+[signals_width] 294
 [sst_expanded] 1
-[sst_vpaned_height] 215
+[sst_vpaned_height] 308
 @800200
 -eth_rx_ports
 @28
 eth_rx.Clk
 eth_rx.Rst
+eth_rx.Crs_Dv
 eth_rx.Rxd[1:0]
 eth_rx.Crc_Valid
 @1000200
@@ -73,9 +74,62 @@ eth_rx.eth_rx_ctrl_inst.rByte_Ctrl_Done
 eth_rx.eth_rx_ctrl_inst.rLen_Type[15:0]
 eth_rx.eth_rx_ctrl_inst.rTot_Payload_Bytes[15:0]
 eth_rx.eth_rx_ctrl_inst.Byte[7:0]
-@29
+@28
 eth_rx.eth_rx_ctrl_inst.Byte_Rdy
 @1000200
 -Byte_Ctrl_FSM
+@200
+-
+@800200
+-Crc
+@28
+eth_rx.eth_rx_ctrl_inst.Crc_En
+@22
+eth_rx.eth_rx_ctrl_inst.rCrc_Recv[31:0]
+@c00022
+eth_rx.rCrc_Computed[31:0]
+@28
+(0)eth_rx.rCrc_Computed[31:0]
+(1)eth_rx.rCrc_Computed[31:0]
+(2)eth_rx.rCrc_Computed[31:0]
+(3)eth_rx.rCrc_Computed[31:0]
+(4)eth_rx.rCrc_Computed[31:0]
+(5)eth_rx.rCrc_Computed[31:0]
+(6)eth_rx.rCrc_Computed[31:0]
+(7)eth_rx.rCrc_Computed[31:0]
+(8)eth_rx.rCrc_Computed[31:0]
+(9)eth_rx.rCrc_Computed[31:0]
+(10)eth_rx.rCrc_Computed[31:0]
+(11)eth_rx.rCrc_Computed[31:0]
+(12)eth_rx.rCrc_Computed[31:0]
+(13)eth_rx.rCrc_Computed[31:0]
+(14)eth_rx.rCrc_Computed[31:0]
+(15)eth_rx.rCrc_Computed[31:0]
+(16)eth_rx.rCrc_Computed[31:0]
+(17)eth_rx.rCrc_Computed[31:0]
+(18)eth_rx.rCrc_Computed[31:0]
+(19)eth_rx.rCrc_Computed[31:0]
+(20)eth_rx.rCrc_Computed[31:0]
+(21)eth_rx.rCrc_Computed[31:0]
+(22)eth_rx.rCrc_Computed[31:0]
+(23)eth_rx.rCrc_Computed[31:0]
+(24)eth_rx.rCrc_Computed[31:0]
+(25)eth_rx.rCrc_Computed[31:0]
+(26)eth_rx.rCrc_Computed[31:0]
+(27)eth_rx.rCrc_Computed[31:0]
+(28)eth_rx.rCrc_Computed[31:0]
+(29)eth_rx.rCrc_Computed[31:0]
+(30)eth_rx.rCrc_Computed[31:0]
+(31)eth_rx.rCrc_Computed[31:0]
+@1401200
+-group_end
+@22
+eth_rx.rCrc_Computed_d1[31:0]
+eth_rx.rCrc_Computed_d2[31:0]
+eth_rx.rCrc_Computed_d3[31:0]
+@29
+eth_rx.Crc_Valid
+@1000200
+-Crc
 [pattern_trace] 1
 [pattern_trace] 0

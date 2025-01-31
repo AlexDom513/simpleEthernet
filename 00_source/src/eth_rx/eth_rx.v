@@ -8,6 +8,7 @@
 module eth_rx (
   input wire        Clk,
   input wire        Rst,
+  input wire        Crs_Dv,
   input wire [1:0]  Rxd,
   output wire       Crc_Valid
 );
@@ -41,6 +42,9 @@ module eth_rx (
   wire            wCrc_Req;
   wire [31:0]     wCrc_Out;
   reg  [31:0]     rCrc_Computed;
+  reg  [31:0]     rCrc_Computed_d1;
+  reg  [31:0]     rCrc_Computed_d2;
+  reg  [31:0]     rCrc_Computed_d3;
 
   //==========================================
   // eth_rx_ctrl
@@ -48,10 +52,11 @@ module eth_rx (
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk            (Clk),
     .Rst            (Rst),
+    .Crs_Dv         (Crs_Dv),
     .Rxd            (Rxd),
     .Byte_Rdy       (rByte_Rdy),
     .Byte           (rByte),
-    .Crc_Computed   (rCrc_Computed),
+    .Crc_Computed   (rCrc_Computed_d3),
     .Rx_En          (wRx_Req),
     .Crc_En         (wCrc_Req),
     .Crc_Valid      (Crc_Valid)
@@ -112,8 +117,12 @@ module eth_rx (
   assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
   always @(posedge Clk)
   begin
-    if (wCrc_En)
+    if (wCrc_En) begin
       rCrc_Computed <= wCrc_Out;
+      rCrc_Computed_d1 <= rCrc_Computed;
+      rCrc_Computed_d2 <= rCrc_Computed_d1;
+      rCrc_Computed_d3 <= rCrc_Computed_d2;
+    end
   end
 
 endmodule
