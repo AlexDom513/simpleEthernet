@@ -1,18 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Dec 31 17:41:15 2024
+[*] Fri Jan 31 06:42:56 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
-[dumpfile_mtime] "Tue Dec 31 17:40:38 2024"
-[dumpfile_size] 265701
+[dumpfile_mtime] "Fri Jan 31 06:40:31 2025"
+[dumpfile_size] 152488
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
 [timestart] 0
 [size] 1440 1016
 [pos] -1 -1
-*-22.272430 6200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-19.184496 1680000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_tx.
 [sst_width] 279
-[signals_width] 245
+[signals_width] 297
 [sst_expanded] 1
 [sst_vpaned_height] 295
 @800200
@@ -24,6 +24,7 @@ eth_tx.Rst
 eth_tx.Eth_Byte[7:0]
 @28
 eth_tx.Eth_Byte_Valid
+eth_tx.Txd[1:0]
 eth_tx.Tx_En
 @1000200
 -eth_tx_ports
@@ -31,14 +32,13 @@ eth_tx.Tx_En
 -
 @800200
 -eth_tx_ctrl
-@23
+@22
 eth_tx.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
-@25
+@24
 eth_tx.eth_tx_ctrl_inst.rTx_Ctrl_Cnt[9:0]
-@29
+@28
 eth_tx.eth_tx_ctrl_inst.Eth_Pkt_Rdy
 eth_tx.eth_tx_ctrl_inst.Fifo_Empty
-eth_tx.rCrc_En
 @1000200
 -eth_tx_ctrl
 @200
@@ -68,12 +68,20 @@ eth_tx.async_fifo_inst.rinc
 Clk
 @22
 eth_tx.rPreamble_Buf[55:0]
+@28
 eth_tx.rSFD_Buf[7:0]
+@22
 eth_tx.rDest_Addr_Buf[47:0]
 eth_tx.rSrc_Addr_Buf[47:0]
 eth_tx.rLen_Type_Buf[15:0]
 eth_tx.rPayload_Buf[7:0]
 eth_tx.rFCS_Buf[31:0]
+@28
+eth_tx.rTx_Data[1:0]
+eth_tx.wTx_En
+eth_tx.rTx_Data_d1[1:0]
+@29
+eth_tx.rTx_En
 @1000200
 -eth_buffer_regs
 @200
@@ -82,7 +90,6 @@ eth_tx.rFCS_Buf[31:0]
 -crc
 @28
 eth_tx.rCrc_Bits_Cnt[1:0]
-eth_tx.rCrc_En
 eth_tx.rCrc_En_d1
 @22
 eth_tx.rCrc_Byte[7:0]

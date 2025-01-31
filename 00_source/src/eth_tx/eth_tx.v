@@ -142,10 +142,7 @@ module eth_tx (
 
         `IDLE:
         begin
-          rPreamble_Buf   <= {{pPreamble[7:0]},     {pPreamble[15:8]},
-                              {pPreamble[23:16]},   {pPreamble[31:24]},
-                              {pPreamble[39:32]},   {pPreamble[47:40]},
-                              {pPreamble[55:48]}};
+          rPreamble_Buf   <= pPreamble;
           rSFD_Buf        <= pSFD;
           rDest_Addr_Buf  <= {{pDest_Addr[7:0]},    {pDest_Addr[15:8]},
                               {pDest_Addr[23:16]},  {pDest_Addr[31:24]},
@@ -174,7 +171,7 @@ module eth_tx (
 
         `SRC_ADDR:
         begin
-          rSrc_Addr_Buf <= rSrc_Addr_Buf >> `pMII_WIDTH;
+          rSrc_Addr_Buf <= rSrc_Addr_Buf << `pMII_WIDTH;
         end
 
         `LEN_TYPE:

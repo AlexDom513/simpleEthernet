@@ -11,7 +11,7 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
-NUM_PACKETS = 2
+NUM_PACKETS = 1
 
 @cocotb.test()
 async def tb_eth_tx(dut):
@@ -32,6 +32,7 @@ async def tb_eth_tx(dut):
     await(RisingEdge(dut.Clk))
 
   # apply input stimulus
+  record = []
   for _ in range(NUM_PACKETS):
     input_vec = packet_gen.packet_gen()
     for byte in input_vec:
@@ -49,5 +50,23 @@ async def tb_eth_tx(dut):
     dut.Eth_Pkt_Rdy.value = 1
     await(RisingEdge(dut.Clk))
     dut.Eth_Pkt_Rdy.value = 0
+
+    # capture transmit data
+    await(RisingEdge(dut.Tx_En))
+    await(RisingEdge(dut.Clk))
+    while(dut.Tx_En.value == 1):
+      binstr = list(dut.Txd.value.binstr)
+      print(binstr)
+      record.append(int(binstr[1])) # Txd[0] (lsb of duet, but later in list)
+      record.append(int(binstr[0])) # Txd[1] (msb of duet, but earlier in list)
+      await(RisingEdge(dut.Clk))
+
+    # buffer time
     await(Timer(10, 'us'))
+
+  # save capture to file
+  print(len(record))
+  with open('tx_capture.txt', 'w') as f:
+    for bit in record:
+      f.write(str(bit) + '\n')
     
