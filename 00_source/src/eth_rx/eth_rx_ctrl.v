@@ -148,12 +148,12 @@ module eth_rx_ctrl (
         //================
         IDLE:
         begin
-          rByte_Cnt <= 0;
-          rByte_Ctrl_Done <= 0;
-          rLen_Type <= 0;
-          rCrc_Recv <= 0;
           Crc_En <= 0;
           Crc_Valid <= 0;
+          rByte_Cnt <= 0;
+          rLen_Type <= 0;
+          rCrc_Recv <= 0;
+          rByte_Ctrl_Done <= 0;
           if (Byte_Rdy) begin
             Crc_En <= 1;
             rByte_Ctrl_FSM_State <= DEST_ADDR;
@@ -225,11 +225,15 @@ module eth_rx_ctrl (
             rByte_Cnt <= rByte_Cnt + 1;
             rCrc_Recv <= {Byte, rCrc_Recv[31:8]};
           end
-          else if (~Crs_Dv) begin
+          else if (Byte_Rdy & ~Crs_Dv) begin
             Crc_En <= 0;
             rCrc_Recv <= {Byte, rCrc_Recv[31:8]};
             rByte_Ctrl_FSM_State <= FCS;
-            end
+          end
+          else if (~Crs_Dv) begin
+            Crc_En <= 0;
+            rByte_Ctrl_FSM_State <= FCS;
+          end
         end
 
         //================

@@ -71,7 +71,7 @@ module eth_rx (
   assign wByte_Rx = {Rxd, rByte_Rx[5:0]};
   always @(posedge Clk)
   begin
-    if (wRx_Req)
+    if (wRx_Req & Crs_Dv)
       rByte_Rx <= wByte_Rx >> pMII_WIDTH;
   end
 
@@ -79,7 +79,7 @@ module eth_rx (
   assign wByte_Rdy = rBit_Cnt[1] & rBit_Cnt[0];
   always @(posedge Clk)
   begin
-    if (wRx_Req)
+    if (wRx_Req & Crs_Dv)
       rBit_Cnt <= rBit_Cnt + 1;
     else
       rBit_Cnt <= 0;
