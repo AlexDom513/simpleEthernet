@@ -23,11 +23,15 @@ int main() {
     PHY_IDENT_2_REG();
 
     // send sample packet
-    for (int i = 0; i < 10; i++) {
-        ETH_TX_TEST_EN();
-        delay();
-        ETH_TX_TEST_DIS();
-    }
+    // for (int i = 0; i < 10; i++) {
+    //     ETH_TX_TEST_EN();
+    //     delay();
+    //     ETH_TX_TEST_DIS();
+    // }
+
+    // enable loopback
+    ETH_LOOPBACK_EN();
+    BASIC_CTRL_REG();
 
     cleanup_platform();
     return 0;

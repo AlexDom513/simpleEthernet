@@ -28,6 +28,26 @@ void ETH_TX_TEST_DIS() {
     printf("TX Test Disabled!\n");
 }
 
+void ETH_LOOPBACK_EN() {
+    READ_PHY_REGS();
+
+    // Read Basic Control Register
+    u32 regVal = Xil_In32(MDIO_BASE_ADDR + MDIO_PHY_CTRL_OFFSET);
+
+    // Set value to write to Basic Control Register to enable Loopback
+    regVal = regVal | (0x1 << 14);
+    Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_WRITE_OFFSET, regVal);
+
+    // Clear MDIO User Control Register
+    Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_CTRL_OFFSET, 0x0);
+
+    // Send bits ----------------------------------> {phy reg addr}                 | {phy addr} | {Write =1}  | {Enable}
+    Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_CTRL_OFFSET, (MDIO_PHY_CTRL_OFFSET_HW << 7) | (0x1 << 2) | (0x1 << 1) | (0x1));
+    delay();
+
+    READ_PHY_REGS();
+}
+
 void READ_PHY_REGS() {
     u32 offsets[] = {
         MDIO_PHY_CTRL_OFFSET_HW,
