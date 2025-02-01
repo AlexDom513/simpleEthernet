@@ -42,8 +42,9 @@ module eth_rx_ctrl (
   localparam pMAC_Addr_Bytes    = 16'h6;
   localparam pLen_Type_Bytes    = 16'h2;
 
-  // IP packet type
-  localparam pIp_Len_Type       = 16'h0800;
+  // len type
+  //localparam pLen_Type          = 16'h0800;
+  localparam pLen_Type          = 16'hFFFF;
 
   //==========================================
   // Wires/Registers
@@ -83,7 +84,7 @@ module eth_rx_ctrl (
         begin
           Rx_En <= 0;
           rRx_Ctrl_Cnt <= 0;
-          if (Rxd == 2'b01) begin
+          if (Rxd == 2'b01 & Crs_Dv) begin
             rRx_Ctrl_Cnt <= rRx_Ctrl_Cnt + 1;
             rRx_Ctrl_FSM_State <= RX_PREAMBLE;
           end
@@ -201,7 +202,7 @@ module eth_rx_ctrl (
             rByte_Cnt <= rByte_Cnt + 1;
 
             if (rByte_Cnt == pLen_Type_Bytes-1) begin
-              if (rLen_Type == pIp_Len_Type) begin
+              if (rLen_Type == pLen_Type) begin
                 rByte_Cnt <= 0;
                 rByte_Ctrl_FSM_State <= PAYLOAD;
               end
