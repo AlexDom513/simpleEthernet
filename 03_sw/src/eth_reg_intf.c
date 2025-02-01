@@ -37,9 +37,11 @@ void ETH_LOOPBACK_EN() {
     // Set value to write to Basic Control Register to enable Loopback
     regVal = regVal | (0x1 << 14);
     Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_WRITE_OFFSET, regVal);
+    delay();
 
     // Clear MDIO User Control Register
     Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_CTRL_OFFSET, 0x0);
+    delay();
 
     // Send bits ----------------------------------> {phy reg addr}                 | {phy addr} | {Write =1}  | {Enable}
     Xil_Out32(MDIO_BASE_ADDR + MDIO_USR_CTRL_OFFSET, (MDIO_PHY_CTRL_OFFSET_HW << 7) | (0x1 << 2) | (0x1 << 1) | (0x1));
