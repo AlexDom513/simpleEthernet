@@ -5,7 +5,7 @@ from scapy.all import Ether, IP, UDP, raw
 def packet_gen(main=False):
 
     # create layers of packet
-    eth_layer   = Ether(dst="ff:ff:ff:ff:ff:ff", src="02:00:00:00:00:01", type=0x0800)
+    eth_layer   = Ether(dst="ff:ff:ff:ff:ff:ff", src="02:00:00:00:00:01", type=0xFFFF)
     ip_layer = IP(dst="192.168.1.1", src="192.168.1.100")
     udp_layer = UDP(dport=12345, sport=54321)
     payload = "Hello, UDP! I'm working on this FPGA Ethernet project!"

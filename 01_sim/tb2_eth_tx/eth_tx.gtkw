@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Jan 31 06:42:56 2025
+[*] Sat Feb  1 19:23:25 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/dump.vcd"
-[dumpfile_mtime] "Fri Jan 31 06:40:31 2025"
-[dumpfile_size] 152488
+[dumpfile_mtime] "Sat Feb  1 19:21:32 2025"
+[dumpfile_size] 234662
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb2_eth_tx/eth_tx.gtkw"
-[timestart] 0
-[size] 1440 1016
-[pos] -1 -1
-*-19.184496 1680000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 10170100
+[size] 1440 1243
+[pos] -1548 -698
+*-15.645835 10220000 10220000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_tx.
 [sst_width] 279
 [signals_width] 297
 [sst_expanded] 1
-[sst_vpaned_height] 295
+[sst_vpaned_height] 376
 @800200
 -eth_tx_ports
 @28
@@ -75,12 +75,14 @@ eth_tx.rDest_Addr_Buf[47:0]
 eth_tx.rSrc_Addr_Buf[47:0]
 eth_tx.rLen_Type_Buf[15:0]
 eth_tx.rPayload_Buf[7:0]
+@23
+eth_tx.wCrc_Computed_Tx[31:0]
+@22
 eth_tx.rFCS_Buf[31:0]
 @28
 eth_tx.rTx_Data[1:0]
 eth_tx.wTx_En
 eth_tx.rTx_Data_d1[1:0]
-@29
 eth_tx.rTx_En
 @1000200
 -eth_buffer_regs
@@ -97,7 +99,6 @@ eth_tx.rCrc_Byte[7:0]
 eth_tx.wCrc_Byte_Valid
 @22
 eth_tx.rCrc_Computed[31:0]
-eth_tx.wCrc_Computed_Tx[31:0]
 @1000200
 -crc
 [pattern_trace] 1

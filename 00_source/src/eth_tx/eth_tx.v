@@ -316,8 +316,11 @@ module eth_tx (
       rCrc_Computed <= wCrc_Out;
   end
 
+  // keep crc byte order for transmission
+  assign wCrc_Computed_Tx = wCrc_Computed;
+
   // flip crc byte order for transmission
-  assign wCrc_Computed_Tx = {wCrc_Computed[7:0], wCrc_Computed[15:8],
-                             wCrc_Computed[23:16], wCrc_Computed[31:24]};
+  // assign wCrc_Computed_Tx = {wCrc_Computed[7:0], wCrc_Computed[15:8],
+  //                            wCrc_Computed[23:16], wCrc_Computed[31:24]};
     
 endmodule
