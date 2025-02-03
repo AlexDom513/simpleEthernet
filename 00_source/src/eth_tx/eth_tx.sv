@@ -30,9 +30,11 @@ module eth_tx (
   // Logic
   //------------------------------------------
 
-  // fsm/control
-  logic [3:0] wTx_Ctrl_FSM_State;
-  logic [3:0] rTx_Ctrl_FSM_State_d1;
+  // fsm
+  eth_tx_ctrl_state_t sTx_Ctrl_FSM_State;
+  eth_tx_ctrl_state_t sTx_Ctrl_FSM_State_d1;
+
+  // control
   logic       wTx_En;
   logic       rTx_En;
   logic       wFifo_Empty;
@@ -75,20 +77,20 @@ module eth_tx (
   // eth_tx_ctrl
   //------------------------------------------
   eth_tx_ctrl eth_tx_ctrl_inst (
-    .Clk                (Clk),
-    .Rst                (Rst),
-    .Eth_Pkt_Rdy        (Eth_Pkt_Rdy),
-    .Tx_Ctrl_FSM_State  (wTx_Ctrl_FSM_State),
-    .Tx_En              (wTx_En),
-    .Fifo_Empty         (wFifo_Empty),
-    .Fifo_Rd            (wFifo_Rd_Valid),
-    .Crc_En             (wCrc_En)
+    .Clk               (Clk),
+    .Rst               (Rst),
+    .Eth_Pkt_Rdy       (Eth_Pkt_Rdy),
+    .Tx_Ctrl_FSM_State (sTx_Ctrl_FSM_State),
+    .Tx_En             (wTx_En),
+    .Fifo_Empty        (wFifo_Empty),
+    .Fifo_Rd           (wFifo_Rd_Valid),
+    .Crc_En            (wCrc_En)
   );
 
   // register previous state
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
-    rTx_Ctrl_FSM_State_d1 <= wTx_Ctrl_FSM_State;
+    sTx_Ctrl_FSM_State_d1 <= sTx_Ctrl_FSM_State;
   end
 
   //------------------------------------------
@@ -111,7 +113,7 @@ module eth_tx (
     .arempty  (wFifo_Aempty)
   );
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst)
       rFifo_Rd_Valid_d1 <= 0;
@@ -125,7 +127,7 @@ module eth_tx (
   // in register, shift right by pMII_WIDTH to make
   // LSBs avaliable first for eth_data_mux
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst) begin
       rPreamble_Buf  <= 0;
@@ -138,7 +140,7 @@ module eth_tx (
       rFCS_Buf       <= 0;
     end
     else begin
-      case (wTx_Ctrl_FSM_State)
+      case (sTx_Ctrl_FSM_State)
 
         IDLE:
         begin
@@ -190,7 +192,7 @@ module eth_tx (
 
         FCS:
         begin
-          if (rTx_Ctrl_FSM_State_d1 == DATA)
+          if (sTx_Ctrl_FSM_State_d1 == DATA)
             rFCS_Buf <= (wCrc_Computed_Tx >> pMII_WIDTH);
           else
             rFCS_Buf <= rFCS_Buf >> pMII_WIDTH;
@@ -217,9 +219,9 @@ module eth_tx (
   assign Txd = rTx_Data_d1;
   assign Tx_En = rTx_En;
 
-  always @(*)
+  always_comb
   begin
-    case(wTx_Ctrl_FSM_State)
+    case(sTx_Ctrl_FSM_State)
       IDLE:
         rTx_Data = 0;
       PREAMBLE:
@@ -237,7 +239,7 @@ module eth_tx (
       PAD:
         rTx_Data = rPad_Buf[pMII_WIDTH-1:0];
       FCS:
-        if (rTx_Ctrl_FSM_State_d1 == DATA)
+        if (sTx_Ctrl_FSM_State_d1 == DATA)
           rTx_Data = wCrc_Computed_Tx[pMII_WIDTH-1:0];
         else
           rTx_Data = rFCS_Buf[pMII_WIDTH-1:0];
@@ -248,7 +250,7 @@ module eth_tx (
   end
 
   // pipeline output
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst) begin
       rTx_En <= 0;
@@ -266,7 +268,7 @@ module eth_tx (
   // computes 32-bit CRC for transmitted data
 
   // pipeline crc_en
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst) begin
       rCrc_En_d1 <= 0;
@@ -281,7 +283,7 @@ module eth_tx (
   // form up bytes for crc, indicate when formed byte is valid
   assign wCrc_Byte_Valid = (rCrc_Bits_Cnt == 0) & (rCrc_En_d1 != 0);
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst)
       rCrc_Byte <= 0;
@@ -310,7 +312,7 @@ module eth_tx (
   // only update rCrc_Computed when byte is ready
   assign wCrc_Computed = (wCrc_Byte_Valid) ? wCrc_Out : rCrc_Computed;
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wCrc_Byte_Valid & rCrc_En_d2)
       rCrc_Computed <= wCrc_Out;

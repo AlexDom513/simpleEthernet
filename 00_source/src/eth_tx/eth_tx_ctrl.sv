@@ -8,13 +8,13 @@
 import eth_tx_pkg::*;
 
 module eth_tx_ctrl (
-  input  logic               Clk,
-  input  logic               Rst,
-  input  logic               Eth_Pkt_Rdy,
-  input  logic               Fifo_Empty,
-  output logic               Tx_En,
-  output logic               Fifo_Rd,
-  output logic               Crc_En,
+  input  logic Clk,
+  input  logic Rst,
+  input  logic Eth_Pkt_Rdy,
+  input  logic Fifo_Empty,
+  output logic Tx_En,
+  output logic Fifo_Rd,
+  output logic Crc_En,
   output eth_tx_ctrl_state_t Tx_Ctrl_FSM_State
 );
 
@@ -28,7 +28,7 @@ module eth_tx_ctrl (
   //------------------------------------------
   // control read-out of bits to PHY
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst) begin
       Tx_En <= 0;
