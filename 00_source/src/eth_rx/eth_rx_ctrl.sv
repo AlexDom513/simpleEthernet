@@ -39,10 +39,10 @@ module eth_rx_ctrl (
     FCS       = 3'h5
   } eth_byte_ctrl_state_t;
 
-  localparam pPreamble_Cnt   = 8'h20;
-  localparam pMAC_Addr_Bytes = 16'h6;
-  localparam pLen_Type_Bytes = 16'h2;
-  localparam pLen_Type       = 16'hFFFF;
+  localparam pPREAMBLE_CNT   = 8'h20;
+  localparam pMAC_ADDR_BYTES = 16'h6;
+  localparam pLEN_TYPE_BYTES = 16'h2;
+  localparam pLEN_TYPE       = 16'hFFFF;
 
   //------------------------------------------
   // Logic
@@ -94,7 +94,7 @@ module eth_rx_ctrl (
         begin
           if (Rxd == 2'b01 & Crs_Dv)
             rRx_Ctrl_Cnt <= rRx_Ctrl_Cnt + 1;
-          else if (Rxd == 2'b11 & rRx_Ctrl_Cnt == pPreamble_Cnt-1 & Crs_Dv) begin
+          else if (Rxd == 2'b11 & rRx_Ctrl_Cnt == pPREAMBLE_CNT-1 & Crs_Dv) begin
             Rx_En <= 1;
             sRx_Ctrl_State <= RX_DATA;
           end
@@ -165,7 +165,7 @@ module eth_rx_ctrl (
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
 
-            if (rByte_Cnt == pMAC_Addr_Bytes-1) begin
+            if (rByte_Cnt == pMAC_ADDR_BYTES-1) begin
               rByte_Cnt <= 0;
               sByte_Ctrl_State <= SRC_ADDR;
             end
@@ -180,7 +180,7 @@ module eth_rx_ctrl (
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
 
-            if (rByte_Cnt == pMAC_Addr_Bytes-1) begin
+            if (rByte_Cnt == pMAC_ADDR_BYTES-1) begin
               rLen_Type <= {rLen_Type[7:0], Byte};
               rByte_Cnt <= 0;
               sByte_Ctrl_State <= LEN_TYPE;
@@ -198,8 +198,8 @@ module eth_rx_ctrl (
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
 
-            if (rByte_Cnt == pLen_Type_Bytes-1) begin
-              if (rLen_Type == pLen_Type) begin
+            if (rByte_Cnt == pLEN_TYPE_BYTES-1) begin
+              if (rLen_Type == pLEN_TYPE) begin
                 rByte_Cnt <= 0;
                 sByte_Ctrl_State <= PAYLOAD;
               end

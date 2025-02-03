@@ -1,79 +1,79 @@
-//====================================================================
-// 02_simple_ethernet
-// eth_tx.v
+//--------------------------------------------------------------------
+// simpleEthernet
+// eth_tx.sv
 // Ethernet RMII transmit module
 // 7/4/24
-//====================================================================
+//--------------------------------------------------------------------
 
-`include "eth_tx_pkg.vh"
+import eth_tx_pkg::*;
 
 module eth_tx (
-  input  wire         Clk,
-  input  wire         Rst,
-  input  wire [7:0]   Eth_Byte,
-  input  wire         Eth_Byte_Valid,
-  input  wire         Eth_Pkt_Rdy,
-  output wire [1:0]   Txd, // bit[0] ('first')
-  output wire         Tx_En
+  input  logic       Clk,
+  input  logic       Rst,
+  input  logic [7:0] Eth_Byte,
+  input  logic       Eth_Byte_Valid,
+  input  logic       Eth_Pkt_Rdy,
+  output logic [1:0] Txd,
+  output logic       Tx_En
 );
 
-  //==========================================
+  //------------------------------------------
   // Constants
-  //==========================================
-  localparam pPreamble  = 56'h55555555555555; // 0101_0101 ... 7x, read out as 1010_1010 ...
+  //------------------------------------------
+  localparam pPREAMBLE  = 56'h55555555555555; // 0101_0101 ... 7x, read out as 1010_1010 ...
   localparam pSFD       = 8'hD5;              // 1101_0101 ... read out as 1010_1011
-  localparam pDest_Addr = 48'hFFFFFFFFFFFF;   // broadcast address
-  localparam pSrc_Addr  = 48'h020000000001;   // locally administered address for testing
-  localparam pLen_Type  = 16'hFFFF;           // IPv4
+  localparam pDEST_ADDR = 48'hFFFFFFFFFFFF;   // broadcast address
+  localparam pSRC_ADDR  = 48'h020000000001;   // locally administered address for testing
+  localparam pLEN_TYPE  = 16'hFFFF;           // len type
 
-  //==========================================
-  // Wires/Registers
-  //==========================================
+  //------------------------------------------
+  // Logic
+  //------------------------------------------
 
   // fsm/control
-  wire [3:0]  wTx_Ctrl_FSM_State;
-  reg [3:0]   rTx_Ctrl_FSM_State_d1;
-  wire        wTx_En;
-  reg         rTx_En;
-  wire        wFifo_Empty;
-  wire        wCrc_En;
-  reg         rCrc_En_d1;
-  reg         rCrc_En_d2;
-  reg [1:0]   rCrc_Bits_Cnt;
+  logic [3:0] wTx_Ctrl_FSM_State;
+  logic [3:0] rTx_Ctrl_FSM_State_d1;
+  logic       wTx_En;
+  logic       rTx_En;
+  logic       wFifo_Empty;
+  logic       wCrc_En;
+  logic       rCrc_En_d1;
+  logic       rCrc_En_d2;
+  logic [1:0] rCrc_Bits_Cnt;
 
   // data
-  reg [1:0]   rTx_Data;
-  reg [1:0]   rTx_Data_d1;
-  wire        wFifo_Rd_Valid;
-  reg         rFifo_Rd_Valid_d1;
-  wire [7:0]  wFifo_Rd_Data;
+  logic[1:0]  rTx_Data;
+  logic[1:0]  rTx_Data_d1;
+  logic       wFifo_Rd_Valid;
+  logic       rFifo_Rd_Valid_d1;
+  logic [7:0] wFifo_Rd_Data;
 
   // placeholder
-  wire        wFifo_Full;
-  wire        wFifo_Afull;
-  wire        wFifo_Aempty;
+  logic       wFifo_Full;
+  logic       wFifo_Afull;
+  logic       wFifo_Aempty;
 
   // crc
-  reg [7:0]   rCrc_Byte;
-  reg [31:0]  rCrc_Computed;
-  wire [31:0] wCrc_Computed;
-  wire [31:0] wCrc_Out;
-  wire [31:0] wCrc_Computed_Tx;
-  wire        wCrc_Byte_Valid;
+  logic [7:0]  rCrc_Byte;
+  logic [31:0] rCrc_Computed;
+  logic [31:0] wCrc_Computed;
+  logic [31:0] wCrc_Out;
+  logic [31:0] wCrc_Computed_Tx;
+  logic        wCrc_Byte_Valid;
 
   // buffer regs
-  reg [55:0]  rPreamble_Buf;
-  reg [7:0]   rSFD_Buf;
-  reg [47:0]  rDest_Addr_Buf;
-  reg [47:0]  rSrc_Addr_Buf;
-  reg [15:0]  rLen_Type_Buf;
-  reg [7:0]   rPayload_Buf;
-  reg [7:0]   rPad_Buf;
-  reg [31:0]  rFCS_Buf;
+  logic [55:0] rPreamble_Buf;
+  logic [7:0]  rSFD_Buf;
+  logic [47:0] rDest_Addr_Buf;
+  logic [47:0] rSrc_Addr_Buf;
+  logic [15:0] rLen_Type_Buf;
+  logic [7:0]  rPayload_Buf;
+  logic [7:0]  rPad_Buf;
+  logic [31:0] rFCS_Buf;
 
-  //==========================================
+  //------------------------------------------
   // eth_tx_ctrl
-  //==========================================
+  //------------------------------------------
   eth_tx_ctrl eth_tx_ctrl_inst (
     .Clk                (Clk),
     .Rst                (Rst),
@@ -91,9 +91,9 @@ module eth_tx (
     rTx_Ctrl_FSM_State_d1 <= wTx_Ctrl_FSM_State;
   end
 
-  //==========================================
+  //------------------------------------------
   // data_fifo
-  //==========================================
+  //------------------------------------------
   // holds payload bytes prior to transmission
 
   async_fifo async_fifo_inst (
@@ -119,9 +119,9 @@ module eth_tx (
       rFifo_Rd_Valid_d1 <= wFifo_Rd_Valid;
   end
 
-  //==========================================
+  //------------------------------------------
   // eth_buffer_regs
-  //==========================================
+  //------------------------------------------
   // in register, shift right by pMII_WIDTH to make
   // LSBs avaliable first for eth_data_mux
 
@@ -140,60 +140,60 @@ module eth_tx (
     else begin
       case (wTx_Ctrl_FSM_State)
 
-        `IDLE:
+        IDLE:
         begin
-          rPreamble_Buf   <= pPreamble;
+          rPreamble_Buf   <= pPREAMBLE;
           rSFD_Buf        <= pSFD;
-          rDest_Addr_Buf  <= {{pDest_Addr[7:0]},    {pDest_Addr[15:8]},
-                              {pDest_Addr[23:16]},  {pDest_Addr[31:24]},
-                              {pDest_Addr[39:32]},  {pDest_Addr[47:40]}};
-          rSrc_Addr_Buf   <= {{pSrc_Addr[7:0]},     {pSrc_Addr[15:8]},
-                              {pSrc_Addr[23:16]},   {pSrc_Addr[31:24]},
-                              {pSrc_Addr[39:32]},   {pSrc_Addr[47:40]}};
-          rLen_Type_Buf   <= {{pLen_Type[7:0]},     {pLen_Type[15:8]}};
+          rDest_Addr_Buf  <= {{pDEST_ADDR[7:0]},    {pDEST_ADDR[15:8]},
+                              {pDEST_ADDR[23:16]},  {pDEST_ADDR[31:24]},
+                              {pDEST_ADDR[39:32]},  {pDEST_ADDR[47:40]}};
+          rSrc_Addr_Buf   <= {{pSRC_ADDR[7:0]},     {pSRC_ADDR[15:8]},
+                              {pSRC_ADDR[23:16]},   {pSRC_ADDR[31:24]},
+                              {pSRC_ADDR[39:32]},   {pSRC_ADDR[47:40]}};
+          rLen_Type_Buf   <= {{pLEN_TYPE[7:0]},     {pLEN_TYPE[15:8]}};
           rPad_Buf        <= 0; // unused
         end
 
-        `PREAMBLE:
+        PREAMBLE:
         begin
-          rPreamble_Buf <= rPreamble_Buf >> `pMII_WIDTH;
+          rPreamble_Buf <= rPreamble_Buf >> pMII_WIDTH;
         end
 
-        `SFD:
+        SFD:
         begin
-          rSFD_Buf <= rSFD_Buf >> `pMII_WIDTH;
+          rSFD_Buf <= rSFD_Buf >> pMII_WIDTH;
         end
 
-        `DEST_ADDR:
+        DEST_ADDR:
         begin
-          rDest_Addr_Buf <= rDest_Addr_Buf >> `pMII_WIDTH;
+          rDest_Addr_Buf <= rDest_Addr_Buf >> pMII_WIDTH;
         end
 
-        `SRC_ADDR:
+        SRC_ADDR:
         begin
-          rSrc_Addr_Buf <= rSrc_Addr_Buf >> `pMII_WIDTH;
+          rSrc_Addr_Buf <= rSrc_Addr_Buf >> pMII_WIDTH;
         end
 
-        `LEN_TYPE:
+        LEN_TYPE:
         begin
-          rLen_Type_Buf <= rLen_Type_Buf >> `pMII_WIDTH;
+          rLen_Type_Buf <= rLen_Type_Buf >> pMII_WIDTH;
           rPayload_Buf <= wFifo_Rd_Data;
         end
 
-        `DATA:
+        DATA:
         begin
           if (rFifo_Rd_Valid_d1)
             rPayload_Buf <= wFifo_Rd_Data;
           else
-            rPayload_Buf <= rPayload_Buf >> `pMII_WIDTH;
+            rPayload_Buf <= rPayload_Buf >> pMII_WIDTH;
         end
 
-        `FCS:
+        FCS:
         begin
-          if (rTx_Ctrl_FSM_State_d1 == `DATA)
-            rFCS_Buf <= (wCrc_Computed_Tx >> `pMII_WIDTH);
+          if (rTx_Ctrl_FSM_State_d1 == DATA)
+            rFCS_Buf <= (wCrc_Computed_Tx >> pMII_WIDTH);
           else
-            rFCS_Buf <= rFCS_Buf >> `pMII_WIDTH;
+            rFCS_Buf <= rFCS_Buf >> pMII_WIDTH;
         end
 
         default:
@@ -209,9 +209,9 @@ module eth_tx (
     end
   end
 
-  //==========================================
+  //------------------------------------------
   // eth_data_mux
-  //==========================================
+  //------------------------------------------
   // muxes data to be transmitted
 
   assign Txd = rTx_Data_d1;
@@ -220,27 +220,27 @@ module eth_tx (
   always @(*)
   begin
     case(wTx_Ctrl_FSM_State)
-      `IDLE:
+      IDLE:
         rTx_Data = 0;
-      `PREAMBLE:
-        rTx_Data = rPreamble_Buf[`pMII_WIDTH-1:0];
-      `SFD:
-        rTx_Data = rSFD_Buf[`pMII_WIDTH-1:0];
-      `DEST_ADDR:
-        rTx_Data = rDest_Addr_Buf[`pMII_WIDTH-1:0];
-      `SRC_ADDR:
-        rTx_Data = rSrc_Addr_Buf[`pMII_WIDTH-1:0]; 
-      `LEN_TYPE:
-        rTx_Data = rLen_Type_Buf[`pMII_WIDTH-1:0];
-      `DATA:
-        rTx_Data = rPayload_Buf[`pMII_WIDTH-1:0];
-      `PAD:
-        rTx_Data = rPad_Buf[`pMII_WIDTH-1:0];
-      `FCS:
-        if (rTx_Ctrl_FSM_State_d1 == `DATA)
-          rTx_Data = wCrc_Computed_Tx[`pMII_WIDTH-1:0];
+      PREAMBLE:
+        rTx_Data = rPreamble_Buf[pMII_WIDTH-1:0];
+      SFD:
+        rTx_Data = rSFD_Buf[pMII_WIDTH-1:0];
+      DEST_ADDR:
+        rTx_Data = rDest_Addr_Buf[pMII_WIDTH-1:0];
+      SRC_ADDR:
+        rTx_Data = rSrc_Addr_Buf[pMII_WIDTH-1:0]; 
+      LEN_TYPE:
+        rTx_Data = rLen_Type_Buf[pMII_WIDTH-1:0];
+      DATA:
+        rTx_Data = rPayload_Buf[pMII_WIDTH-1:0];
+      PAD:
+        rTx_Data = rPad_Buf[pMII_WIDTH-1:0];
+      FCS:
+        if (rTx_Ctrl_FSM_State_d1 == DATA)
+          rTx_Data = wCrc_Computed_Tx[pMII_WIDTH-1:0];
         else
-          rTx_Data = rFCS_Buf[`pMII_WIDTH-1:0];
+          rTx_Data = rFCS_Buf[pMII_WIDTH-1:0];
 
       default:
         rTx_Data = 0;
@@ -260,9 +260,9 @@ module eth_tx (
     end
   end
 
-  //==========================================
+  //------------------------------------------
   // crc
-  //==========================================
+  //------------------------------------------
   // computes 32-bit CRC for transmitted data
 
   // pipeline crc_en
