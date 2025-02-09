@@ -1,15 +1,15 @@
-//====================================================================
+//--------------------------------------------------------------------
 // 02_simple_ethernet
 // clk_rst_mgr.v
 // Obtain 1 MHz MDC clock
 // 8/17/24
-//====================================================================
+//--------------------------------------------------------------------
 
 module clk_rst_mgr (
-  input  wire  Clk,
-  input  wire  Rstn,
-  output wire  MDC_Clk,
-  output wire  MDC_Rst
+  input  logic Clk,
+  input  logic Rstn,
+  output logic MDC_Clk,
+  output logic MDC_Rst
 );
 
   // NOTE: 
@@ -17,15 +17,15 @@ module clk_rst_mgr (
   //    - additionally, cannot solely rely on clock enbable because
   //      MDC needs to be passed to PHY that is external to FPGA
 
-  //==========================================
+  //------------------------------------------
   // Clock Management
-  //==========================================
+  //------------------------------------------
   localparam  CLK_DIV_CNT = 50;
-  reg   [6:0] rClk_Cnt;
-  reg         rMDC_Clk = 1;
-  wire        wMDC_Clk;
+  logic [6:0] rClk_Cnt;
+  logic       rMDC_Clk = 1;
+  logic       wMDC_Clk;
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (~Rstn)
       rClk_Cnt <= 0;
@@ -36,7 +36,7 @@ module clk_rst_mgr (
     end
   end
 
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (rClk_Cnt == CLK_DIV_CNT-1)
       rMDC_Clk <= ~rMDC_Clk;
@@ -45,12 +45,12 @@ module clk_rst_mgr (
   assign wMDC_Clk = rMDC_Clk;
   assign MDC_Clk  = wMDC_Clk;
 
-  //==========================================
+  //------------------------------------------
   // Reset Management
-  //==========================================
+  //------------------------------------------
   reg rMDC_Rst;
 
-  always @(posedge wMDC_Clk)
+  always_ff @(posedge wMDC_Clk)
   begin
   if (~Rstn)
     rMDC_Rst <= 1;
