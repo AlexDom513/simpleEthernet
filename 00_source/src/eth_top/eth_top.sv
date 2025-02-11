@@ -1,0 +1,215 @@
+//--------------------------------------------------------------------
+// simpleEthernet
+// eth_top.sv
+// Experiment implementing simple ethernet communication
+// 6/30/24
+//--------------------------------------------------------------------
+
+module eth_top (
+
+  // AXI-Lite Interface
+  input  logic        AXI_Clk,
+  input  logic        AXI_Rstn,
+  input  logic        AXI_awvalid,
+  output logic        AXI_awready,
+  input  logic [31:0] AXI_awaddr,
+  input  logic        AXI_wvalid,
+  output logic        AXI_wready,
+  input  logic [31:0] AXI_wdata,
+  output logic        AXI_bvalid,
+  output logic [1:0]  AXI_bresp,
+  input  logic        AXI_bready,
+  input  logic        AXI_arvalid,
+  output logic        AXI_arready,
+  input  logic [31:0] AXI_araddr,
+  input  logic        AXI_rready,
+  output logic [31:0] AXI_rdata,
+  output logic        AXI_rvalid,
+  output logic [1:0]  AXI_rresp,
+
+  // MDIO Interface
+  output logic        MDC_Clk,
+  inout  logic        MDIO,
+
+  // Ethernet Interface
+  input  logic        Eth_Clk,
+  input  logic        Eth_Rst,
+  input  logic        Eth_Tx_Test_En,
+  input  logic        Crs_Dv,
+  input  logic [1:0]  Rxd,
+  output logic [1:0]  Txd,
+  output logic        Tx_En,
+  output logic        Crc_Valid
+);
+
+  //------------------------------------------
+  // Logic
+  //------------------------------------------
+
+  // Clock Enable (for 1 MHz MDC Clock)
+  logic wMDC_Clk;
+  logic wMDC_Rst;
+
+  // Test TX Data
+  logic       rEth_Tx_Test_En_meta;
+  logic       rEth_Tx_Test_En;
+  logic       rEth_Tx_Test_Start;
+  logic [7:0] rEth_Byte_Test;
+  logic       rEth_Byte_Valid_Test;
+  logic       rEth_Pkt_Rdy_Test;
+
+  // MDIO DMA
+  logic [4:0]  wMDIO_Phy_Addr_Req;
+  logic [4:0]  wMDIO_Reg_Addr_Req;
+  logic        wMDIO_Transc_Type_Req;
+  logic        wMDIO_En_Req;
+  logic [15:0] wMDIO_Wr_Dat_Req;
+  logic [5:0]  wMDIO_Reg_Addr_Recv;
+  logic        wMDIO_Data_Valid_Recv;
+  logic [31:0] wMDIO_Data_Recv;
+  logic        wMDIO_Busy_Recv;
+  logic        wEth_Tx_Test_En;
+
+  //------------------------------------------
+  // clk_rst_mgr
+  //------------------------------------------
+  clk_rst_mgr  clk_rst_mgr_inst (
+    .Clk     (AXI_Clk),
+    .Rstn    (AXI_Rstn),
+    .MDC_Clk (wMDC_Clk),
+    .MDC_Rst (wMDC_Rst)
+  );
+  assign MDC_Clk = wMDC_Clk;
+
+  //------------------------------------------
+  // eth_rx
+  //------------------------------------------
+  eth_rx  eth_rx_inst (
+    .Clk       (Eth_Clk),
+    .Rst       (Eth_Rst),
+    .Crs_Dv    (Crs_Dv),
+    .Rxd       (Rxd),
+    .Crc_Valid (Crc_Valid)
+  );
+
+  //------------------------------------------
+  // eth_tx
+  //------------------------------------------
+  // including some test infrastructure
+
+  always_ff @(posedge Eth_Clk)
+  begin
+  if (Eth_Rst) begin
+    rEth_Tx_Test_En_meta <= 0;
+    rEth_Tx_Test_En <= 0;
+  end
+  else begin
+    rEth_Tx_Test_En_meta <= Eth_Tx_Test_En;
+    rEth_Tx_Test_En <= rEth_Tx_Test_En_meta;
+  end
+  end
+
+  always_ff @(posedge Eth_Clk)
+  begin
+    if (Eth_Rst)
+      rEth_Tx_Test_Start <= 0;
+    else
+      rEth_Tx_Test_Start <= rEth_Tx_Test_En;
+  end
+
+  always_ff @(posedge Eth_Clk)
+  begin
+  if (Eth_Rst) begin
+    rEth_Byte_Valid_Test <= 0;
+    rEth_Byte_Test <= 0;
+  end
+  else begin
+    if (rEth_Tx_Test_En && ~rEth_Tx_Test_Start) begin
+      rEth_Byte_Valid_Test <= 1;
+      rEth_Byte_Test <= rEth_Byte_Test + 1;
+    end
+
+    else if (rEth_Tx_Test_En && rEth_Byte_Test > 0 && rEth_Byte_Test < 100) begin
+      rEth_Byte_Valid_Test <= 1;
+      rEth_Byte_Test <= rEth_Byte_Test + 1;
+    end
+
+    else if (rEth_Tx_Test_En && rEth_Byte_Test == 100) begin
+      rEth_Byte_Valid_Test <= 0;
+      rEth_Byte_Test <= 0;
+      rEth_Pkt_Rdy_Test <= 1;
+    end
+
+    else begin
+      rEth_Byte_Valid_Test <= 0;
+      rEth_Byte_Test <= 0;
+      rEth_Pkt_Rdy_Test <= 0;
+    end
+  end
+  end
+
+  eth_tx eth_tx_inst (
+    .Clk            (Eth_Clk),
+    .Rst            (Eth_Rst),
+    .Eth_Byte       (rEth_Byte_Test),
+    .Eth_Byte_Valid (rEth_Byte_Valid_Test),
+    .Eth_Pkt_Rdy    (rEth_Pkt_Rdy_Test),
+    .Txd            (Txd),
+    .Tx_En          (Tx_En)
+  );
+
+  //------------------------------------------
+  // eth_regs
+  //------------------------------------------
+  eth_regs eth_regs_inst (
+    .AXI_Clk              (AXI_Clk),
+    .AXI_Rstn             (AXI_Rstn),
+    .MDC_Clk              (wMDC_Clk),
+    .MDC_Rst              (wMDC_Rst),
+    .AXI_awvalid          (AXI_awvalid),
+    .AXI_awready          (AXI_awready),
+    .AXI_awaddr           (AXI_awaddr), 
+    .AXI_wvalid           (AXI_wvalid), 
+    .AXI_wready           (AXI_wready), 
+    .AXI_wdata            (AXI_wdata),  
+    .AXI_bvalid           (AXI_bvalid), 
+    .AXI_bresp            (AXI_bresp),
+    .AXI_bready           (AXI_bready),
+    .AXI_arvalid          (AXI_arvalid),
+    .AXI_arready          (AXI_arready),
+    .AXI_araddr           (AXI_araddr),
+    .AXI_rready           (AXI_rready),
+    .AXI_rdata            (AXI_rdata),
+    .AXI_rvalid           (AXI_rvalid),
+    .AXI_rresp            (AXI_rresp),
+    .MDIO_Phy_Addr_Req    (wMDIO_Phy_Addr_Req),
+    .MDIO_Reg_Addr_Req    (wMDIO_Reg_Addr_Req),
+    .MDIO_Transc_Type_Req (wMDIO_Transc_Type_Req),
+    .MDIO_En_Req          (wMDIO_En_Req),
+    .MDIO_Wr_Dat_Req      (wMDIO_Wr_Dat_Req),
+    .MDIO_Reg_Addr_Recv   (wMDIO_Reg_Addr_Recv),
+    .MDIO_Data_Valid_Recv (wMDIO_Data_Valid_Recv),
+    .MDIO_Data_Recv       (wMDIO_Data_Recv),
+    .MDIO_Busy_Recv       (wMDIO_Busy_Recv),
+    .Eth_Tx_Test_En       (wEth_Tx_Test_En)
+  );
+
+  //------------------------------------------
+  // eth_mdio
+  //------------------------------------------
+  eth_mdio  eth_mdio_inst (
+    .Clk                   (wMDC_Clk),
+    .Rst                   (wMDC_Rst),
+    .MDIO                  (MDIO),
+    .MDIO_Phy_Addr_Recv    (wMDIO_Phy_Addr_Req),
+    .MDIO_Reg_Addr_Recv    (wMDIO_Reg_Addr_Req),
+    .MDIO_Transc_Type_Recv (wMDIO_Transc_Type_Req),
+    .MDIO_En_Recv          (wMDIO_En_Req),
+    .MDIO_Wr_Dat_Recv      (wMDIO_Wr_Dat_Req),
+    .MDIO_Reg_Addr         (wMDIO_Reg_Addr_Recv),
+    .MDIO_Data_Valid       (wMDIO_Data_Valid_Recv),
+    .MDIO_Data             (wMDIO_Data_Recv),
+    .MDIO_Busy             (wMDIO_Busy_Recv)
+  );
+
+endmodule

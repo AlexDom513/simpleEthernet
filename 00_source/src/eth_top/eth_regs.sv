@@ -1,9 +1,9 @@
-//====================================================================
+//--------------------------------------------------------------------
 // simpleEthernet
-// eth_regs.v
+// eth_regs.sv
 // Regs module using AXI4-Lite, eth_regs denoted as slave
 // 1/3/25
-//====================================================================
+//--------------------------------------------------------------------
 
 // AXI4Lite:
 // https://docs.amd.com/r/en-US/pg085-axi4stream-infrastructure/AXI4-Lite-Interface-Signals
@@ -15,7 +15,7 @@
 // https://docs.amd.com/r/en-US/ug994-vivado-ip-subsystems/List-of-Supported-X_-Attributes
 // https://docs.amd.com/r/en-US/ug994-vivado-ip-subsystems/Inferring-AXI-Interfaces
 
-//====================================================================
+//--------------------------------------------------------------------
 
 // Custom Register Descriptions (eth_mdio)
 // (0)  MDIO Control Register
@@ -26,7 +26,7 @@
 // (1)  MDIO Write Register
 //        - bit(s) {15:0}   - Write Data
 
-//====================================================================
+//--------------------------------------------------------------------
 
 // Device Register Descriptions (MDIO - LAN8720A):
 // (0)  Basic Control Register                          - Basic
@@ -44,56 +44,56 @@
 // (30) Interrupt Mask Register                         - Vendor-Specific
 // (31) PHY Special Control/Status Register             - Vendor-Specific
 
-//====================================================================
+//--------------------------------------------------------------------
 
 module eth_regs (
 
-  input wire AXI_Clk,
-  input wire AXI_Rstn,
-  input wire MDC_Clk,
-  input wire MDC_Rst,
+  input logic AXI_Clk,
+  input logic AXI_Rstn,
+  input logic MDC_Clk,
+  input logic MDC_Rst,
 
   // AXI write addressing
-  input  wire         AXI_awvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
-  output reg          AXI_awready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
-  input  wire [31:0]  AXI_awaddr,           // write address provided by master                            (s_axi_ctrl_awaddr)
+  input  logic        AXI_awvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_awvalid)
+  output logic        AXI_awready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_awready)
+  input  logic [31:0] AXI_awaddr,           // write address provided by master                            (s_axi_ctrl_awaddr)
 
   // AXI write data
-  input  wire         AXI_wvalid,           // master indicates if the write data is avaliable             (s_axi_ctrl_wvalid)
-  output reg          AXI_wready,           // slave indicates that it can acccept write data              (s_axi_ctrl_w      ready)
-  input  wire [31:0]  AXI_wdata,            // write data provided to slave                                (s_axi_ctrl_w      data)
+  input  logic        AXI_wvalid,           // master indicates if the write data is avaliable             (s_axi_ctrl_wvalid)
+  output logic        AXI_wready,           // slave indicates that it can acccept write data              (s_axi_ctrl_wready)
+  input  logic [31:0] AXI_wdata,            // write data provided to slave                                (s_axi_ctrl_wdata)
 
   // AXI write response
-  output reg          AXI_bvalid,           // slave indicates it is signaling a valid write response      (s_axi_ctrl_bvalid)
-  output reg [1:0]    AXI_bresp,            // slave's write response to master                            (s_axi_ctrl_bresp)
-  input  wire         AXI_bready,           // master indicates that it accepts write response             (s_axi_ctrl_bready)
+  output logic        AXI_bvalid,           // slave indicates it is signaling a valid write response      (s_axi_ctrl_bvalid)
+  output logic [1:0]  AXI_bresp,            // slave's write response to master                            (s_axi_ctrl_bresp)
+  input  logic        AXI_bready,           // master indicates that it accepts write response             (s_axi_ctrl_bready)
 
   // AXI read addressing
-  input  wire         AXI_arvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_arvalid)
-  output reg          AXI_arready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_arready)
-  input  wire [31:0]  AXI_araddr,           // read address provided by master                             (s_axi_ctrl_araddr)
+  input  logic        AXI_arvalid,          // master indicates if the provided address is valid           (s_axi_ctrl_arvalid)
+  output logic        AXI_arready,          // slave indicates if it is ready to accept an address         (s_axi_ctrl_arready)
+  input  logic [31:0] AXI_araddr,           // read address provided by master                             (s_axi_ctrl_araddr)
 
   // AXI read data
-  input  wire         AXI_rready,           // master indicates that it can accept read data and status    (s_axi_ctrl_rready)
-  output reg [31:0]   AXI_rdata,            // read data provided to master                                (s_axi_ctrl_rdata)
-  output reg          AXI_rvalid,           // slave indicates if the read data is valid                   (s_axi_ctrl_rvalid)
-  output reg [1:0]    AXI_rresp,            // slave indicates status of read transfer                     (s_axi_ctrl_rresp)
+  input  logic        AXI_rready,           // master indicates that it can accept read data and status    (s_axi_ctrl_rready)
+  output logic [31:0] AXI_rdata,            // read data provided to master                                (s_axi_ctrl_rdata)
+  output logic        AXI_rvalid,           // slave indicates if the read data is valid                   (s_axi_ctrl_rvalid)
+  output logic [1:0]  AXI_rresp,            // slave indicates status of read transfer                     (s_axi_ctrl_rresp)
 
   // To MDIO
-  output wire [4:0]   MDIO_Phy_Addr_Req,    // phy address
-  output wire [4:0]   MDIO_Reg_Addr_Req,    // register address
-  output wire         MDIO_Transc_Type_Req, // read or write transaction
-  output wire         MDIO_En_Req,          // strobe that kicks-off a transaction
-  output wire [15:0]  MDIO_Wr_Dat_Req,      // data for MDIO registers
+  output logic [4:0]  MDIO_Phy_Addr_Req,    // phy address
+  output logic [4:0]  MDIO_Reg_Addr_Req,    // register address
+  output logic        MDIO_Transc_Type_Req, // read or write transaction
+  output logic        MDIO_En_Req,          // strobe that kicks-off a transaction
+  output logic [15:0] MDIO_Wr_Dat_Req,      // data for MDIO registers
 
   // From MDIO
-  input  wire [5:0]   MDIO_Reg_Addr_Recv,   // address of register targeted by MDIO DMA
-  input  wire         MDIO_Data_Valid_Recv, // indicates when data from MDIO DMA is valid
-  input  wire [31:0]  MDIO_Data_Recv,       // data from MDIO DMA
-  input  wire         MDIO_Busy_Recv,       // indicates when MDIO read/write is in progress
+  input  logic [5:0]  MDIO_Reg_Addr_Recv,   // address of register targeted by MDIO DMA
+  input  logic        MDIO_Data_Valid_Recv, // indicates when data from MDIO DMA is valid
+  input  logic [31:0] MDIO_Data_Recv,       // data from MDIO DMA
+  input  logic        MDIO_Busy_Recv,       // indicates when MDIO read/write is in progress
 
   // To Eth Tx Test
-  output wire         Eth_Tx_Test_En        // enable ethernet tx test
+  output logic        Eth_Tx_Test_En        // enable ethernet tx test
 );
 
   // PHY Registers (read-only, match datasheet register map)
@@ -122,54 +122,53 @@ module eth_regs (
   localparam READ   = 4'h1;
   localparam WRITE  = 4'h2;
   localparam ACK    = 4'h3;
-  reg [3:0] rCtrl_Fsm_State;
+  logic [3:0] rCtrl_Fsm_State;
 
   // cdc read data valid (from eth_mdio)
-  reg        rMDIO_Busy_Recv_meta;
-  reg        rMDIO_Busy_Recv;
+  logic       rMDIO_Busy_Recv_meta;
+  logic       rMDIO_Busy_Recv;
 
   // control & truncated addresses
-  wire [5:0] wWrite_Addr;
-  reg  [5:0] rRead_Addr;
-  reg        rWrite_Reg;
+  logic [5:0] wWrite_Addr;
+  logic [5:0] rRead_Addr;
+  logic       rWrite_Reg;
 
   // registers (from PHY)
-  reg [31:0] rMDIO_PHY_CTRL_REG;
-  reg [31:0] rMDIO_PHY_STAT_REG;
-  reg [31:0] rMDIO_PHY_IDENT_1_REG;
-  reg [31:0] rMDIO_PHY_IDENT_2_REG;
-  reg [31:0] rMDIO_PHY_ANA_REG;
-  reg [31:0] rMDIO_PHY_ANLP_REG;
-  reg [31:0] rMDIO_PHY_ANE_REG;
-  reg [31:0] rMDIO_PHY_MODE_REG;
-  reg [31:0] rMDIO_PHY_SPEC_MD_REG;
-  reg [31:0] rMDIO_PHY_SYM_ERR_REG;
-  reg [31:0] rMDIO_PHY_INDC_REG;
-  reg [31:0] rMDIO_PHY_INTR_SRC_REG;
-  reg [31:0] rMDIO_PHY_INTR_MSK_REG;
-  reg [31:0] rMDIO_PHY_SPEC_CTRL_REG;
+  logic [31:0] rMDIO_PHY_CTRL_REG;
+  logic [31:0] rMDIO_PHY_STAT_REG;
+  logic [31:0] rMDIO_PHY_IDENT_1_REG;
+  logic [31:0] rMDIO_PHY_IDENT_2_REG;
+  logic [31:0] rMDIO_PHY_ANA_REG;
+  logic [31:0] rMDIO_PHY_ANLP_REG;
+  logic [31:0] rMDIO_PHY_ANE_REG;
+  logic [31:0] rMDIO_PHY_MODE_REG;
+  logic [31:0] rMDIO_PHY_SPEC_MD_REG;
+  logic [31:0] rMDIO_PHY_SYM_ERR_REG;
+  logic [31:0] rMDIO_PHY_INDC_REG;
+  logic [31:0] rMDIO_PHY_INTR_SRC_REG;
+  logic [31:0] rMDIO_PHY_INTR_MSK_REG;
+  logic [31:0] rMDIO_PHY_SPEC_CTRL_REG;
 
   // registers (used to set communication with PHY)
-  reg [31:0] rMDIO_USR_CTRL_REG;
-  reg [31:0] rMDIO_USR_WRITE_REG;
+  logic [31:0] rMDIO_USR_CTRL_REG;
+  logic [31:0] rMDIO_USR_WRITE_REG;
 
   // registers (ethernet tx test)
-  reg [31:0] rETH_TEST_REG;
+  logic [31:0] rETH_TEST_REG;
 
-  //==========================================
+  //------------------------------------------
   // top-level assignments
-  //==========================================
+  //------------------------------------------
   assign MDIO_Reg_Addr_Req      = rMDIO_USR_CTRL_REG[11:7];
   assign MDIO_Phy_Addr_Req      = rMDIO_USR_CTRL_REG[6:2];
   assign MDIO_Transc_Type_Req   = rMDIO_USR_CTRL_REG[1];
   assign MDIO_En_Req            = rMDIO_USR_CTRL_REG[0];
   assign MDIO_Wr_Dat_Req        = rMDIO_USR_WRITE_REG[15:0];
-
   assign Eth_Tx_Test_En         = rETH_TEST_REG[0];
 
-  //==========================================
+  //------------------------------------------
   // address_truncation
-  //==========================================
+  //------------------------------------------
 
   // zynq can only obtain 1 byte per address
   // thus, we need 4 bytes * (8 bits/byte) to obtain 32 bits
@@ -182,12 +181,12 @@ module eth_regs (
 
   assign wWrite_Addr = AXI_awaddr[7:2];
 
-  //==========================================
+  //------------------------------------------
   // read_mux
-  //==========================================
+  //------------------------------------------
   // provides data for AXI reads
 
-  always @(*)
+  always_comb
   begin
   case(rRead_Addr)
     pMDIO_PHY_CTRL_ADDR      : AXI_rdata = rMDIO_PHY_CTRL_REG;
@@ -210,12 +209,12 @@ module eth_regs (
   endcase
   end
 
-  //==========================================
+  //------------------------------------------
   // CDC for MDIO_Busy_Recv
-  //==========================================
+  //------------------------------------------
   // cross MDIO_Busy_Recv into domain used by AXI
 
-  always @(posedge(AXI_Clk))
+  always_ff @(posedge AXI_Clk)
   begin
     if (~AXI_Rstn) begin
       rMDIO_Busy_Recv_meta <= 0;
@@ -227,12 +226,12 @@ module eth_regs (
     end
   end
 
-  //==========================================
+  //------------------------------------------
   // ctrl_fsm
-  //==========================================
+  //------------------------------------------
   // handles AXI Transactions
 
-  always @(posedge(AXI_Clk))
+  always_ff @(posedge AXI_Clk)
   begin
   if (~AXI_Rstn) begin
     rCtrl_Fsm_State <= IDLE;
@@ -307,17 +306,17 @@ module eth_regs (
   end
   end
 
-  //======================================================================================
+  //--------------------------------------------------------------------
   // Registers Configured by PS
-  //======================================================================================
+  //--------------------------------------------------------------------
 
-  //==========================================
+  //------------------------------------------
   // MDIO_USR_CTRL_REG
-  //==========================================
+  //------------------------------------------
   // control data for interacting with MDIO
   // can be configured for read/write operations
 
-  always @(posedge(AXI_Clk))
+  always_ff @(posedge AXI_Clk)
   begin
   if (~AXI_Rstn)
     rMDIO_USR_CTRL_REG <= 32'h00000000;
@@ -328,12 +327,12 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_USR_WRITE_REG
-  //==========================================
+  //------------------------------------------
   // data to write to specific MDIO registers
 
-  always @(posedge(AXI_Clk))
+  always_ff @(posedge AXI_Clk)
   begin
   if (~AXI_Rstn)
     rMDIO_USR_WRITE_REG <= 32'h00000000;
@@ -344,12 +343,12 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // ETH_TEST_REG
-  //==========================================
+  //------------------------------------------
   // enable/disable sending of test packets
 
-  always @(posedge(AXI_Clk))
+  always_ff @(posedge AXI_Clk)
   begin
   if (~AXI_Rstn)
     rETH_TEST_REG <= 32'h00000000;
@@ -360,14 +359,14 @@ module eth_regs (
   end
   end
 
-  //======================================================================================
+  //--------------------------------------------------------------------
   // Registers Configured by MDIO DMA
-  //======================================================================================
+  //--------------------------------------------------------------------
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_CTRL_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_CTRL_REG <= 32'h00000000;
@@ -378,10 +377,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_STAT_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_STAT_REG <= 32'h00000000;
@@ -392,10 +391,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_IDENT_1_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_IDENT_1_REG <= 32'h00000000;
@@ -406,10 +405,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_IDENT_2_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_IDENT_2_REG <= 32'h00000000;
@@ -420,10 +419,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_ANA_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_ANA_REG <= 32'h00000000;
@@ -434,10 +433,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_ANLP_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_ANLP_REG <= 32'h00000000;
@@ -448,10 +447,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_ANE_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_ANE_REG <= 32'h00000000;
@@ -462,10 +461,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_MODE_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_MODE_REG <= 32'h00000000;
@@ -476,10 +475,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_SPEC_MD_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_SPEC_MD_REG <= 32'h00000000;
@@ -490,10 +489,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_SYM_ERR_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_SYM_ERR_REG <= 32'h00000000;
@@ -504,10 +503,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_INDC_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_INDC_REG <= 32'h00000000;
@@ -518,10 +517,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_INTR_SRC_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_INTR_SRC_REG <= 32'h00000000;
@@ -532,10 +531,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_INTR_MSK_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_INTR_MSK_REG <= 32'h00000000;
@@ -546,10 +545,10 @@ module eth_regs (
   end
   end
 
-  //==========================================
+  //------------------------------------------
   // MDIO_PHY_SPEC_CTRL_REG
-  //==========================================
-  always @(posedge(MDC_Clk))
+  //------------------------------------------
+  always_ff @(posedge MDC_Clk)
   begin
   if (MDC_Rst)
     rMDIO_PHY_SPEC_CTRL_REG <= 32'h00000000;
