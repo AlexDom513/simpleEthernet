@@ -16,26 +16,23 @@ fi
 BITSTREAM=$(find "$OUTPUT_DIR" -type f -name "*.bit" -print -quit)
 LTX_FILE=$(find "$OUTPUT_DIR" -type f -name "*.ltx" -print -quit)
 
-# Check if the required files exist
-if [ -z "$BITSTREAM" ]; then
-    echo "Error: No .bit file found in $OUTPUT_DIR."
-    exit 1
-fi
-
-if [ -z "$LTX_FILE" ]; then
-    echo "Error: No .ltx file found in $OUTPUT_DIR."
-    exit 1
-fi
-
 # Determine the destination directory (one level up from the project directory)
 DEST_DIR="./"
 
 # Create the destination directory if it doesn't exist
 mkdir -p "$DEST_DIR"
 
-# Copy the files
-cp "$BITSTREAM" "$DEST_DIR"
-cp "$LTX_FILE" "$DEST_DIR"
+# Check if the required files exist
+if [ -z "$BITSTREAM" ]; then
+    echo "Error: No .bit file found in $OUTPUT_DIR."
+    exit 1
+else
+    cp "$BITSTREAM" "$DEST_DIR"
+fi
 
-# Confirm success
-echo "Copied .bit and .ltx files to $DEST_DIR."
+if [ -z "$LTX_FILE" ]; then
+    echo "Error: No .ltx file found in $OUTPUT_DIR."
+    exit 1
+else
+    cp "$LTX_FILE" "$DEST_DIR"
+fi
