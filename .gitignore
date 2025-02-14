@@ -1,8 +1,8 @@
-########################################################################
-# Gitignore Rules
-########################################################################
-
+# dirs
+01_sim/**/*.txt
 sim_build/
+
+# file types
 __pycache__
 *.fst
 *.xml
@@ -39,19 +39,6 @@ __pycache__
 *.sim/
 *.srcs/
 *.ioplanning/
-
-# block design
-**/bd/*
-!**/bd/hdl
-**/bd/hdl/*
-!**/bd/hdl/bd_wrapper.v
-
-# vitis
-sw_platform_gen/
-
-# exceptions
-!*_sim/
-!component.xml
 
 # vscode
 .vscode
