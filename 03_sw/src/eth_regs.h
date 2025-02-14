@@ -1,3 +1,10 @@
+//--------------------------------------------------------------------
+// simpleEthernet
+// eth_regs.h
+// Offsets for ethernet configuration registers
+// 9/20/24
+//--------------------------------------------------------------------
+
 #ifndef ETH_REGS_H
 #define ETH_REGS_H
 
