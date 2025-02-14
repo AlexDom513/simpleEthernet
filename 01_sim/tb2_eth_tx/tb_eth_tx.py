@@ -1,17 +1,17 @@
-#====================================================================
+#--------------------------------------------------------------------
 # simpleEthernet
 # tb_eth_tx.py
 # Testbench for Ethernet RMII transmit module
 # 12/23/24
-#====================================================================
+#--------------------------------------------------------------------
 
-import tb_eth_packet_gen as packet_gen
+import tb_eth_tx_frame_gen as frame_gen
 import cocotb
 from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
-NUM_PACKETS = 1
+NUM_FRAMES = 1
 
 @cocotb.test()
 async def tb_eth_tx(dut):
@@ -33,8 +33,8 @@ async def tb_eth_tx(dut):
 
   # apply input stimulus
   record = []
-  for _ in range(NUM_PACKETS):
-    input_vec = packet_gen.packet_gen()
+  for _ in range(NUM_FRAMES):
+    input_vec = frame_gen.frame_gen()
     for byte in input_vec:
       await(RisingEdge(dut.Clk))
       dut.Eth_Byte.value = byte
@@ -45,7 +45,7 @@ async def tb_eth_tx(dut):
     dut.Eth_Byte.value = BinaryValue(0, n_bits=8)
     dut.Eth_Byte_Valid.value = 0
 
-    # strobe packet ready
+    # strobe frame ready
     await(RisingEdge(dut.Clk))
     dut.Eth_Pkt_Rdy.value = 1
     await(RisingEdge(dut.Clk))

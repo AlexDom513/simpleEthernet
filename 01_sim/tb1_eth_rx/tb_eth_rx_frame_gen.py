@@ -1,8 +1,13 @@
+#--------------------------------------------------------------------
+# simpleEthernet
+# tb_eth_tx_capture_analysis.py
+# Verify transmit of Tx module
+# 1/30/25
+#--------------------------------------------------------------------
+
 import zlib
 import numpy as np
 from scapy.all import Ether, IP, UDP, raw
-
-# https://crccalc.com/?crc=123456789&method=&datatype=hex&outtype=hex
 
 def frame_gen():
 
@@ -16,7 +21,7 @@ def frame_gen():
     frame       = eth_layer / ip_layer / udp_layer / payload
 
     # write frame bytes/info to file
-    with open('0_packet_gen.txt', 'w') as file:
+    with open('0_frame_gen.txt', 'w') as file:
         bin_data = raw(frame)
         hex_data = bin_data.hex()
         for i in range(0, len(hex_data), 2):
@@ -30,13 +35,13 @@ def frame_gen():
     bin_data = raw(frame)
     crc32_bytes = zlib.crc32(bin_data).to_bytes(4, byteorder='big')
     crc32_binary = np.unpackbits(np.frombuffer(crc32_bytes, dtype=np.uint8))
-    crc32_binary = crc32_binary.reshape(-1, 8)[:, ::-1].flatten() # Reverse bits within each byte
-    crc32_binary = crc32_binary.reshape(-1,8)[::-1].flatten() # Reverse byte order
+    crc32_binary = crc32_binary.reshape(-1, 8)[:, ::-1].flatten()               # Reverse bits within each byte
+    crc32_binary = crc32_binary.reshape(-1,8)[::-1].flatten()                   # Reverse byte order
 
     # create input vector
     frame_bytes = bytes(frame)
     frame_binary = np.unpackbits(np.frombuffer(frame_bytes, dtype=np.uint8))
-    frame_binary = frame_binary.reshape(-1, 8)[:, ::-1].flatten() # LSBs of each byte are sent first
+    frame_binary = frame_binary.reshape(-1, 8)[:, ::-1].flatten()               # LSBs of each byte are sent first
     frame_binary = np.concatenate((preamble, sfd, frame_binary, crc32_binary))
     frame_binary = frame_binary.reshape((-1, 2))
 

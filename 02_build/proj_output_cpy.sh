@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#--------------------------------------------------------------------
+# simpleEthernet
+# proj_output_cpy.sh
+# Fetches .bit and .ltx files from Vivado project
+# 2/14/25
+#--------------------------------------------------------------------
+
 # Exit on error
 set -e
 

@@ -5,18 +5,6 @@
 // 1/3/25
 //--------------------------------------------------------------------
 
-// AXI4Lite:
-// https://docs.amd.com/r/en-US/pg085-axi4stream-infrastructure/AXI4-Lite-Interface-Signals
-// https://docs.amd.com/r/en-US/pg165-cmac/AXI-User-Interface-Ports
-// https://www.youtube.com/watch?v=okiTzvihHRA
-// https://zipcpu.com/formal/2018/12/28/axilite.html
-
-// Inferring AXI4Lite:
-// https://docs.amd.com/r/en-US/ug994-vivado-ip-subsystems/List-of-Supported-X_-Attributes
-// https://docs.amd.com/r/en-US/ug994-vivado-ip-subsystems/Inferring-AXI-Interfaces
-
-//--------------------------------------------------------------------
-
 // Custom Register Descriptions (eth_mdio)
 // (0)  MDIO Control Register
 //        - bit(s) {11:7}   - Register Address

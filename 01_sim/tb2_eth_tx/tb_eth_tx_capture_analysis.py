@@ -1,9 +1,9 @@
-#====================================================================
+#--------------------------------------------------------------------
 # simpleEthernet
-# tb_eth_capture_analysis.py
+# tb_eth_tx_capture_analysis.py
 # Verify transmit of Tx module
 # 1/30/25
-#====================================================================
+#--------------------------------------------------------------------
 
 with open('1_bit_capture.txt', 'r') as f:
     data = f.read().splitlines()
@@ -17,7 +17,7 @@ with open('1_bit_capture.txt', 'r') as f:
             val += (2**j) * byte_group[j]
         byte_list.append(val)
 
-    with open('2_packet_recover.txt', 'w') as f:
+    with open('2_frame_recover.txt', 'w') as f:
         for byte in byte_list:
             f.write(hex(byte) + '\n')
 

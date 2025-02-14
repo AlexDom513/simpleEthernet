@@ -1,5 +1,3 @@
-# example: https://gist.github.com/davidzwa/ef1eafc6cd23e613af612e27eddb054b
-
 # axi ports
 gtkwave::/Edit/Insert_Blank
 set axi_ports [list]
@@ -34,7 +32,7 @@ lappend eth_ports eth_top.Txd
 lappend eth_ports eth_top.Tx_En
 gtkwave::addSignalsFromList $eth_ports
 gtkwave::/Edit/Create_Group "ETH_Ports" $eth_ports
-gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Ports"
+#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Ports"
 
 # eth tx test
 gtkwave::/Edit/Insert_Blank
@@ -48,7 +46,7 @@ lappend eth_tx_test eth_top.rEth_Byte_Valid_Test
 lappend eth_tx_test eth_top.rEth_Pkt_Rdy_Test
 gtkwave::addSignalsFromList $eth_tx_test
 gtkwave::/Edit/Create_Group "ETH_TX_TEST" $eth_tx_test
-gtkwave::/Edit/Toggle_Group_Open|Close "ETH_TX_TEST"
+#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_TX_TEST"
 
 # eth regs
 gtkwave::/Edit/Insert_Blank

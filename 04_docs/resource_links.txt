@@ -1,47 +1,31 @@
 resource_links:
 
 Ethernet:
-    - Ethernet Frame Format
-        https://www.youtube.com/watch?v=JsYqqDqmQaE
+  - Ethernet Frame Format:            https://www.youtube.com/watch?v=JsYqqDqmQaE
+  - How Ethernet Works:               https://www.youtube.com/playlist?list=PLfSW-xVM-0-LniWAh3vUk8EplJsiOfKGc
+  - Ethernet Frame State Machine:     https://www.youtube.com/watch?v=zTsHbEIOM2A
+  - RMII spec:                        http://ebook.pldworld.com/_eBook/-Telecommunications,Networks-/TCPIP/RMII/rmii_rev12.pdf
+  - Online CRC32 Calculator:          https://crccalc.com/
 
-    - How Ethernet Works
-        https://www.youtube.com/playlist?list=PLfSW-xVM-0-LniWAh3vUk8EplJsiOfKGc
+Constraints:
+  - Overview:                         https://www.01signal.com/constraints/
 
-    - 10 Gigabit Ethernet
-        https://en.wikipedia.org/wiki/10_Gigabit_Ethernet
-
-    - Ethernet Frame State Machine
-        https://www.youtube.com/watch?v=zTsHbEIOM2A
-
-    - RMII spec
-        http://ebook.pldworld.com/_eBook/-Telecommunications,Networks-/TCPIP/RMII/rmii_rev12.pdf
-        https://www.reddit.com/r/FPGA/comments/s56dtt/using_fpga_as_a_mac_to_control_a_phy_by_rmii/
-
-
-
-// https://v2kparse.sourceforge.net/includes.pdf
-
-
-
-
-***CRC32 // Online CRC32 Calculator:       https://crccalc.com/
-
-
-
-By Module:
-    - proj_top.v
-        Setting up a top-level design
-          https://github.com/HDLForBeginners/Examples/tree/main/ZynqSeries
-
-    - clk_rst_mgr.v
-        Example Clock Divider/Enable
-          https://github.com/gtaylormb/opl3_fpga/blob/master/fpga/modules/clks/src/clk_div.sv
+HDL/Digital Design:
+  - Setting up a top-level design:    https://github.com/HDLForBeginners/Examples/tree/main/ZynqSeries
+  - Example Clock Divider/Enable:     https://github.com/gtaylormb/opl3_fpga/blob/master/fpga/modules/clks/src/clk_div.sv      
+  - Reduce Clock Speed:               https://www.reddit.com/r/FPGA/comments/pyss1v/noob_question_i_am_trying_to_reduce_to_speed_of/
         
-        Reduce Clock Speed (PLL too Fast)
-          https://www.reddit.com/r/FPGA/comments/pyss1v/noob_question_i_am_trying_to_reduce_to_speed_of/
-        
-        How to generate a clock enable signal on FPGA
-          https://www.fpga4student.com/2017/08/how-to-generate-clock-enable-signal.html
+AXI:
+  - AXI4-Lite Signals:                https://docs.amd.com/r/en-US/pg085-axi4stream-infrastructure/AXI4-Lite-Interface-Signals
+  - AXI User Interface Ports:         https://docs.amd.com/r/en-US/pg165-cmac/AXI-User-Interface-Ports
+  - Understanding AXI Lite:           https://www.youtube.com/watch?v=okiTzvihHRA
+  - Verifying an AXI Lite Peripheral: https://zipcpu.com/formal/2018/12/28/axilite.html
+  - Cocotb AXI                        https://github.com/alexforencich/cocotbext-axi
 
-        MMCM vs Clock Divider
-          https://www.reddit.com/r/FPGA/comments/qbes5c/mmcm_vs_clock_divider/
+Project Management
+  - Vivado                            https://github.com/jhallen/vivado_setup
+  - .tcl with Gtkwave                 https://gist.github.com/davidzwa/ef1eafc6cd23e613af612e27eddb054b
+  - Running tcl scripts (using xsct): https://docs.amd.com/r/en-US/ug1400-vitis-embedded/Running-Tcl-Scripts
+  - Vitis launch options:             https://docs.amd.com/r/en-US/ug1400-vitis-embedded/Vitis-Unified-IDE-Launch-Options
+  - Vitis automation examples:        https://docs.amd.com/r/en-US/ug1400-vitis-embedded/Common-Use-Cases
+  - Vitis XSCT commands:              https://docs.amd.com/r/en-US/ug1400-vitis-embedded/Vitis-Projects

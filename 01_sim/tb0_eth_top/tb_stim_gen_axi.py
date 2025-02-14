@@ -1,10 +1,10 @@
-#====================================================================
+#--------------------------------------------------------------------
 # simpleEthernet
 # tb_stim_gen_axi.py
 # AXI Lite stimulus generator for Ethernet regs module, utilizes
 # functionality in https://github.com/alexforencich/cocotbext-axi
 # 1/1/25
-#====================================================================
+#--------------------------------------------------------------------
 
 import cocotb
 from cocotb.clock import Clock

@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# Key Resource
-#https://github.com/jhallen/vivado_setup
+#--------------------------------------------------------------------
+# simpleEthernet
+# proj_init.sh
+# Handles project creation using .tcl generated in Vivado
+# 2/14/25
+#--------------------------------------------------------------------
 
 # NOTE:
-# when working with block diagrams, it is critical to take two actions to prepare for source control
-# 1) update 00_source/bd/hdl/bd_wrapper.v with most recent ports
-# 2) associate the current state of the project with a tcl script --> {write_project_tcl rebuild}
+# when working with block diagrams, take the following actions for source control
+# 1) update 00_source/src/bd_wrapper.v with most recent ports
+# 2) associate the desired state of the project with a tcl script --> {write_project_tcl rebuild}
 # 3) compare current full_build.tcl with rebuild.tcl and verify differences before accepting new version
 
 # prompt user
