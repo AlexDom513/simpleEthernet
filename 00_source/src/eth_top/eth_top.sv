@@ -51,12 +51,9 @@ module eth_top (
   logic wMDC_Rst;
 
   // Test TX Data
-  logic       rEth_Tx_Test_En_meta;
-  logic       rEth_Tx_Test_En;
-  logic       rEth_Tx_Test_Start;
-  logic [7:0] rEth_Byte_Test;
-  logic       rEth_Byte_Valid_Test;
-  logic       rEth_Pkt_Rdy_Test;
+  logic [7:0] wEth_Byte_Test;
+  logic       wEth_Byte_Valid_Test;
+  logic       wEth_Pkt_Rdy_Test;
 
   // MDIO DMA
   logic [4:0]  wMDIO_Phy_Addr_Req;
@@ -95,65 +92,29 @@ module eth_top (
   //------------------------------------------
   // eth_tx
   //------------------------------------------
-  // including some test infrastructure
+  // automatically inserts Preamble, SFD, MAC destination,
+  // MAC source, Ethertype, and CRC. User is responsible
+  // for providing all other Payload bytes
+  //
+  // to TX, write 1 byte (Eth_Byte) per CC while
+  // asserting (Eth_Byte_Valid), once all desired bytes are
+  // written, assert (Eth_Pkt_Rdy) to kickoff send
 
-  always_ff @(posedge Eth_Clk)
-  begin
-  if (Eth_Rst) begin
-    rEth_Tx_Test_En_meta <= 0;
-    rEth_Tx_Test_En <= 0;
-  end
-  else begin
-    rEth_Tx_Test_En_meta <= Eth_Tx_Test_En;
-    rEth_Tx_Test_En <= rEth_Tx_Test_En_meta;
-  end
-  end
-
-  always_ff @(posedge Eth_Clk)
-  begin
-    if (Eth_Rst)
-      rEth_Tx_Test_Start <= 0;
-    else
-      rEth_Tx_Test_Start <= rEth_Tx_Test_En;
-  end
-
-  always_ff @(posedge Eth_Clk)
-  begin
-  if (Eth_Rst) begin
-    rEth_Byte_Valid_Test <= 0;
-    rEth_Byte_Test <= 0;
-  end
-  else begin
-    if (rEth_Tx_Test_En && ~rEth_Tx_Test_Start) begin
-      rEth_Byte_Valid_Test <= 1;
-      rEth_Byte_Test <= rEth_Byte_Test + 1;
-    end
-
-    else if (rEth_Tx_Test_En && rEth_Byte_Test > 0 && rEth_Byte_Test < 100) begin
-      rEth_Byte_Valid_Test <= 1;
-      rEth_Byte_Test <= rEth_Byte_Test + 1;
-    end
-
-    else if (rEth_Tx_Test_En && rEth_Byte_Test == 100) begin
-      rEth_Byte_Valid_Test <= 0;
-      rEth_Byte_Test <= 0;
-      rEth_Pkt_Rdy_Test <= 1;
-    end
-
-    else begin
-      rEth_Byte_Valid_Test <= 0;
-      rEth_Byte_Test <= 0;
-      rEth_Pkt_Rdy_Test <= 0;
-    end
-  end
-  end
+  eth_tx_tpg  eth_tx_tpg_inst (
+    .Clk                 (Eth_Clk),
+    .Rst                 (Eth_Rst),
+    .Eth_Tx_Test_En      (Eth_Tx_Test_En),
+    .Eth_Byte_Test       (wEth_Byte_Test),
+    .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test),
+    .Eth_Pkt_Rdy_Test    (wEth_Pkt_Rdy_Test)
+  );
 
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
     .Rst            (Eth_Rst),
-    .Eth_Byte       (rEth_Byte_Test),
-    .Eth_Byte_Valid (rEth_Byte_Valid_Test),
-    .Eth_Pkt_Rdy    (rEth_Pkt_Rdy_Test),
+    .Eth_Byte       (wEth_Byte_Test),
+    .Eth_Byte_Valid (wEth_Byte_Valid_Test),
+    .Eth_Pkt_Rdy    (wEth_Pkt_Rdy_Test),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
   );

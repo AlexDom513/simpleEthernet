@@ -11,6 +11,9 @@ from cocotb.triggers import Timer, RisingEdge
 from tb_stim_gen_axi import Stim_Gen_Axi
 from tb_stim_gen_mdio import Stim_Gen_Mdio
 
+REG_TEST_EN = 0
+TX_TEST_EN = 1
+
 @cocotb.test()
 async def tb_eth_top(dut):
 
@@ -37,35 +40,38 @@ async def tb_eth_top(dut):
     # register tests
     #------------------------------------------
 
-    # mdio read test
-    cocotb.start_soon(stim_gen_axi.phy_regs_read_sim())
-    await stim_gen_mdio.mdio_read_response()
-    await(Timer(100, 'us'))
+    if (REG_TEST_EN):
 
-    # mdio write test
-    cocotb.start_soon(stim_gen_axi.phy_regs_write_sim())
-    await stim_gen_mdio.mdio_write_check()
-    await(Timer(100, 'us'))
+        # mdio read test
+        cocotb.start_soon(stim_gen_axi.phy_regs_read_sim())
+        await stim_gen_mdio.mdio_read_response()
+        await(Timer(100, 'us'))
+
+        # mdio write test
+        cocotb.start_soon(stim_gen_axi.phy_regs_write_sim())
+        await stim_gen_mdio.mdio_write_check()
+        await(Timer(100, 'us'))
 
     #------------------------------------------
     # ethernet tests
     #------------------------------------------
 
-    # ethernet tx test
-    await RisingEdge(dut.Eth_Clk)
-    dut.Eth_Tx_Test_En.value = 1
-    await(Timer(100, 'us'))
-    await RisingEdge(dut.Eth_Clk)
-    dut.Eth_Tx_Test_En.value = 0
-    await(Timer(100, 'us'))
+    if (TX_TEST_EN):
 
-    await RisingEdge(dut.Eth_Clk)
-    dut.Eth_Tx_Test_En.value = 1
-    await(Timer(100, 'us'))
-    await RisingEdge(dut.Eth_Clk)
-    dut.Eth_Tx_Test_En.value = 0
+        # ethernet tx test
+        await RisingEdge(dut.Eth_Clk)
+        dut.Eth_Tx_Test_En.value = 1
+        await(Timer(100, 'us'))
+        await RisingEdge(dut.Eth_Clk)
+        dut.Eth_Tx_Test_En.value = 0
+        await(Timer(100, 'us'))
+
+        await RisingEdge(dut.Eth_Clk)
+        dut.Eth_Tx_Test_En.value = 1
+        await(Timer(100, 'us'))
+        await RisingEdge(dut.Eth_Clk)
+        dut.Eth_Tx_Test_En.value = 0
 
     # await stim_gen_axi.ethernet_tx_sim()
-    # await(Timer(100, 'us'))
 
-    await(Timer(1, 'ms'))
+    await(Timer(100, 'us'))

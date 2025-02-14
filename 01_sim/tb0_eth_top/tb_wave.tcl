@@ -37,13 +37,14 @@ gtkwave::/Edit/Create_Group "ETH_Ports" $eth_ports
 # eth tx test
 gtkwave::/Edit/Insert_Blank
 set eth_tx_test [list]
-lappend eth_tx_test eth_top.wEth_Tx_Test_En
-lappend eth_tx_test eth_top.rEth_Tx_Test_En_meta
-lappend eth_tx_test eth_top.rEth_Tx_Test_En
-lappend eth_tx_test eth_top.rEth_Tx_Test_Start
-lappend eth_tx_test eth_top.rEth_Byte_Test
-lappend eth_tx_test eth_top.rEth_Byte_Valid_Test
-lappend eth_tx_test eth_top.rEth_Pkt_Rdy_Test
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.Eth_Tx_Test_En
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.rEth_Tx_Test_En_meta
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.rEth_Tx_Test_En
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.rEth_Tx_Test_En_d1
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.rEth_Tx_Test_Start
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.Eth_Byte_Test
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.Eth_Byte_Valid_Test
+lappend eth_tx_test eth_top.eth_tx_tpg_inst.Eth_Pkt_Rdy_Test
 gtkwave::addSignalsFromList $eth_tx_test
 gtkwave::/Edit/Create_Group "ETH_TX_TEST" $eth_tx_test
 #gtkwave::/Edit/Toggle_Group_Open|Close "ETH_TX_TEST"
@@ -69,7 +70,7 @@ lappend eth_regs eth_top.eth_regs_inst.rMDIO_PHY_STAT_REG
 lappend eth_regs eth_top.eth_regs_inst.rETH_TEST_REG
 gtkwave::addSignalsFromList $eth_regs
 gtkwave::/Edit/Create_Group "ETH_Regs" $eth_regs
-#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Regs"
+gtkwave::/Edit/Toggle_Group_Open|Close "ETH_Regs"
 
 # eth mdio
 gtkwave::/Edit/Insert_Blank
@@ -106,4 +107,4 @@ lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Data
 lappend eth_mdio eth_top.eth_mdio_inst.MDIO_Busy
 gtkwave::addSignalsFromList $eth_mdio
 gtkwave::/Edit/Create_Group "ETH_MDIO" $eth_mdio
-#gtkwave::/Edit/Toggle_Group_Open|Close "ETH_MDIO"
+gtkwave::/Edit/Toggle_Group_Open|Close "ETH_MDIO"
