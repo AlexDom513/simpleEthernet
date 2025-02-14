@@ -20,7 +20,7 @@ create_generated_clock -name mdc_clk -source [get_pins eth_top_inst/clk_rst_mgr_
 #---------------------------------------------------------------------
 
 # NOTE: maybe change to set_max_delay
-set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks eth_clk]
+set_clock_groups -asynchronous -group clk_fpga_0 -group eth_clk
 
 #---------------------------------------------------------------------
 # I/O Delay Constraints
