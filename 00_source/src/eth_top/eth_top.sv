@@ -65,6 +65,7 @@ module eth_top #(
   // Loopback (RX) to TX Data
   logic [7:0] wEth_Byte_Loopback;
   logic       wEth_Byte_Valid_Loopback;
+  logic       wEtherType_Valid;
 
   // Selected TX Data
   logic [7:0] wEth_Byte;
@@ -98,13 +99,14 @@ module eth_top #(
   // eth_rx
   //------------------------------------------
   eth_rx  eth_rx_inst (
-    .Clk           (Eth_Clk),
-    .Rst           (Eth_Rst),
-    .Crs_Dv        (Crs_Dv),
-    .Rxd           (Rxd),
-    .Recv_Byte     (wEth_Byte_Loopback),
-    .Recv_Byte_Rdy (wEth_Byte_Valid_Loopback),
-    .Crc_Valid     (Crc_Valid)
+    .Clk             (Eth_Clk),
+    .Rst             (Eth_Rst),
+    .Crs_Dv          (Crs_Dv),
+    .Rxd             (Rxd),
+    .Recv_Byte       (wEth_Byte_Loopback),
+    .Recv_Byte_Rdy   (wEth_Byte_Valid_Loopback),
+    .Crc_Valid       (Crc_Valid),
+    .EtherType_Valid (wEtherType_Valid)
   );
 
   //------------------------------------------
@@ -151,9 +153,11 @@ module eth_top #(
     end
   endcase
 
+  // clear FIFO when CRC is valid but EtherType is not
+  // this FIFO only holds data we want to send out
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
-    .Rst            (Eth_Rst),
+    .Rst            (Eth_Rst | (~wEtherType_Valid)),
     .Eth_Byte       (wEth_Byte),
     .Eth_Byte_Valid (wEth_Byte_Valid),
     .Eth_Pkt_Rdy    (wEth_Pkt_Rdy),

@@ -10,16 +10,17 @@
 # Notes:
 # Ethernet frame: (Preamble)(SFD)(MAC dest)(MAC source)(EtherType)(Payload)(FCS)
 # MAC is currently configured to only operate on incoming packets with EtherType 0xFFFF
+# Wireshark filter: eth.type == 0xFFFF 
 
 from scapy.all import Ether, sendp
 import threading
 
 class Loopback_Handler:
     def __init__(self):
-        self.mac_src  = "b4:2e:99:ee:a1:12"
+        self.mac_src  = "00:00:00:00:00:00"
         self.mac_dest = "ff:ff:ff:ff:ff:ff"
         self.len_type = 0xffff
-        self.payload  = b"This is a test message for the loopback test!"
+        self.payload  = b"This is a test message for the loopback test! Need to add zero-padding!"
 
     def send_packet(self, loopback_en=False):
         eth = Ether(dst=self.mac_dest, src=self.mac_src, type=self.len_type)
@@ -34,5 +35,5 @@ class Loopback_Handler:
 if __name__ == "__main__":
     handler = Loopback_Handler()
 
-    for i in range(100):
+    for i in range(1):
         handler.send_packet(True)

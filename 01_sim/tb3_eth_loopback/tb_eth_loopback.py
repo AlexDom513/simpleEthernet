@@ -11,7 +11,7 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 
-NUM_FRAMES = 1
+NUM_FRAMES = 3
 
 @cocotb.test()
 async def tb_eth_loopback(dut):
@@ -32,8 +32,27 @@ async def tb_eth_loopback(dut):
         await(RisingEdge(dut.Eth_Clk))
 
     # apply input stimulus
+    # need to discard packets we don't care about
+
+    custom_etherpkt = False
     for _ in range(NUM_FRAMES):
-        input_vec = frame_gen.frame_gen()
+        input_vec = frame_gen.frame_gen(custom_etherpkt)
+        vec = BinaryValue()
+        for rx in input_vec:
+            await(RisingEdge(dut.Eth_Clk))
+            binstr = str(rx[1]) + str(rx[0])
+            vec.binstr = binstr
+            dut.Rxd.value = vec
+            dut.Crs_Dv.value = 1
+
+        await(RisingEdge(dut.Eth_Clk))
+        dut.Rxd.value = 0
+        dut.Crs_Dv.value = 0
+        await(Timer(10, 'us'))
+
+    custom_etherpkt = True
+    for _ in range(NUM_FRAMES):
+        input_vec = frame_gen.frame_gen(custom_etherpkt)
         vec = BinaryValue()
         for rx in input_vec:
             await(RisingEdge(dut.Eth_Clk))

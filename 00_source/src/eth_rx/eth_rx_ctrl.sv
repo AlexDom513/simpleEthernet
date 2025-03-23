@@ -15,7 +15,8 @@ module eth_rx_ctrl (
   input  logic [31:0] Crc_Computed,
   output logic        Rx_En,
   output logic        Crc_En,
-  output logic        Crc_Valid
+  output logic        Crc_Valid,
+  output logic        EtherType_Valid
 );
 
   //------------------------------------------
@@ -131,10 +132,11 @@ module eth_rx_ctrl (
   begin
     if (Rst) begin
       sByte_Ctrl_State <= IDLE;
-      rByte_Cnt <= 0;
-      rLen_Type <= 0;
-      rCrc_Recv <= 0;
-      Crc_Valid <= 0;
+      rByte_Cnt       <= 0;
+      rLen_Type       <= 0;
+      rCrc_Recv       <= 0;
+      Crc_Valid       <= 0;
+      EtherType_Valid <= 1;
     end
     else begin
 
@@ -151,6 +153,7 @@ module eth_rx_ctrl (
           rLen_Type <= 0;
           rCrc_Recv <= 0;
           rByte_Ctrl_Done <= 0;
+          EtherType_Valid <= 1;
           if (Byte_Rdy) begin
             Crc_En <= 1;
             sByte_Ctrl_State <= DEST_ADDR;
@@ -192,6 +195,7 @@ module eth_rx_ctrl (
         // LEN_TYPE (3)
         //----------------
         // parse ethertype
+        // for loopback, marking EtherType invalid clears data FIFO 
 
         LEN_TYPE:
         begin
@@ -200,10 +204,12 @@ module eth_rx_ctrl (
 
             if (rByte_Cnt == pLEN_TYPE_BYTES-1) begin
               if (rLen_Type == pLEN_TYPE) begin
+                EtherType_Valid <= 1;
                 rByte_Cnt <= 0;
                 sByte_Ctrl_State <= PAYLOAD;
               end
               else begin
+                EtherType_Valid <= 0;
                 rByte_Ctrl_Done <= 1;
                 sByte_Ctrl_State <= IDLE;
               end

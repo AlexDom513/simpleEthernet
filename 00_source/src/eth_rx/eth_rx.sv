@@ -12,7 +12,8 @@ module eth_rx (
   input  logic [1:0] Rxd,
   output logic [7:0] Recv_Byte,
   output logic       Recv_Byte_Rdy,
-  output logic       Crc_Valid
+  output logic       Crc_Valid,
+  output logic       EtherType_Valid
 );
 
   //------------------------------------------
@@ -60,16 +61,17 @@ module eth_rx (
   // eth_rx_ctrl
   //------------------------------------------
   eth_rx_ctrl eth_rx_ctrl_inst (
-    .Clk          (Clk),
-    .Rst          (Rst),
-    .Crs_Dv       (Crs_Dv),
-    .Rxd          (Rxd),
-    .Byte_Rdy     (rByte_Rdy),
-    .Byte         (rByte),
-    .Crc_Computed (rCrc_Computed_d3),
-    .Rx_En        (wRx_Req),
-    .Crc_En       (wCrc_Req),
-    .Crc_Valid    (Crc_Valid)
+    .Clk             (Clk),
+    .Rst             (Rst),
+    .Crs_Dv          (Crs_Dv),
+    .Rxd             (Rxd),
+    .Byte_Rdy        (rByte_Rdy),
+    .Byte            (rByte),
+    .Crc_Computed    (rCrc_Computed_d3),
+    .Rx_En           (wRx_Req),
+    .Crc_En          (wCrc_Req),
+    .Crc_Valid       (Crc_Valid),
+    .EtherType_Valid (EtherType_Valid)
   );
 
   //------------------------------------------
