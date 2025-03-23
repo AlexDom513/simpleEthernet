@@ -10,6 +10,8 @@ module eth_rx (
   input  logic       Rst,
   input  logic       Crs_Dv,
   input  logic [1:0] Rxd,
+  output logic [7:0] Recv_Byte,
+  output logic       Recv_Byte_Rdy,
   output logic       Crc_Valid
 );
 
@@ -36,6 +38,14 @@ module eth_rx (
   logic       rByte_Rdy_d1;
   logic [7:0] rByte;
   logic [7:0] rByte_d1;
+
+  // output bytes
+  logic [7:0]  rRecv_Byte;
+  logic [7:0]  rRecv_Byte_d1;
+  logic [7:0]  rRecv_Byte_d2;
+  logic [7:0]  rRecv_Byte_d3;
+  logic [7:0]  rRecv_Byte_d4;
+  logic [16:0] rRecv_Byte_Rdy;
 
   // crc
   logic        wCrc_En;
@@ -124,5 +134,33 @@ module eth_rx (
       rCrc_Computed_d3 <= rCrc_Computed_d2;
     end
   end
+
+  //------------------------------------------
+  // data output
+  //------------------------------------------
+  
+  // pipeline the data for output
+  always @(posedge Clk)
+  begin
+    if (rByte_Rdy) begin
+      rRecv_Byte <= rByte;
+      rRecv_Byte_d1 <= rRecv_Byte;
+      rRecv_Byte_d2 <= rRecv_Byte_d1;
+      rRecv_Byte_d3 <= rRecv_Byte_d2;
+      rRecv_Byte_d4 <= rRecv_Byte_d3;
+    end
+  end
+
+  // pipeline the byte ready signal
+  always @(posedge Clk)
+  begin
+    if (rByte_Rdy)
+      rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], rByte_Rdy};
+    else
+      rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], 1'b0};
+  end
+
+  assign Recv_Byte = rRecv_Byte_d4;
+  assign Recv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
 
 endmodule

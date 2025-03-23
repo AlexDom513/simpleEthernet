@@ -5,7 +5,8 @@
 // 6/30/24
 //--------------------------------------------------------------------
 
-module eth_top (
+module eth_top #(
+  parameter gLoopback_En=1) (
 
   // AXI-Lite Interface
   input  logic        AXI_Clk,
@@ -43,6 +44,12 @@ module eth_top (
 );
 
   //------------------------------------------
+  // Constants
+  //------------------------------------------
+  localparam TX_TEST = 0;
+  localparam LOOPBACK_TEST = 1;
+
+  //------------------------------------------
   // Logic
   //------------------------------------------
 
@@ -54,6 +61,15 @@ module eth_top (
   logic [7:0] wEth_Byte_Test;
   logic       wEth_Byte_Valid_Test;
   logic       wEth_Pkt_Rdy_Test;
+
+  // Loopback (RX) to TX Data
+  logic [7:0] wEth_Byte_Loopback;
+  logic       wEth_Byte_Valid_Loopback;
+
+  // Selected TX Data
+  logic [7:0] wEth_Byte;
+  logic       wEth_Byte_Valid;
+  logic       wEth_Pkt_Rdy;
 
   // MDIO DMA
   logic [4:0]  wMDIO_Phy_Addr_Req;
@@ -82,11 +98,13 @@ module eth_top (
   // eth_rx
   //------------------------------------------
   eth_rx  eth_rx_inst (
-    .Clk       (Eth_Clk),
-    .Rst       (Eth_Rst),
-    .Crs_Dv    (Crs_Dv),
-    .Rxd       (Rxd),
-    .Crc_Valid (Crc_Valid)
+    .Clk           (Eth_Clk),
+    .Rst           (Eth_Rst),
+    .Crs_Dv        (Crs_Dv),
+    .Rxd           (Rxd),
+    .Recv_Byte     (wEth_Byte_Loopback),
+    .Recv_Byte_Rdy (wEth_Byte_Valid_Loopback),
+    .Crc_Valid     (Crc_Valid)
   );
 
   //------------------------------------------
@@ -109,12 +127,36 @@ module eth_top (
     .Eth_Pkt_Rdy_Test    (wEth_Pkt_Rdy_Test)
   );
 
+  // mux test or loopback data depending on generic
+  case(gLoopback_En)
+    TX_TEST:
+    begin
+      assign wEth_Byte       = wEth_Byte_Test;
+      assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
+      assign wEth_Pkt_Rdy    = wEth_Pkt_Rdy_Test;
+    end
+
+    LOOPBACK_TEST:
+    begin
+      assign wEth_Byte       = wEth_Byte_Loopback;
+      assign wEth_Byte_Valid = wEth_Byte_Valid_Loopback;
+      assign wEth_Pkt_Rdy    = Crc_Valid;
+    end
+
+    default:
+    begin
+      assign wEth_Byte       = wEth_Byte_Test;
+      assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
+      assign wEth_Pkt_Rdy    = wEth_Pkt_Rdy_Test;
+    end
+  endcase
+
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
     .Rst            (Eth_Rst),
-    .Eth_Byte       (wEth_Byte_Test),
-    .Eth_Byte_Valid (wEth_Byte_Valid_Test),
-    .Eth_Pkt_Rdy    (wEth_Pkt_Rdy_Test),
+    .Eth_Byte       (wEth_Byte),
+    .Eth_Byte_Valid (wEth_Byte_Valid),
+    .Eth_Pkt_Rdy    (wEth_Pkt_Rdy),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
   );

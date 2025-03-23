@@ -1,8 +1,8 @@
 #--------------------------------------------------------------------
 # simpleEthernet
-# tb_eth_rx_frame_gen.py
-# Verify transmit of Rx module
-# 1/30/25
+# tb_eth_loopback_frame_gen.py
+# Verify Rx from PC and Tx to PC
+# 3/22/25
 #--------------------------------------------------------------------
 
 import zlib
