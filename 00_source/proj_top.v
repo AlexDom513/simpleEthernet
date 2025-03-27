@@ -38,7 +38,6 @@ module proj_top(
   input  Rxd,
   output Tx_En,
   output Txd,
-  output Crc_Valid,
   output MDC_Clk,
   inout  MDIO
 );
@@ -95,7 +94,6 @@ module proj_top(
   wire [1:0] Rxd;
   wire [1:0] Txd;
   wire Tx_En;
-  wire Crc_Valid;
 
   bd_wrapper  bd_wrapper_inst (
     .AXI_Clk              (AXI_Clk),
@@ -175,8 +173,7 @@ module proj_top(
     .Crs_Dv               (Crs_Dv),
     .Rxd                  (Rxd),
     .Txd                  (Txd),
-    .Tx_En                (Tx_En),
-    .Crc_Valid            (Crc_Valid)
+    .Tx_En                (Tx_En)
   );
 
 endmodule

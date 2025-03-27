@@ -10,10 +10,8 @@ module eth_rx (
   input  logic       Rst,
   input  logic       Crs_Dv,
   input  logic [1:0] Rxd,
-  output logic [7:0] Recv_Byte,
-  output logic       Recv_Byte_Rdy,
-  output logic       Crc_Valid,
-  output logic       EtherType_Valid
+  output logic [9:0] Recv_Byte,
+  output logic       Recv_Byte_Rdy
 );
 
   //------------------------------------------
@@ -47,6 +45,8 @@ module eth_rx (
   logic [7:0]  rRecv_Byte_d3;
   logic [7:0]  rRecv_Byte_d4;
   logic [16:0] rRecv_Byte_Rdy;
+  logic [9:0]  wRecv_Byte;
+  logic        wRecv_Byte_Rdy;
 
   // crc
   logic        wCrc_En;
@@ -56,22 +56,35 @@ module eth_rx (
   logic [31:0] rCrc_Computed_d1;
   logic [31:0] rCrc_Computed_d2;
   logic [31:0] rCrc_Computed_d3;
+  logic        wCrc_Valid;
+  logic        rCrc_Valid;
+
+  // rx fifo
+  logic        wPkt_Invalid;
+  logic        wSOP_Out;
+  logic [15:0] rSOP;
+  logic        wSOP;
+  logic        wEOP;
+  logic        wFifo_Empty;
+  logic        rFifo_Rd_Valid;
 
   //------------------------------------------
   // eth_rx_ctrl
   //------------------------------------------
   eth_rx_ctrl eth_rx_ctrl_inst (
-    .Clk             (Clk),
-    .Rst             (Rst),
-    .Crs_Dv          (Crs_Dv),
-    .Rxd             (Rxd),
-    .Byte_Rdy        (rByte_Rdy),
-    .Byte            (rByte),
-    .Crc_Computed    (rCrc_Computed_d3),
-    .Rx_En           (wRx_Req),
-    .Crc_En          (wCrc_Req),
-    .Crc_Valid       (Crc_Valid),
-    .EtherType_Valid (EtherType_Valid)
+    .Clk          (Clk),
+    .Rst          (Rst),
+    .Crs_Dv       (Crs_Dv),
+    .Rxd          (Rxd),
+    .Byte_Rdy     (rByte_Rdy),
+    .Byte         (rByte),
+    .Crc_Computed (rCrc_Computed_d3),
+    .Rx_En        (wRx_Req),
+    .Crc_En       (wCrc_Req),
+    .Crc_Valid    (wCrc_Valid),
+    .Pkt_Invalid  (wPkt_Invalid),
+    .SOP          (wSOP_Out),
+    .EOP          (wEOP)
   );
 
   //------------------------------------------
@@ -141,7 +154,7 @@ module eth_rx (
   // data output
   //------------------------------------------
   
-  // pipeline the data for output
+  // pipeline the data for output (to not include CRC)
   always @(posedge Clk)
   begin
     if (rByte_Rdy) begin
@@ -162,7 +175,58 @@ module eth_rx (
       rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], 1'b0};
   end
 
-  assign Recv_Byte = rRecv_Byte_d4;
-  assign Recv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
+  //------------------------------------------
+  // data_fifo
+  //------------------------------------------
+  // holds rx bytes prior to CRC valid
+
+  // pipeline start of packet flag
+  always @(posedge Clk)
+  begin
+    rSOP <= {rSOP[14:0], wSOP_Out};
+  end
+  assign wSOP = rSOP[15];
+
+  // FIFO readout control logic
+  always @(posedge Clk)
+  begin
+    if (Rst) begin
+      rCrc_Valid <= 0;
+      rFifo_Rd_Valid <= 0;
+    end
+    else begin
+      rCrc_Valid <= wCrc_Valid;
+
+      // start readout on CRC valid
+      if (wCrc_Valid & ~rCrc_Valid)
+        rFifo_Rd_Valid <= 1;
+
+      // end readout on EOP flag
+      if (Recv_Byte[8])
+        rFifo_Rd_Valid <= 0;
+    end
+  end
+
+  // data output to FIFO
+  assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
+  assign wRecv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
+
+  async_fifo #(.DSIZE (10)) 
+  async_fifo_inst (
+    .wclk     (Clk),
+    .wrst_n   (~Rst | ~wPkt_Invalid),
+    .winc     (wRecv_Byte_Rdy),
+    .wdata    (wRecv_Byte),
+    .wfull    (),
+    .awfull   (),
+    .rclk     (Clk),
+    .rrst_n   (~Rst),
+    .rinc     (rFifo_Rd_Valid),
+    .rdata    (Recv_Byte),
+    .rempty   (wFifo_Empty),
+    .arempty  ()
+  );
+
+  assign Recv_Byte_Rdy = rFifo_Rd_Valid & ~Recv_Byte[9];
 
 endmodule

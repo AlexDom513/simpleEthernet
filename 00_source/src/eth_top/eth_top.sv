@@ -39,8 +39,7 @@ module eth_top #(
   input  logic        Crs_Dv,
   input  logic [1:0]  Rxd,
   output logic [1:0]  Txd,
-  output logic        Tx_En,
-  output logic        Crc_Valid
+  output logic        Tx_En
 );
 
   //------------------------------------------
@@ -103,10 +102,9 @@ module eth_top #(
     .Rst             (Eth_Rst),
     .Crs_Dv          (Crs_Dv),
     .Rxd             (Rxd),
-    .Recv_Byte       (wEth_Byte_Loopback),
-    .Recv_Byte_Rdy   (wEth_Byte_Valid_Loopback),
-    .Crc_Valid       (Crc_Valid),
-    .EtherType_Valid (wEtherType_Valid)
+    .Recv_Byte       (),//(wEth_Byte_Loopback),
+    .Recv_Byte_Rdy   ()//(wEth_Byte_Valid_Loopback)
+    //.EtherType_Valid (wEtherType_Valid) remove!
   );
 
   //------------------------------------------
@@ -142,7 +140,7 @@ module eth_top #(
     begin
       assign wEth_Byte       = wEth_Byte_Loopback;
       assign wEth_Byte_Valid = wEth_Byte_Valid_Loopback;
-      assign wEth_Pkt_Rdy    = Crc_Valid;
+      assign wEth_Pkt_Rdy    = 0; // need to fix
     end
 
     default:
