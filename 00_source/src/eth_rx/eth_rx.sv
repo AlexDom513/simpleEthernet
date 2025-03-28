@@ -4,6 +4,7 @@
 // Ethernet RMII receive module
 // 12/10/24
 //--------------------------------------------------------------------
+// note that bits 9 & 8 hold SOP & EOP flags, remainder is data
 
 module eth_rx (
   input  logic       Clk,
@@ -59,7 +60,7 @@ module eth_rx (
   logic        wCrc_Valid;
   logic        rCrc_Valid;
 
-  // rx fifo
+  // rx fifo control
   logic        wPkt_Invalid;
   logic        wSOP_Out;
   logic [15:0] rSOP;
@@ -88,7 +89,7 @@ module eth_rx (
   );
 
   //------------------------------------------
-  // byte_rx
+  // byte formation
   //------------------------------------------
   // big-endian byte order, bits enter with LSB first
 
@@ -158,7 +159,7 @@ module eth_rx (
   always_ff @(posedge Clk)
   begin
     if (rByte_Rdy) begin
-      rRecv_Byte <= rByte;
+      rRecv_Byte    <= rByte;
       rRecv_Byte_d1 <= rRecv_Byte;
       rRecv_Byte_d2 <= rRecv_Byte_d1;
       rRecv_Byte_d3 <= rRecv_Byte_d2;
@@ -176,9 +177,21 @@ module eth_rx (
   end
 
   //------------------------------------------
-  // data_fifo
+  // rx fifo
   //------------------------------------------
   // holds rx bytes prior to CRC valid
+  //  - control logic (in eth_rx_ctrl) will insert 
+  //    SOP & EOP flags for the first & last bytes in a packet
+  //  - these flags are inserted prior to storing in the FIFO
+
+  // control logic (in eth_rx_ctrl) will indicate wCrc_Valid
+  //  - this signal begins readout of the rx FIFO
+  //  - readout continues until byte containing the EOP flag is reached or FIFO is empty
+
+  // control logic (in eth_rx_ctrl) will indicate wPkt_Invalid
+  //  - packet can be marked invalid due to failed checksum
+  //    or invalid EtherType (only 0xFFFF)
+  //  - wPkt_Invalid will cause the rx FIFO to be cleared
 
   // pipeline start of packet flag
   always_ff @(posedge Clk)
@@ -206,6 +219,7 @@ module eth_rx (
         rFifo_Rd_Valid <= 0;
     end
   end
+  assign Recv_Byte_Rdy = rFifo_Rd_Valid;
 
   // data output to FIFO
   assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
@@ -229,7 +243,5 @@ module eth_rx (
     .rempty   (wFifo_Empty),
     .arempty  ()
   );
-
-  assign Recv_Byte_Rdy = rFifo_Rd_Valid;
 
 endmodule

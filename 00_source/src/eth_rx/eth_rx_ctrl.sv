@@ -242,7 +242,6 @@ module eth_rx_ctrl (
           end
           else if (~Crs_Dv) begin
             Crc_En <= 0;
-            //EOP <= 1;
             sByte_Ctrl_State <= FCS;
           end
         end

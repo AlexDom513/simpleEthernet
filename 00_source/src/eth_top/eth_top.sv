@@ -110,17 +110,10 @@ module eth_top #(
   // MAC source, Ethertype, and CRC. User is responsible
   // for providing all other Payload bytes
   //
-  // to TX, write 1 byte (Eth_Byte) per CC while
-  // asserting (Eth_Byte_Valid), once all desired bytes are
-  // written, assert (Eth_Pkt_Rdy) to kickoff send
-
-  eth_tx_tpg  eth_tx_tpg_inst (
-    .Clk                 (Eth_Clk),
-    .Rst                 (Eth_Rst),
-    .Eth_Tx_Test_En      (Eth_Tx_Test_En),
-    .Eth_Byte_Test       (wEth_Byte_Test),
-    .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test)
-  );
+  // - to TX, write 1 byte (Eth_Byte) per CC while asserting (Eth_Byte_Valid)
+  // - to guarantee proper readout, all bytes belonging to same packet must enter on
+  //   consecutive clock cycles
+  // - first and last bytes of a packet must be marked with proper SOP (bit 9) & EOP (bit 8) flags
 
   // mux test or loopback data depending on generic
   case(gLoopback_En)
@@ -150,6 +143,17 @@ module eth_top #(
     .Eth_Byte_Valid (wEth_Byte_Valid),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
+  );
+
+  //------------------------------------------
+  // eth_tx_tpg
+  //------------------------------------------
+  eth_tx_tpg  eth_tx_tpg_inst (
+    .Clk                 (Eth_Clk),
+    .Rst                 (Eth_Rst),
+    .Eth_Tx_Test_En      (Eth_Tx_Test_En),
+    .Eth_Byte_Test       (wEth_Byte_Test),
+    .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test)
   );
 
   //------------------------------------------
