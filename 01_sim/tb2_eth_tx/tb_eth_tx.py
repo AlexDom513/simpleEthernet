@@ -13,6 +13,21 @@ from cocotb.triggers import Timer, RisingEdge
 
 NUM_FRAMES = 1
 
+async def tx_capture(dut):
+  record = []
+  await(RisingEdge(dut.Tx_En))
+  await(RisingEdge(dut.Clk))
+  while(dut.Tx_En.value == 1):
+    binstr = list(dut.Txd.value.binstr)
+    record.append(binstr[1]) # Txd[0] (lsb of duet, but later in list)
+    record.append(binstr[0]) # Txd[1] (msb of duet, but earlier in list)
+    await(RisingEdge(dut.Clk))
+
+  with open('1_bit_capture.txt', 'w') as f:
+    for bit in record:
+      f.write(bit + '\n')
+
+
 @cocotb.test()
 async def tb_eth_tx(dut):
 
@@ -31,18 +46,23 @@ async def tb_eth_tx(dut):
   for _ in range(5):
     await(RisingEdge(dut.Clk))
 
+  # begin capture
+  cocotb.start_soon(tx_capture(dut))
+
   # apply input stimulus
-  record = []
   for _ in range(NUM_FRAMES):
     input_vec = frame_gen.frame_gen()
-    for byte in input_vec:
+    for i in range(len(input_vec)):
       await(RisingEdge(dut.Clk))
-      dut.Eth_Byte.value = byte
+      if (i == len(input_vec)-1):
+        dut.Eth_Byte.value = input_vec[i] + 2**8 # EOP
+      else:
+        dut.Eth_Byte.value = input_vec[i]
       dut.Eth_Byte_Valid.value = 1
 
     # disable input stimulus
     await(RisingEdge(dut.Clk))
-    dut.Eth_Byte.value = BinaryValue(0, n_bits=8)
+    dut.Eth_Byte.value = BinaryValue(0, n_bits=10)
     dut.Eth_Byte_Valid.value = 0
 
     # strobe frame ready
@@ -51,19 +71,19 @@ async def tb_eth_tx(dut):
     await(RisingEdge(dut.Clk))
     dut.Eth_Pkt_Rdy.value = 0
 
-    # capture transmit data
-    await(RisingEdge(dut.Tx_En))
-    await(RisingEdge(dut.Clk))
-    while(dut.Tx_En.value == 1):
-      binstr = list(dut.Txd.value.binstr)
-      record.append(binstr[1]) # Txd[0] (lsb of duet, but later in list)
-      record.append(binstr[0]) # Txd[1] (msb of duet, but earlier in list)
-      await(RisingEdge(dut.Clk))
+    # # capture transmit data
+    # await(RisingEdge(dut.Tx_En))
+    # await(RisingEdge(dut.Clk))
+    # while(dut.Tx_En.value == 1):
+    #   binstr = list(dut.Txd.value.binstr)
+    #   record.append(binstr[1]) # Txd[0] (lsb of duet, but later in list)
+    #   record.append(binstr[0]) # Txd[1] (msb of duet, but earlier in list)
+    #   await(RisingEdge(dut.Clk))
 
     # buffer time
     await(Timer(10, 'us'))
 
-  with open('1_bit_capture.txt', 'w') as f:
-    for bit in record:
-      f.write(bit + '\n')
+  # with open('1_bit_capture.txt', 'w') as f:
+  #   for bit in record:
+  #     f.write(bit + '\n')
     

@@ -10,8 +10,7 @@ module eth_tx_tpg (
   input  logic       Rst,
   input  logic       Eth_Tx_Test_En,
   output logic [7:0] Eth_Byte_Test,
-  output logic       Eth_Byte_Valid_Test,
-  output logic       Eth_Pkt_Rdy_Test
+  output logic       Eth_Byte_Valid_Test
 );
 
   //------------------------------------------
@@ -62,12 +61,10 @@ module eth_tx_tpg (
       else if (Eth_Byte_Test == MAX_CNT) begin
         Eth_Byte_Valid_Test <= 0;
         Eth_Byte_Test <= 0;
-        Eth_Pkt_Rdy_Test <= 1;
       end
       else begin
         Eth_Byte_Valid_Test <= 0;
         Eth_Byte_Test <= 0;
-        Eth_Pkt_Rdy_Test <= 0;
       end
 
     end

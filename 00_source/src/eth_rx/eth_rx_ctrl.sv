@@ -15,7 +15,10 @@ module eth_rx_ctrl (
   input  logic [31:0] Crc_Computed,
   output logic        Rx_En,
   output logic        Crc_En,
-  output logic        Crc_Valid
+  output logic        Crc_Valid,
+  output logic        Pkt_Invalid,
+  output logic        SOP,
+  output logic        EOP
 );
 
   //------------------------------------------
@@ -61,7 +64,7 @@ module eth_rx_ctrl (
   //------------------------------------------
   // eth_rx_ctrl_fsm
   //------------------------------------------
-  // monitor read-in of bits from PHY
+  // monitor read-in of bits from PHY (capture preamble)
 
   always_ff @(posedge Clk)
   begin
@@ -109,6 +112,7 @@ module eth_rx_ctrl (
         begin
           if (rByte_Ctrl_Done | ~Crs_Dv) begin
             Rx_En <= 0;
+            rRx_Ctrl_Cnt <= 0;
             sRx_Ctrl_State <= RX_IDLE;
           end
         end
@@ -131,10 +135,13 @@ module eth_rx_ctrl (
   begin
     if (Rst) begin
       sByte_Ctrl_State <= IDLE;
-      rByte_Cnt <= 0;
-      rLen_Type <= 0;
-      rCrc_Recv <= 0;
-      Crc_Valid <= 0;
+      rByte_Cnt   <= 0;
+      rLen_Type   <= 0;
+      rCrc_Recv   <= 0;
+      Crc_Valid   <= 0;
+      Pkt_Invalid <= 0;
+      SOP         <= 0;
+      EOP         <= 0;
     end
     else begin
 
@@ -151,8 +158,13 @@ module eth_rx_ctrl (
           rLen_Type <= 0;
           rCrc_Recv <= 0;
           rByte_Ctrl_Done <= 0;
+          Pkt_Invalid <= 0;
+          SOP <= 0;
+          EOP <= 0;
           if (Byte_Rdy) begin
+            Pkt_Invalid <= 0;
             Crc_En <= 1;
+            SOP <= 1;
             sByte_Ctrl_State <= DEST_ADDR;
           end
         end
@@ -162,6 +174,7 @@ module eth_rx_ctrl (
         //----------------
         DEST_ADDR:
         begin
+          SOP <= 0;
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
 
@@ -197,16 +210,15 @@ module eth_rx_ctrl (
         begin
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
-
             if (rByte_Cnt == pLEN_TYPE_BYTES-1) begin
-              if (rLen_Type == pLEN_TYPE) begin
-                rByte_Cnt <= 0;
-                sByte_Ctrl_State <= PAYLOAD;
-              end
-              else begin
-                rByte_Ctrl_Done <= 1;
-                sByte_Ctrl_State <= IDLE;
-              end
+              //if (rLen_Type == pLEN_TYPE) begin
+              rByte_Cnt <= 0;
+              sByte_Ctrl_State <= PAYLOAD;
+              //end
+              // else begin
+              //   rByte_Ctrl_Done <= 1;
+              //   sByte_Ctrl_State <= IDLE;
+              // end
             end
             else
               rLen_Type <= {rLen_Type[7:0], Byte};
@@ -225,6 +237,7 @@ module eth_rx_ctrl (
           else if (Byte_Rdy & ~Crs_Dv) begin
             Crc_En <= 0;
             rCrc_Recv <= {Byte, rCrc_Recv[31:8]};
+            EOP <= 1;
             sByte_Ctrl_State <= FCS;
           end
           else if (~Crs_Dv) begin
@@ -236,10 +249,15 @@ module eth_rx_ctrl (
         //----------------
         // FCS (5)
         //----------------
+        // packet valid when valid EtherType and CRC 
+
         FCS:
         begin
-          if (rCrc_Recv == Crc_Computed)
+          EOP <= 0;
+          if (rLen_Type == pLEN_TYPE & rCrc_Recv == Crc_Computed)
             Crc_Valid <= 1;
+          else
+            Pkt_Invalid <= 1;
           sByte_Ctrl_State <= IDLE;
         end
 

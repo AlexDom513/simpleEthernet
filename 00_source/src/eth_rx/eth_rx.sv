@@ -4,13 +4,15 @@
 // Ethernet RMII receive module
 // 12/10/24
 //--------------------------------------------------------------------
+// note that bits 9 & 8 hold SOP & EOP flags, remainder is data
 
 module eth_rx (
   input  logic       Clk,
   input  logic       Rst,
   input  logic       Crs_Dv,
   input  logic [1:0] Rxd,
-  output logic       Crc_Valid
+  output logic [9:0] Recv_Byte,
+  output logic       Recv_Byte_Rdy
 );
 
   //------------------------------------------
@@ -37,6 +39,16 @@ module eth_rx (
   logic [7:0] rByte;
   logic [7:0] rByte_d1;
 
+  // output bytes
+  logic [7:0]  rRecv_Byte;
+  logic [7:0]  rRecv_Byte_d1;
+  logic [7:0]  rRecv_Byte_d2;
+  logic [7:0]  rRecv_Byte_d3;
+  logic [7:0]  rRecv_Byte_d4;
+  logic [16:0] rRecv_Byte_Rdy;
+  logic [9:0]  wRecv_Byte;
+  logic        wRecv_Byte_Rdy;
+
   // crc
   logic        wCrc_En;
   logic        wCrc_Req;
@@ -45,6 +57,17 @@ module eth_rx (
   logic [31:0] rCrc_Computed_d1;
   logic [31:0] rCrc_Computed_d2;
   logic [31:0] rCrc_Computed_d3;
+  logic        wCrc_Valid;
+  logic        rCrc_Valid;
+
+  // rx fifo control
+  logic        wPkt_Invalid;
+  logic        wSOP_Out;
+  logic [15:0] rSOP;
+  logic        wSOP;
+  logic        wEOP;
+  logic        wFifo_Empty;
+  logic        rFifo_Rd_Valid;
 
   //------------------------------------------
   // eth_rx_ctrl
@@ -59,17 +82,20 @@ module eth_rx (
     .Crc_Computed (rCrc_Computed_d3),
     .Rx_En        (wRx_Req),
     .Crc_En       (wCrc_Req),
-    .Crc_Valid    (Crc_Valid)
+    .Crc_Valid    (wCrc_Valid),
+    .Pkt_Invalid  (wPkt_Invalid),
+    .SOP          (wSOP_Out),
+    .EOP          (wEOP)
   );
 
   //------------------------------------------
-  // byte_rx
+  // byte formation
   //------------------------------------------
   // big-endian byte order, bits enter with LSB first
 
   // form bytes when past PREAMBLE
   assign wByte_Rx = {Rxd, rByte_Rx[5:0]};
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wRx_Req & Crs_Dv)
       rByte_Rx <= wByte_Rx >> pMII_WIDTH;
@@ -77,7 +103,7 @@ module eth_rx (
 
   // indicate when formed byte is valid
   assign wByte_Rdy = rBit_Cnt[1] & rBit_Cnt[0];
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wRx_Req & Crs_Dv)
       rBit_Cnt <= rBit_Cnt + 1;
@@ -86,7 +112,7 @@ module eth_rx (
   end
 
   // rx output register
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     rByte_Rdy <= wByte_Rdy;
     if (wByte_Rdy & wRx_Req)
@@ -98,7 +124,7 @@ module eth_rx (
   //------------------------------------------
 
   // pipeline data for crc
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     rByte_Rdy_d1 <= rByte_Rdy;
     rByte_d1 <= rByte;
@@ -115,7 +141,7 @@ module eth_rx (
 
   // only update rCrc_Computed when byte is ready
   assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wCrc_En) begin
       rCrc_Computed <= wCrc_Out;
@@ -124,5 +150,98 @@ module eth_rx (
       rCrc_Computed_d3 <= rCrc_Computed_d2;
     end
   end
+
+  //------------------------------------------
+  // data output
+  //------------------------------------------
+  
+  // pipeline the data for output (to not include CRC)
+  always_ff @(posedge Clk)
+  begin
+    if (rByte_Rdy) begin
+      rRecv_Byte    <= rByte;
+      rRecv_Byte_d1 <= rRecv_Byte;
+      rRecv_Byte_d2 <= rRecv_Byte_d1;
+      rRecv_Byte_d3 <= rRecv_Byte_d2;
+      rRecv_Byte_d4 <= rRecv_Byte_d3;
+    end
+  end
+
+  // pipeline the byte ready signal
+  always_ff @(posedge Clk)
+  begin
+    if (rByte_Rdy)
+      rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], rByte_Rdy};
+    else
+      rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], 1'b0};
+  end
+
+  //------------------------------------------
+  // rx fifo
+  //------------------------------------------
+  // holds rx bytes prior to CRC valid
+  //  - control logic (in eth_rx_ctrl) will insert 
+  //    SOP & EOP flags for the first & last bytes in a packet
+  //  - these flags are inserted prior to storing in the FIFO
+
+  // control logic (in eth_rx_ctrl) will indicate wCrc_Valid
+  //  - this signal begins readout of the rx FIFO
+  //  - readout continues until byte containing the EOP flag is reached or FIFO is empty
+
+  // control logic (in eth_rx_ctrl) will indicate wPkt_Invalid
+  //  - packet can be marked invalid due to failed checksum
+  //    or invalid EtherType (only 0xFFFF)
+  //  - wPkt_Invalid will cause the rx FIFO to be cleared
+
+  // pipeline start of packet flag
+  always_ff @(posedge Clk)
+  begin
+    rSOP <= {rSOP[14:0], wSOP_Out};
+  end
+  assign wSOP = rSOP[15];
+
+  // FIFO readout control logic
+  always_ff @(posedge Clk)
+  begin
+    if (Rst) begin
+      rCrc_Valid <= 0;
+      rFifo_Rd_Valid <= 0;
+    end
+    else begin
+      rCrc_Valid <= wCrc_Valid;
+
+      // start readout on CRC valid
+      if (wCrc_Valid & ~rCrc_Valid)
+        rFifo_Rd_Valid <= 1;
+
+      // end readout on EOP flag or empty
+      if (Recv_Byte[8] | wFifo_Empty)
+        rFifo_Rd_Valid <= 0;
+    end
+  end
+  assign Recv_Byte_Rdy = rFifo_Rd_Valid;
+
+  // data output to FIFO
+  assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
+  assign wRecv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
+
+  async_fifo #(
+    .DSIZE (10),
+    .ASIZE (9)
+  ) 
+  async_fifo_inst (
+    .wclk     (Clk),
+    .wrst_n   (~Rst & ~wPkt_Invalid),
+    .winc     (wRecv_Byte_Rdy),
+    .wdata    (wRecv_Byte),
+    .wfull    (),
+    .awfull   (),
+    .rclk     (Clk),
+    .rrst_n   (~Rst & ~wPkt_Invalid),
+    .rinc     (rFifo_Rd_Valid),
+    .rdata    (Recv_Byte),
+    .rempty   (wFifo_Empty),
+    .arempty  ()
+  );
 
 endmodule

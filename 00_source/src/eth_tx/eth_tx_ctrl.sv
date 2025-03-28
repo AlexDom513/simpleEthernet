@@ -10,7 +10,7 @@ import eth_tx_pkg::*;
 module eth_tx_ctrl (
   input  logic Clk,
   input  logic Rst,
-  input  logic Eth_Pkt_Rdy,
+  input  logic EOP,
   input  logic Fifo_Empty,
   output logic Tx_En,
   output logic Fifo_Rd,
@@ -22,6 +22,7 @@ module eth_tx_ctrl (
   // Logic
   //------------------------------------------
   logic [9:0] rTx_Ctrl_Cnt;
+  logic [9:0] rByte_Cnt;
 
   //------------------------------------------
   // eth_tx_ctrl_fsm
@@ -42,12 +43,16 @@ module eth_tx_ctrl (
       //----------------
       // IDLE (0)
       //----------------
+      // can begin forming packet as soon as byte enters data fifo
+      // set rByte_Cnt = 14 (MAC dest) + (MAC src) + (EtherType)
+
       IDLE:
       begin
         Tx_En <= 0;
         Crc_En <= 0;
         rTx_Ctrl_Cnt  <= 0;
-        if (Eth_Pkt_Rdy) begin
+        rByte_Cnt <= 14;
+        if (~Fifo_Empty) begin
           Tx_En <= 1;
           Tx_Ctrl_FSM_State <= PREAMBLE;
         end
@@ -123,8 +128,10 @@ module eth_tx_ctrl (
         Fifo_Rd <= 0;
 
         // ready for read
-        if (rTx_Ctrl_Cnt == 1)
+        if (rTx_Ctrl_Cnt == 1) begin
           Fifo_Rd <= 1;
+          rByte_Cnt <= rByte_Cnt + 1;
+        end
         else if (rTx_Ctrl_Cnt == 3) begin
           Fifo_Rd <= 0;
           rTx_Ctrl_Cnt <= 0;
@@ -132,10 +139,10 @@ module eth_tx_ctrl (
         else
           Fifo_Rd <= 0;
 
-        // transition when fifo is empty, assume pad is skipped
-        if (Fifo_Empty) begin
+        // transition on EOP
+        if (EOP) begin
           rTx_Ctrl_Cnt <= 0;
-          if (1) begin
+          if (rByte_Cnt > pMIN_PKT_BYTES) begin
             Crc_En <= 0;
             Tx_Ctrl_FSM_State <= FCS;
           end
@@ -147,10 +154,26 @@ module eth_tx_ctrl (
       //----------------
       // PAD (7)
       //----------------
-      // standard ethernet frame has minimum of 64 bytes total
+      // standard ethernet frame has minimum of 64 bytes (including FCS)
+
       PAD:
       begin
-        Tx_Ctrl_FSM_State <= FCS;
+        rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+
+        // zero-pad
+        if (rTx_Ctrl_Cnt == 1) begin
+          rByte_Cnt <= rByte_Cnt + 1;
+        end
+        else if (rTx_Ctrl_Cnt == 3) begin
+          rTx_Ctrl_Cnt <= 0;
+        end
+
+        // tranisition on minimum packet size
+        if (rByte_Cnt > pMIN_PKT_BYTES) begin
+          rTx_Ctrl_Cnt <= 0;
+          Crc_En <= 0;
+          Tx_Ctrl_FSM_State <= FCS;
+        end
       end
 
       //----------------
@@ -162,6 +185,18 @@ module eth_tx_ctrl (
         if (rTx_Ctrl_Cnt == pFCS_CNT-1) begin
           rTx_Ctrl_Cnt <= 0;
           Tx_En <= 0;
+          Tx_Ctrl_FSM_State <= IPG;
+        end
+      end
+
+      //----------------
+      // IPG (9)
+      //----------------
+      IPG:
+      begin
+        rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+        if (rTx_Ctrl_Cnt == pIPG_CNT-1) begin
+          rTx_Ctrl_Cnt <= 0;
           Tx_Ctrl_FSM_State <= IDLE;
         end
       end

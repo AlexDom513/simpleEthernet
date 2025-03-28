@@ -9,7 +9,7 @@
 
 # NOTE:
 # when working with block diagrams, take the following actions for source control
-# 1) update 00_source/src/bd_wrapper.v with most recent ports
+# 1) update 00_source/bd_wrapper.v with most recent ports
 # 2) associate the desired state of the project with a tcl script --> {write_project_tcl rebuild}
 # 3) compare current full_build.tcl with rebuild.tcl and verify differences before accepting new version
 

@@ -15,6 +15,7 @@
 #define ETH_BASE_ADDR                   0x43C00000
 #define ETH_TX_TEST_OFFSET              0x88
 
+// byte address offsets (read/write w/ zynq)
 #define MDIO_BASE_ADDR                  0x43C00000
 #define MDIO_PHY_CTRL_OFFSET            0x00
 #define MDIO_PHY_STAT_OFFSET            0x04
@@ -33,6 +34,7 @@
 #define MDIO_USR_CTRL_OFFSET            0x80
 #define MDIO_USR_WRITE_OFFSET           0x84
 
+// phy address offsets (MDIO read/write w/ PHY)
 #define MDIO_PHY_CTRL_OFFSET_HW         (MDIO_PHY_CTRL_OFFSET      >> 2)
 #define MDIO_PHY_STAT_OFFSET_HW         (MDIO_PHY_STAT_OFFSET      >> 2)
 #define MDIO_PHY_IDENT_1_OFFSET_HW      (MDIO_PHY_IDENT_1_OFFSET   >> 2)
