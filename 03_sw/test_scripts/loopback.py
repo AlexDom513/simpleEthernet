@@ -21,7 +21,7 @@ class Loopback_Handler:
         self.mac_src  = "00:00:00:00:00:00"
         self.mac_dest = "ff:ff:ff:ff:ff:ff"
         self.len_type = 0xffff
-        self.payload  = b"This is a test message for the loopback test! Need to add zero-padding!"
+        self.payload  = b"Test"
 
     def send_packet(self, loopback_en=False):
         eth = Ether(dst=self.mac_dest, src=self.mac_src, type=self.len_type)
@@ -36,5 +36,5 @@ class Loopback_Handler:
 if __name__ == "__main__":
     handler = Loopback_Handler()
 
-    for i in range(100):
+    for i in range(1):
         handler.send_packet(True)

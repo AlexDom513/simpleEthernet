@@ -67,7 +67,6 @@ module eth_tx (
   logic [47:0] rSrc_Addr_Buf;
   logic [15:0] rLen_Type_Buf;
   logic [7:0]  rPayload_Buf;
-  logic [7:0]  rPad_Buf;
   logic [31:0] rFCS_Buf;
 
   //------------------------------------------
@@ -151,7 +150,6 @@ module eth_tx (
       rSrc_Addr_Buf  <= 0;
       rLen_Type_Buf  <= 0;
       rPayload_Buf   <= 0;
-      rPad_Buf       <= 0;
       rFCS_Buf       <= 0;
     end
     else begin
@@ -168,7 +166,6 @@ module eth_tx (
                               {pSRC_ADDR[23:16]},   {pSRC_ADDR[31:24]},
                               {pSRC_ADDR[39:32]},   {pSRC_ADDR[47:40]}};
           rLen_Type_Buf   <= {{pLEN_TYPE[7:0]},     {pLEN_TYPE[15:8]}};
-          rPad_Buf        <= 0; // unused
         end
 
         PREAMBLE:
@@ -207,7 +204,7 @@ module eth_tx (
 
         FCS:
         begin
-          if (sTx_Ctrl_FSM_State_d1 == DATA)
+          if (sTx_Ctrl_FSM_State_d1 == DATA | sTx_Ctrl_FSM_State_d1 == PAD)
             rFCS_Buf <= (wCrc_Computed_Tx >> pMII_WIDTH);
           else
             rFCS_Buf <= rFCS_Buf >> pMII_WIDTH;
@@ -252,9 +249,9 @@ module eth_tx (
       DATA:
         rTx_Data = rPayload_Buf[pMII_WIDTH-1:0];
       PAD:
-        rTx_Data = rPad_Buf[pMII_WIDTH-1:0];
+        rTx_Data = 2'b00;
       FCS:
-        if (sTx_Ctrl_FSM_State_d1 == DATA)
+        if (sTx_Ctrl_FSM_State_d1 == DATA | sTx_Ctrl_FSM_State_d1 == PAD)
           rTx_Data = wCrc_Computed_Tx[pMII_WIDTH-1:0];
         else
           rTx_Data = rFCS_Buf[pMII_WIDTH-1:0];

@@ -7,10 +7,11 @@
 
 package eth_tx_pkg;
 
-  parameter pMII_WIDTH      = 2; // # parallel data lines to PHY
-  parameter pBYTES_TO_BITS  = 3; // shift to convert bytes to bits
+  parameter pMII_WIDTH      = 2;  // # parallel data lines to PHY
+  parameter pBYTES_TO_BITS  = 3;  // shift to convert bytes to bits
 
   // byte counts
+  parameter pMIN_PKT_BYTES  = 60; // not including CRC
   parameter pPREAMBLE_BYTES = 7;
   parameter pSFD_BYTES      = 1;
   parameter pMAC_ADDR_BYTES = 6;

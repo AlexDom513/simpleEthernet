@@ -20,10 +20,8 @@ def frame_gen(custom_etherpkt):
     preamble    = np.tile([1,0,1,0,1,0,1,0], 7)
     sfd         = np.array([1, 0, 1, 0, 1, 0, 1, 1])
     eth_layer   = Ether(dst="ff:ff:ff:ff:ff:ff", src="00:00:00:00:00:00", type=ethertype)
-    ip_layer    = IP(dst="192.168.1.1", src="192.168.1.100")
-    udp_layer   = UDP(dport=12345, sport=54321)
-    payload     = "Hello, UDP!, Making the packet longer!"
-    frame       = eth_layer / ip_layer / udp_layer / payload
+    payload     = "Test"
+    frame       = eth_layer / payload
 
     # write frame bytes/info to file
     with open('0_frame_gen.txt', 'w') as file:
