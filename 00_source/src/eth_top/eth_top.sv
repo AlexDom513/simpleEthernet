@@ -59,17 +59,14 @@ module eth_top #(
   // Test TX Data
   logic [7:0] wEth_Byte_Test;
   logic       wEth_Byte_Valid_Test;
-  logic       wEth_Pkt_Rdy_Test;
 
   // Loopback (RX) to TX Data
-  logic [7:0] wEth_Byte_Loopback;
+  logic [9:0] wEth_Byte_Loopback;
   logic       wEth_Byte_Valid_Loopback;
-  logic       wEtherType_Valid;
 
   // Selected TX Data
-  logic [7:0] wEth_Byte;
+  logic [9:0] wEth_Byte;
   logic       wEth_Byte_Valid;
-  logic       wEth_Pkt_Rdy;
 
   // MDIO DMA
   logic [4:0]  wMDIO_Phy_Addr_Req;
@@ -98,13 +95,12 @@ module eth_top #(
   // eth_rx
   //------------------------------------------
   eth_rx  eth_rx_inst (
-    .Clk             (Eth_Clk),
-    .Rst             (Eth_Rst),
-    .Crs_Dv          (Crs_Dv),
-    .Rxd             (Rxd),
-    .Recv_Byte       (),//(wEth_Byte_Loopback),
-    .Recv_Byte_Rdy   ()//(wEth_Byte_Valid_Loopback)
-    //.EtherType_Valid (wEtherType_Valid) remove!
+    .Clk           (Eth_Clk),
+    .Rst           (Eth_Rst),
+    .Crs_Dv        (Crs_Dv),
+    .Rxd           (Rxd),
+    .Recv_Byte     (wEth_Byte_Loopback),
+    .Recv_Byte_Rdy (wEth_Byte_Valid_Loopback)
   );
 
   //------------------------------------------
@@ -123,8 +119,7 @@ module eth_top #(
     .Rst                 (Eth_Rst),
     .Eth_Tx_Test_En      (Eth_Tx_Test_En),
     .Eth_Byte_Test       (wEth_Byte_Test),
-    .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test),
-    .Eth_Pkt_Rdy_Test    (wEth_Pkt_Rdy_Test)
+    .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test)
   );
 
   // mux test or loopback data depending on generic
@@ -133,32 +128,26 @@ module eth_top #(
     begin
       assign wEth_Byte       = wEth_Byte_Test;
       assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
-      assign wEth_Pkt_Rdy    = wEth_Pkt_Rdy_Test;
     end
 
     LOOPBACK_TEST:
     begin
       assign wEth_Byte       = wEth_Byte_Loopback;
       assign wEth_Byte_Valid = wEth_Byte_Valid_Loopback;
-      assign wEth_Pkt_Rdy    = 0; // need to fix
     end
 
     default:
     begin
       assign wEth_Byte       = wEth_Byte_Test;
       assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
-      assign wEth_Pkt_Rdy    = wEth_Pkt_Rdy_Test;
     end
   endcase
 
-  // clear FIFO when CRC is valid but EtherType is not
-  // this FIFO only holds data we want to send out
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
-    .Rst            (Eth_Rst | (~wEtherType_Valid)),
+    .Rst            (Eth_Rst),
     .Eth_Byte       (wEth_Byte),
     .Eth_Byte_Valid (wEth_Byte_Valid),
-    .Eth_Pkt_Rdy    (wEth_Pkt_Rdy),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
   );

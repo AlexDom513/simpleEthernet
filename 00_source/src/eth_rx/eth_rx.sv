@@ -94,7 +94,7 @@ module eth_rx (
 
   // form bytes when past PREAMBLE
   assign wByte_Rx = {Rxd, rByte_Rx[5:0]};
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wRx_Req & Crs_Dv)
       rByte_Rx <= wByte_Rx >> pMII_WIDTH;
@@ -102,7 +102,7 @@ module eth_rx (
 
   // indicate when formed byte is valid
   assign wByte_Rdy = rBit_Cnt[1] & rBit_Cnt[0];
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wRx_Req & Crs_Dv)
       rBit_Cnt <= rBit_Cnt + 1;
@@ -111,7 +111,7 @@ module eth_rx (
   end
 
   // rx output register
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     rByte_Rdy <= wByte_Rdy;
     if (wByte_Rdy & wRx_Req)
@@ -123,7 +123,7 @@ module eth_rx (
   //------------------------------------------
 
   // pipeline data for crc
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     rByte_Rdy_d1 <= rByte_Rdy;
     rByte_d1 <= rByte;
@@ -140,7 +140,7 @@ module eth_rx (
 
   // only update rCrc_Computed when byte is ready
   assign wCrc_En = rByte_Rdy_d1 & wCrc_Req;
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (wCrc_En) begin
       rCrc_Computed <= wCrc_Out;
@@ -155,7 +155,7 @@ module eth_rx (
   //------------------------------------------
   
   // pipeline the data for output (to not include CRC)
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (rByte_Rdy) begin
       rRecv_Byte <= rByte;
@@ -167,7 +167,7 @@ module eth_rx (
   end
 
   // pipeline the byte ready signal
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (rByte_Rdy)
       rRecv_Byte_Rdy <= {rRecv_Byte_Rdy[15:0], rByte_Rdy};
@@ -181,14 +181,14 @@ module eth_rx (
   // holds rx bytes prior to CRC valid
 
   // pipeline start of packet flag
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     rSOP <= {rSOP[14:0], wSOP_Out};
   end
   assign wSOP = rSOP[15];
 
   // FIFO readout control logic
-  always @(posedge Clk)
+  always_ff @(posedge Clk)
   begin
     if (Rst) begin
       rCrc_Valid <= 0;
@@ -201,8 +201,8 @@ module eth_rx (
       if (wCrc_Valid & ~rCrc_Valid)
         rFifo_Rd_Valid <= 1;
 
-      // end readout on EOP flag
-      if (Recv_Byte[8])
+      // end readout on EOP flag or empty
+      if (Recv_Byte[8] | wFifo_Empty)
         rFifo_Rd_Valid <= 0;
     end
   end
@@ -211,22 +211,25 @@ module eth_rx (
   assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
   assign wRecv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
 
-  async_fifo #(.DSIZE (10)) 
+  async_fifo #(
+    .DSIZE (10),
+    .ASIZE (9)
+  ) 
   async_fifo_inst (
     .wclk     (Clk),
-    .wrst_n   (~Rst | ~wPkt_Invalid),
+    .wrst_n   (~Rst & ~wPkt_Invalid),
     .winc     (wRecv_Byte_Rdy),
     .wdata    (wRecv_Byte),
     .wfull    (),
     .awfull   (),
     .rclk     (Clk),
-    .rrst_n   (~Rst),
+    .rrst_n   (~Rst & ~wPkt_Invalid),
     .rinc     (rFifo_Rd_Valid),
     .rdata    (Recv_Byte),
     .rempty   (wFifo_Empty),
     .arempty  ()
   );
 
-  assign Recv_Byte_Rdy = rFifo_Rd_Valid & ~Recv_Byte[9];
+  assign Recv_Byte_Rdy = rFifo_Rd_Valid;
 
 endmodule

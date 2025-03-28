@@ -10,9 +10,8 @@ import eth_tx_pkg::*;
 module eth_tx (
   input  logic       Clk,
   input  logic       Rst,
-  input  logic [7:0] Eth_Byte,
+  input  logic [9:0] Eth_Byte,
   input  logic       Eth_Byte_Valid,
-  input  logic       Eth_Pkt_Rdy,
   output logic [1:0] Txd,
   output logic       Tx_En
 );
@@ -48,12 +47,10 @@ module eth_tx (
   logic[1:0]  rTx_Data_d1;
   logic       wFifo_Rd_Valid;
   logic       rFifo_Rd_Valid_d1;
+  logic [9:0] wFifo_Rd_Data_Out;
   logic [7:0] wFifo_Rd_Data;
-
-  // placeholder
-  logic       wFifo_Full;
-  logic       wFifo_Afull;
-  logic       wFifo_Aempty;
+  logic       wEOP;
+  logic       rEOP;
 
   // crc
   logic [7:0]  rCrc_Byte;
@@ -79,10 +76,10 @@ module eth_tx (
   eth_tx_ctrl eth_tx_ctrl_inst (
     .Clk               (Clk),
     .Rst               (Rst),
-    .Eth_Pkt_Rdy       (Eth_Pkt_Rdy),
     .Tx_Ctrl_FSM_State (sTx_Ctrl_FSM_State),
-    .Tx_En             (wTx_En),
+    .EOP               (rEOP),
     .Fifo_Empty        (wFifo_Empty),
+    .Tx_En             (wTx_En),
     .Fifo_Rd           (wFifo_Rd_Valid),
     .Crc_En            (wCrc_En)
   );
@@ -96,22 +93,40 @@ module eth_tx (
   //------------------------------------------
   // data_fifo
   //------------------------------------------
-  // holds payload bytes prior to transmission
+  // holds payload bytes prior to transmission,
+  // to guarantee proper readout, all bytes belonging to same packet
+  // must enter on consecutive clock cycles
 
-  async_fifo async_fifo_inst (
+  async_fifo #(
+    .DSIZE (10),
+    .ASIZE (9)
+  )
+  async_fifo_inst (
     .wclk     (Clk),
     .wrst_n   (~Rst),
     .winc     (Eth_Byte_Valid),
     .wdata    (Eth_Byte),
-    .wfull    (wFifo_Full),
-    .awfull   (wFifo_Afull),
+    .wfull    (),
+    .awfull   (),
     .rclk     (Clk),
     .rrst_n   (~Rst),
     .rinc     (wFifo_Rd_Valid),
-    .rdata    (wFifo_Rd_Data),
+    .rdata    (wFifo_Rd_Data_Out),
     .rempty   (wFifo_Empty),
-    .arempty  (wFifo_Aempty)
+    .arempty  ()
   );
+
+  // pipeline wEOP by 1 CC
+  assign wEOP = wFifo_Rd_Data_Out[8];
+  always_ff @(posedge Clk)
+  begin
+    if (wFifo_Rd_Valid)
+      rEOP <= wEOP;
+    else
+      rEOP <= 0;
+  end
+
+  assign wFifo_Rd_Data = wFifo_Rd_Data_Out[7:0];
 
   always_ff @(posedge Clk)
   begin

@@ -162,6 +162,7 @@ module eth_rx_ctrl (
           SOP <= 0;
           EOP <= 0;
           if (Byte_Rdy) begin
+            Pkt_Invalid <= 0;
             Crc_En <= 1;
             SOP <= 1;
             sByte_Ctrl_State <= DEST_ADDR;
@@ -210,8 +211,14 @@ module eth_rx_ctrl (
           if (Byte_Rdy) begin
             rByte_Cnt <= rByte_Cnt + 1;
             if (rByte_Cnt == pLEN_TYPE_BYTES-1) begin
+              //if (rLen_Type == pLEN_TYPE) begin
               rByte_Cnt <= 0;
               sByte_Ctrl_State <= PAYLOAD;
+              //end
+              // else begin
+              //   rByte_Ctrl_Done <= 1;
+              //   sByte_Ctrl_State <= IDLE;
+              // end
             end
             else
               rLen_Type <= {rLen_Type[7:0], Byte};
@@ -235,7 +242,7 @@ module eth_rx_ctrl (
           end
           else if (~Crs_Dv) begin
             Crc_En <= 0;
-            EOP <= 1;
+            //EOP <= 1;
             sByte_Ctrl_State <= FCS;
           end
         end

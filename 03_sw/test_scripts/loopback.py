@@ -11,6 +11,7 @@
 # Ethernet frame: (Preamble)(SFD)(MAC dest)(MAC source)(EtherType)(Payload)(FCS)
 # MAC is currently configured to only operate on incoming packets with EtherType 0xFFFF
 # Wireshark filter: eth.type == 0xFFFF 
+#                   eth.dst == FF:FF:FF:FF:FF:FF
 
 from scapy.all import Ether, sendp
 import threading
@@ -35,5 +36,5 @@ class Loopback_Handler:
 if __name__ == "__main__":
     handler = Loopback_Handler()
 
-    for i in range(1):
+    for i in range(100):
         handler.send_packet(True)

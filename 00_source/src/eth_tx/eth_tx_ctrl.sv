@@ -10,7 +10,7 @@ import eth_tx_pkg::*;
 module eth_tx_ctrl (
   input  logic Clk,
   input  logic Rst,
-  input  logic Eth_Pkt_Rdy,
+  input  logic EOP,
   input  logic Fifo_Empty,
   output logic Tx_En,
   output logic Fifo_Rd,
@@ -42,12 +42,14 @@ module eth_tx_ctrl (
       //----------------
       // IDLE (0)
       //----------------
+      // can begin forming packet as soon as byte enters data fifo
+
       IDLE:
       begin
         Tx_En <= 0;
         Crc_En <= 0;
         rTx_Ctrl_Cnt  <= 0;
-        if (Eth_Pkt_Rdy) begin
+        if (~Fifo_Empty) begin
           Tx_En <= 1;
           Tx_Ctrl_FSM_State <= PREAMBLE;
         end
@@ -132,8 +134,8 @@ module eth_tx_ctrl (
         else
           Fifo_Rd <= 0;
 
-        // transition when fifo is empty, assume pad is skipped
-        if (Fifo_Empty) begin
+        // transition on EOP, assume pad is skipped
+        if (EOP) begin
           rTx_Ctrl_Cnt <= 0;
           if (1) begin
             Crc_En <= 0;
@@ -162,6 +164,18 @@ module eth_tx_ctrl (
         if (rTx_Ctrl_Cnt == pFCS_CNT-1) begin
           rTx_Ctrl_Cnt <= 0;
           Tx_En <= 0;
+          Tx_Ctrl_FSM_State <= IPG;
+        end
+      end
+
+      //----------------
+      // IPG (8)
+      //----------------
+      IPG:
+      begin
+        rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
+        if (rTx_Ctrl_Cnt == pIPG_CNT-1) begin
+          rTx_Ctrl_Cnt <= 0;
           Tx_Ctrl_FSM_State <= IDLE;
         end
       end
