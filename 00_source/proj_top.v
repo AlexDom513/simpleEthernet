@@ -42,6 +42,11 @@ module proj_top(
   inout  MDIO
 );
 
+  // Build Options
+  localparam cLoopback = 0;
+  localparam cTx_Rx    = 1;
+  localparam cTpg      = 2;
+
   // Block Design
   wire AXI_Clk;
   wire AXI_Rstn;
@@ -140,7 +145,10 @@ module proj_top(
     .M_AXI_0_wvalid       (M_AXI_0_wvalid)
   );
 
-  eth_top  eth_top_inst (
+  eth_top #(
+    .pBuild_Option(cTx_Rx)
+  )
+  eth_top_inst (
 
     // Block Design
     .AXI_Clk              (AXI_Clk),
@@ -161,7 +169,13 @@ module proj_top(
     .AXI_rdata            (M_AXI_0_rdata),
     .AXI_rvalid           (M_AXI_0_rvalid),
     .AXI_rresp            (M_AXI_0_rresp),
-    
+
+    // Data Interface
+    .Eth_Byte_Rx          (),
+    .Eth_Byte_Valid_Rx    (),
+    .Eth_Byte_Tx          (),
+    .Eth_Byte_Valid_Tx    (),
+
     // MDIO Interface
     .MDC_Clk              (MDC_Clk),
     .MDIO                 (MDIO),

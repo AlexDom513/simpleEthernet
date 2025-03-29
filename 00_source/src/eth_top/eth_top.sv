@@ -6,7 +6,8 @@
 //--------------------------------------------------------------------
 
 module eth_top #(
-  parameter gLoopback_En=1) (
+  parameter pBuild_Option=1
+  )(
 
   // AXI-Lite Interface
   input  logic        AXI_Clk,
@@ -28,6 +29,12 @@ module eth_top #(
   output logic        AXI_rvalid,
   output logic [1:0]  AXI_rresp,
 
+  // Data Interface
+  output logic [9:0]  Eth_Byte_Rx,
+  output logic        Eth_Byte_Valid_Rx,
+  output logic [9:0]  Eth_Byte_Tx,
+  output logic        Eth_Byte_Valid_Tx,
+
   // MDIO Interface
   output logic        MDC_Clk,
   inout  logic        MDIO,
@@ -45,8 +52,9 @@ module eth_top #(
   //------------------------------------------
   // Constants
   //------------------------------------------
-  localparam TX_TEST = 0;
-  localparam LOOPBACK_TEST = 1;
+  localparam cLoopback = 0;
+  localparam cTx_Rx    = 1;
+  localparam cTpg      = 2;
 
   //------------------------------------------
   // Logic
@@ -57,16 +65,16 @@ module eth_top #(
   logic wMDC_Rst;
 
   // Test TX Data
-  logic [7:0] wEth_Byte_Test;
-  logic       wEth_Byte_Valid_Test;
+  logic [7:0]  wEth_Byte_Test;
+  logic        wEth_Byte_Valid_Test;
 
-  // Loopback (RX) to TX Data
-  logic [9:0] wEth_Byte_Loopback;
-  logic       wEth_Byte_Valid_Loopback;
+  // RX Data
+  logic [9:0]  wEth_Byte_Rx;
+  logic        wEth_Byte_Valid_Rx;
 
   // Selected TX Data
-  logic [9:0] wEth_Byte;
-  logic       wEth_Byte_Valid;
+  logic [9:0]  wEth_Byte_Tx;
+  logic        wEth_Byte_Valid_Tx;
 
   // MDIO DMA
   logic [4:0]  wMDIO_Phy_Addr_Req;
@@ -99,9 +107,11 @@ module eth_top #(
     .Rst           (Eth_Rst),
     .Crs_Dv        (Crs_Dv),
     .Rxd           (Rxd),
-    .Recv_Byte     (wEth_Byte_Loopback),
-    .Recv_Byte_Rdy (wEth_Byte_Valid_Loopback)
+    .Recv_Byte     (wEth_Byte_Rx),
+    .Recv_Byte_Rdy (wEth_Byte_Valid_Rx)
   );
+  assign Eth_Byte_Rx = wEth_Byte_Rx;
+  assign Eth_Byte_Valid_Rx = wEth_Byte_Valid_Rx;
 
   //------------------------------------------
   // eth_tx
@@ -115,32 +125,38 @@ module eth_top #(
   //   consecutive clock cycles
   // - first and last bytes of a packet must be marked with proper SOP (bit 9) & EOP (bit 8) flags
 
-  // mux test or loopback data depending on generic
-  case(gLoopback_En)
-    TX_TEST:
+  // loopback, tx_rx, or test data depending on parameter
+  case(pBuild_Option)
+    cLoopback:
     begin
-      assign wEth_Byte       = wEth_Byte_Test;
-      assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
+      assign wEth_Byte_Tx       = wEth_Byte_Rx;
+      assign wEth_Byte_Valid_Tx = wEth_Byte_Valid_Rx;
     end
 
-    LOOPBACK_TEST:
+    cTx_Rx:
     begin
-      assign wEth_Byte       = wEth_Byte_Loopback;
-      assign wEth_Byte_Valid = wEth_Byte_Valid_Loopback;
+      assign wEth_Byte_Tx       = Eth_Byte_Tx;
+      assign wEth_Byte_Valid_Tx = Eth_Byte_Valid_Tx;
+    end
+
+    cTpg:
+    begin
+      assign wEth_Byte_Tx       = wEth_Byte_Test;
+      assign wEth_Byte_Valid_Tx = wEth_Byte_Valid_Test;
     end
 
     default:
     begin
-      assign wEth_Byte       = wEth_Byte_Test;
-      assign wEth_Byte_Valid = wEth_Byte_Valid_Test;
+      assign wEth_Byte_Tx       = wEth_Byte_Test;
+      assign wEth_Byte_Valid_Tx = wEth_Byte_Valid_Test;
     end
   endcase
 
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
     .Rst            (Eth_Rst),
-    .Eth_Byte       (wEth_Byte),
-    .Eth_Byte_Valid (wEth_Byte_Valid),
+    .Eth_Byte       (wEth_Byte_Tx),
+    .Eth_Byte_Valid (wEth_Byte_Valid_Tx),
     .Txd            (Txd),
     .Tx_En          (Tx_En)
   );

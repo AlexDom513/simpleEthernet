@@ -4,12 +4,18 @@ GTKWAVE = gtkwave
 
 VERILOG_COMMON_DIR = $(PWD)/../../00_source/src/common
 VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/eth_crc_gen.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/fifomem.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/rptr_empty.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/wptr_full.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/sync_r2w.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/sync_w2r.v
+VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/async_fifo.v
 
 VERILOG_SOURCE_DIR = $(PWD)/../../00_source/src/eth_rx
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_rx.sv
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_rx_ctrl.sv
 
-VERILATOR_FLAGS = -j 0 -Wall -I$(VERILOG_COMMON_DIR)
+VERILATOR_FLAGS = -j 0 -I$(VERILOG_COMMON_DIR)
 COMPILE_ARGS += $(VERILATOR_FLAGS)
 EXTRA_ARGS += --trace --trace-structs
 

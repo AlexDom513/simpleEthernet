@@ -11,7 +11,7 @@ from cocotb.triggers import Timer, RisingEdge
 from tb_stim_gen_axi import Stim_Gen_Axi
 from tb_stim_gen_mdio import Stim_Gen_Mdio
 
-REG_TEST_EN = 0
+REG_TEST_EN = 1
 TX_TEST_EN = 1
 
 @cocotb.test()
