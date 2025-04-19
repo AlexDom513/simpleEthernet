@@ -32,8 +32,8 @@ module eth_top #(
   // Data Interface
   output logic [9:0]  Eth_Byte_Rx,
   output logic        Eth_Byte_Valid_Rx,
-  output logic [9:0]  Eth_Byte_Tx,
-  output logic        Eth_Byte_Valid_Tx,
+  input  logic [9:0]  Eth_Byte_Tx,
+  input  logic        Eth_Byte_Valid_Tx,
 
   // MDIO Interface
   output logic        MDC_Clk,
