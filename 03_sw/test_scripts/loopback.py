@@ -14,7 +14,6 @@
 #                   eth.dst == FF:FF:FF:FF:FF:FF
 
 from scapy.all import Ether, sendp
-import threading
 
 class Loopback_Handler:
     def __init__(self):

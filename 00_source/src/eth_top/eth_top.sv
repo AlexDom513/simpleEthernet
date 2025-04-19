@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------
 
 module eth_top #(
-  parameter pBuild_Option=1
+  parameter pBuild_Option=0
   )(
 
   // AXI-Lite Interface
@@ -52,9 +52,9 @@ module eth_top #(
   //------------------------------------------
   // Constants
   //------------------------------------------
-  localparam cLoopback = 0;
-  localparam cTx_Rx    = 1;
-  localparam cTpg      = 2;
+  localparam cLoopback = 0; // data entering RX is sent back to TX
+  localparam cTx_Rx    = 1; // data enters RX and leaves eth_top, data sent to TX from outside eth_top
+  localparam cTpg      = 2; // TX data created by TPG
 
   //------------------------------------------
   // Logic
