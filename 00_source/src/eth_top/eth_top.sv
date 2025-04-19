@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------
 
 module eth_top #(
-  parameter pBuild_Option=0
+  parameter pBuild_Option=1
   )(
 
   // AXI-Lite Interface
@@ -100,6 +100,21 @@ module eth_top #(
   assign MDC_Clk = wMDC_Clk;
 
   //------------------------------------------
+  // eth_data_mgr
+  //------------------------------------------
+  eth_data_mgr # (
+    .pPayload_Only (1)
+  )
+  eth_data_mgr_inst (
+    .Clk                   (Eth_Clk),
+    .Rst                   (Eth_Rst),
+    .Eth_Byte_Rx_In        (wEth_Byte_Rx),
+    .Eth_Byte_Valid_Rx_In  (wEth_Byte_Valid_Rx),
+    .Eth_Byte_Rx_Out       (Eth_Byte_Rx),
+    .Eth_Byte_Valid_Rx_Out (Eth_Byte_Valid_Rx)
+  );
+
+  //------------------------------------------
   // eth_rx
   //------------------------------------------
   eth_rx  eth_rx_inst (
@@ -110,8 +125,6 @@ module eth_top #(
     .Recv_Byte     (wEth_Byte_Rx),
     .Recv_Byte_Rdy (wEth_Byte_Valid_Rx)
   );
-  assign Eth_Byte_Rx = wEth_Byte_Rx;
-  assign Eth_Byte_Valid_Rx = wEth_Byte_Valid_Rx;
 
   //------------------------------------------
   // eth_tx

@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Mar 28 21:04:02 2025
+[*] Sat Apr 19 20:48:03 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/dump.vcd"
-[dumpfile_mtime] "Fri Mar 28 21:00:35 2025"
-[dumpfile_size] 793017
+[dumpfile_mtime] "Sat Apr 19 20:47:03 2025"
+[dumpfile_size] 627910
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/eth_loopback.gtkw"
-[timestart] 2610000
+[timestart] 17700000
 [size] 1440 1243
 [pos] -1 -1
-*-21.425060 8720000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-15.701390 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_top.
 [treeopen] eth_top.eth_rx_inst.
 [treeopen] eth_top.eth_tx_inst.
 [sst_width] 321
-[signals_width] 225
+[signals_width] 274
 [sst_expanded] 1
 [sst_vpaned_height] 368
 @28
@@ -100,8 +100,15 @@ eth_top.eth_rx_inst.Recv_Byte[9:0]
 eth_top.eth_rx_inst.Recv_Byte_Rdy
 @200
 -
-@28
-eth_top.eth_tx_inst.Eth_Byte_Valid
+@23
+[color] 2
+Eth_Byte_Rx[9:0]
+@820
+[color] 2
+eth_top.Eth_Byte_Rx[9:0]
+@22
+[color] 2
+eth_top.Eth_Byte_Valid_Rx
 @200
 -
 @28
@@ -123,7 +130,6 @@ eth_top.eth_tx_inst.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
 eth_top.eth_tx_inst.wCrc_Byte_Valid
 @22
 eth_top.eth_tx_inst.wCrc_Computed[31:0]
-@23
 eth_top.eth_tx_inst.wCrc_Computed_Tx[31:0]
 @200
 -

@@ -13,6 +13,7 @@ VERILOG_SOURCES += $(VERILOG_COMMON_DIR)/async_fifo/async_fifo.v
 
 VERILOG_SOURCE_DIR = $(PWD)/../../00_source/src
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_proc/eth_tx_tpg.sv
+VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_proc/eth_data_mgr.sv
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx/eth_tx_pkg.sv
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx/eth_tx_ctrl.sv
 VERILOG_SOURCES += $(VERILOG_SOURCE_DIR)/eth_tx/eth_tx.sv
