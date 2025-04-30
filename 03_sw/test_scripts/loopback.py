@@ -18,7 +18,8 @@ from scapy.all import Ether, sendp
 class Loopback_Handler:
     def __init__(self):
         self.mac_src  = "00:00:00:00:00:00"
-        self.mac_dest = "ff:ff:ff:ff:ff:ff"
+        #self.mac_dest = "ff:ff:ff:ff:ff:ff"
+        self.mac_dest = "02:00:00:00:00:01"
         self.len_type = 0xffff
         self.payload  = b"Test, ABCDEFGHIJKLMNOPQRSTUVWXYZ, Test for full loopback from PC --> FPGA --> PC"
 

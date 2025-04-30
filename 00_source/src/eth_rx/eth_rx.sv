@@ -68,6 +68,7 @@ module eth_rx (
   logic        wEOP;
   logic        wFifo_Empty;
   logic        rFifo_Rd_Valid;
+  logic        rFifo_Rd_Valid_d1;
 
   //------------------------------------------
   // eth_rx_ctrl
@@ -209,6 +210,7 @@ module eth_rx (
     end
     else begin
       rCrc_Valid <= wCrc_Valid;
+      rFifo_Rd_Valid_d1 <= rFifo_Rd_Valid;
 
       // start readout on CRC valid
       if (wCrc_Valid & ~rCrc_Valid)
@@ -219,15 +221,16 @@ module eth_rx (
         rFifo_Rd_Valid <= 0;
     end
   end
-  assign Recv_Byte_Rdy = rFifo_Rd_Valid;
+  assign Recv_Byte_Rdy = rFifo_Rd_Valid & rFifo_Rd_Valid_d1;
 
   // data output to FIFO
   assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
   assign wRecv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
 
   async_fifo #(
-    .DSIZE (10),
-    .ASIZE (9)
+    .DSIZE       (10),
+    .ASIZE       (11),
+    .FALLTHROUGH ("FALSE") // "TRUE" causes inference of LUTRAM
   ) 
   async_fifo_inst (
     .wclk     (Clk),

@@ -1,24 +1,23 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Sat Apr 19 20:48:03 2025
+[*] Wed Apr 30 03:55:43 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/dump.vcd"
-[dumpfile_mtime] "Sat Apr 19 20:47:03 2025"
-[dumpfile_size] 627910
+[dumpfile_mtime] "Wed Apr 30 03:50:50 2025"
+[dumpfile_size] 820349
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/eth_loopback.gtkw"
-[timestart] 17700000
-[size] 1440 1243
-[pos] -1 -1
-*-15.701390 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 4455000
+[size] 1245 1376
+[pos] 2754 659
+*-16.780375 4620000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_top.
 [treeopen] eth_top.eth_rx_inst.
 [treeopen] eth_top.eth_tx_inst.
 [sst_width] 321
 [signals_width] 274
 [sst_expanded] 1
-[sst_vpaned_height] 368
+[sst_vpaned_height] 415
 @28
-eth_top.Eth_Clk
 eth_top.Eth_Rst
 @200
 -
@@ -100,7 +99,7 @@ eth_top.eth_rx_inst.Recv_Byte[9:0]
 eth_top.eth_rx_inst.Recv_Byte_Rdy
 @200
 -
-@23
+@22
 [color] 2
 Eth_Byte_Rx[9:0]
 @820
@@ -119,7 +118,23 @@ eth_top.eth_tx_inst.wFifo_Rd_Data_Out[9:0]
 @820
 eth_top.eth_tx_inst.wFifo_Rd_Data[7:0]
 @28
-eth_top.eth_tx_inst.eth_tx_ctrl_inst.Fifo_Rd
+eth_top.eth_tx_inst.wFifo_Rd_Valid
+eth_top.eth_tx_inst.rFifo_Rd_Valid_d1
+@29
+eth_top.Eth_Clk
+@22
+[color] 2
+eth_top.eth_tx_inst.rPreamble_Buf[55:0]
+[color] 2
+eth_top.eth_tx_inst.rSFD_Buf[7:0]
+[color] 2
+eth_top.eth_tx_inst.rDest_Addr_Buf[47:0]
+[color] 2
+eth_top.eth_tx_inst.rSrc_Addr_Buf[47:0]
+[color] 2
+eth_top.eth_tx_inst.rLen_Type_Buf[15:0]
+[color] 2
+eth_top.eth_tx_inst.rPayload_Buf[7:0]
 @24
 eth_top.eth_tx_inst.eth_tx_ctrl_inst.rByte_Cnt[9:0]
 @22

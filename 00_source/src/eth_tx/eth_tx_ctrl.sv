@@ -53,6 +53,7 @@ module eth_tx_ctrl (
         rTx_Ctrl_Cnt  <= 0;
         rByte_Cnt <= 14;
         if (~Fifo_Empty) begin
+          Fifo_Rd <= 1;
           Tx_En <= 1;
           Tx_Ctrl_FSM_State <= PREAMBLE;
         end
@@ -63,6 +64,7 @@ module eth_tx_ctrl (
       //----------------
       PREAMBLE:
       begin
+        Fifo_Rd <= 0;
         rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
         if (rTx_Ctrl_Cnt == pPREAMBLE_CNT-1) begin
           rTx_Ctrl_Cnt <= 0;

@@ -11,7 +11,7 @@ module async_fifo
     #(
         parameter DSIZE = 8,
         parameter ASIZE = 9,
-        parameter FALLTHROUGH = "TRUE" // First word fall-through without latency
+        parameter FALLTHROUGH = "FALSE" // First word fall-through without latency
     )(
         input  wire             wclk,
         input  wire             wrst_n,

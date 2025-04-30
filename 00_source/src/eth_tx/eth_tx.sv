@@ -97,8 +97,9 @@ module eth_tx (
   // must enter on consecutive clock cycles
 
   async_fifo #(
-    .DSIZE (10),
-    .ASIZE (9)
+    .DSIZE       (10),
+    .ASIZE       (11),
+    .FALLTHROUGH ("FALSE") // "TRUE" causes inference of LUTRAM
   )
   async_fifo_inst (
     .wclk     (Clk),
@@ -115,6 +116,9 @@ module eth_tx (
     .arempty  ()
   );
 
+  // extract bytes without SOP/EOP
+  assign wFifo_Rd_Data = wFifo_Rd_Data_Out[7:0];
+
   // pipeline wEOP by 1 CC
   assign wEOP = wFifo_Rd_Data_Out[8];
   always_ff @(posedge Clk)
@@ -125,8 +129,7 @@ module eth_tx (
       rEOP <= 0;
   end
 
-  assign wFifo_Rd_Data = wFifo_Rd_Data_Out[7:0];
-
+  // delay needed?
   always_ff @(posedge Clk)
   begin
     if (Rst)

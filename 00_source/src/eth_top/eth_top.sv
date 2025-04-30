@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------
 
 module eth_top #(
-  parameter pBuild_Option=1
+  parameter pBuild_Option=0
   )(
 
   // AXI-Lite Interface
