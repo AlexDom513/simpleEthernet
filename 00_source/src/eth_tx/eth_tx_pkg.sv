@@ -7,33 +7,33 @@
 
 package eth_tx_pkg;
 
-  parameter pMII_WIDTH      = 2;  // # parallel data lines to PHY
-  parameter pBYTES_TO_BITS  = 3;  // shift to convert bytes to bits
+  localparam pMII_WIDTH      = 2;  // # parallel data lines to PHY
+  localparam pBYTES_TO_BITS  = 3;  // shift to convert bytes to bits
 
   // byte counts
-  parameter pMIN_PKT_BYTES  = 60; // not including CRC
-  parameter pPREAMBLE_BYTES = 7;
-  parameter pSFD_BYTES      = 1;
-  parameter pMAC_ADDR_BYTES = 6;
-  parameter pLEN_TYPE_BYTES = 2;
-  parameter pFCS_BYTES      = 4;
-  parameter pIPG_BYTES      = 12;
+  localparam pMIN_PKT_BYTES  = 60; // not including CRC
+  localparam pPREAMBLE_BYTES = 7;
+  localparam pSFD_BYTES      = 1;
+  localparam pMAC_ADDR_BYTES = 6;
+  localparam pLEN_TYPE_BYTES = 2;
+  localparam pFCS_BYTES      = 4;
+  localparam pIPG_BYTES      = 12;
 
   // bit counts
-  parameter pPREAMBLE_BITS  = (pPREAMBLE_BYTES << pBYTES_TO_BITS);
-  parameter pSFD_BITS       = (pSFD_BYTES      << pBYTES_TO_BITS);
-  parameter pMAC_ADDR_BITS  = (pMAC_ADDR_BYTES << pBYTES_TO_BITS);
-  parameter pLEN_TYPE_BITS  = (pLEN_TYPE_BYTES << pBYTES_TO_BITS);
-  parameter pFCS_BITS       = (pFCS_BYTES      << pBYTES_TO_BITS);
-  parameter pIPG_BITS       = (pIPG_BYTES      << pBYTES_TO_BITS);
+  localparam pPREAMBLE_BITS  = (pPREAMBLE_BYTES << pBYTES_TO_BITS);
+  localparam pSFD_BITS       = (pSFD_BYTES      << pBYTES_TO_BITS);
+  localparam pMAC_ADDR_BITS  = (pMAC_ADDR_BYTES << pBYTES_TO_BITS);
+  localparam pLEN_TYPE_BITS  = (pLEN_TYPE_BYTES << pBYTES_TO_BITS);
+  localparam pFCS_BITS       = (pFCS_BYTES      << pBYTES_TO_BITS);
+  localparam pIPG_BITS       = (pIPG_BYTES      << pBYTES_TO_BITS);
 
   // serial counts (# iterations to process data given some MII width)
-  parameter pPREAMBLE_CNT   = (pPREAMBLE_BITS  >> (pMII_WIDTH >> 1));
-  parameter pSFD_CNT        = (pSFD_BITS       >> (pMII_WIDTH >> 1));
-  parameter pMAC_ADDR_CNT   = (pMAC_ADDR_BITS  >> (pMII_WIDTH >> 1));
-  parameter pLen_TYPE_CNT   = (pLEN_TYPE_BITS  >> (pMII_WIDTH >> 1));
-  parameter pFCS_CNT        = (pFCS_BITS       >> (pMII_WIDTH >> 1));
-  parameter pIPG_CNT        = (pIPG_BITS       >> (pMII_WIDTH >> 1));
+  localparam pPREAMBLE_CNT   = (pPREAMBLE_BITS  >> (pMII_WIDTH >> 1));
+  localparam pSFD_CNT        = (pSFD_BITS       >> (pMII_WIDTH >> 1));
+  localparam pMAC_ADDR_CNT   = (pMAC_ADDR_BITS  >> (pMII_WIDTH >> 1));
+  localparam pLen_TYPE_CNT   = (pLEN_TYPE_BITS  >> (pMII_WIDTH >> 1));
+  localparam pFCS_CNT        = (pFCS_BITS       >> (pMII_WIDTH >> 1));
+  localparam pIPG_CNT        = (pIPG_BITS       >> (pMII_WIDTH >> 1));
 
   // eth_rx_ctrl_fsm
   typedef enum logic [3:0] {

@@ -129,7 +129,7 @@ module eth_tx (
       rEOP <= 0;
   end
 
-  // delay needed?
+  // read delay
   always_ff @(posedge Clk)
   begin
     if (Rst)

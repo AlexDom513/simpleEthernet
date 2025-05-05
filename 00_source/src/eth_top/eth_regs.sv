@@ -155,7 +155,7 @@ module eth_regs (
   assign Eth_Tx_Test_En         = rETH_TEST_REG[0];
 
   //------------------------------------------
-  // address_truncation
+  // address truncation
   //------------------------------------------
 
   // zynq can only obtain 1 byte per address
@@ -170,7 +170,7 @@ module eth_regs (
   assign wWrite_Addr = AXI_awaddr[7:2];
 
   //------------------------------------------
-  // read_mux
+  // read mux
   //------------------------------------------
   // provides data for AXI reads
 
@@ -200,7 +200,9 @@ module eth_regs (
   //------------------------------------------
   // CDC for MDIO_Busy_Recv
   //------------------------------------------
-  // cross MDIO_Busy_Recv into domain used by AXI
+  // cross MDIO_Busy_Recv into domain used by AXI,
+  // do not allow AXI to read MDIO registers until
+  // the crossed busy signal is low
 
   always_ff @(posedge AXI_Clk)
   begin
@@ -215,7 +217,7 @@ module eth_regs (
   end
 
   //------------------------------------------
-  // ctrl_fsm
+  // axi_ctrl_fsm
   //------------------------------------------
   // handles AXI Transactions
 
@@ -297,6 +299,7 @@ module eth_regs (
   //--------------------------------------------------------------------
   // Registers Configured by PS
   //--------------------------------------------------------------------
+  // These registers use AXI_Clk and are written/read by the PS.
 
   //------------------------------------------
   // MDIO_USR_CTRL_REG
@@ -350,6 +353,8 @@ module eth_regs (
   //--------------------------------------------------------------------
   // Registers Configured by MDIO DMA
   //--------------------------------------------------------------------
+  // These registers use MDC_Clk and they are written by the MDIO DMA.
+  // They can be read by the PS when the crossed rMDIO_Busy_Recv is de-asserted
 
   //------------------------------------------
   // MDIO_PHY_CTRL_REG

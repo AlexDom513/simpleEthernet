@@ -6,8 +6,7 @@
 //--------------------------------------------------------------------
 
 module eth_top #(
-  parameter pBuild_Option=0
-  )(
+  parameter pBuild_Option=0)(
 
   // AXI-Lite Interface
   input  logic        AXI_Clk,
@@ -41,7 +40,6 @@ module eth_top #(
 
   // Ethernet Interface
   input  logic        Eth_Clk,
-  input  logic        Eth_Rst,
   input  logic        Eth_Tx_Test_En,
   input  logic        Crs_Dv,
   input  logic [1:0]  Rxd,
@@ -60,7 +58,10 @@ module eth_top #(
   // Logic
   //------------------------------------------
 
-  // Clock Enable (for 1 MHz MDC Clock)
+  // Eth
+  logic wEth_Rst;
+
+  // MDC
   logic wMDC_Clk;
   logic wMDC_Rst;
 
@@ -92,10 +93,12 @@ module eth_top #(
   // clk_rst_mgr
   //------------------------------------------
   clk_rst_mgr  clk_rst_mgr_inst (
-    .Clk     (AXI_Clk),
-    .Rstn    (AXI_Rstn),
-    .MDC_Clk (wMDC_Clk),
-    .MDC_Rst (wMDC_Rst)
+    .AXI_Clk     (AXI_Clk),
+    .AXI_Rstn    (AXI_Rstn),
+    .Eth_Clk     (Eth_Clk),
+    .Eth_Rst     (wEth_Rst),
+    .MDC_Clk     (wMDC_Clk),
+    .MDC_Rst     (wMDC_Rst)
   );
   assign MDC_Clk = wMDC_Clk;
 
@@ -107,7 +110,7 @@ module eth_top #(
   )
   eth_data_mgr_inst (
     .Clk                   (Eth_Clk),
-    .Rst                   (Eth_Rst),
+    .Rst                   (wEth_Rst),
     .Eth_Byte_Rx_In        (wEth_Byte_Rx),
     .Eth_Byte_Valid_Rx_In  (wEth_Byte_Valid_Rx),
     .Eth_Byte_Rx_Out       (Eth_Byte_Rx),
@@ -119,7 +122,7 @@ module eth_top #(
   //------------------------------------------
   eth_rx  eth_rx_inst (
     .Clk           (Eth_Clk),
-    .Rst           (Eth_Rst),
+    .Rst           (wEth_Rst),
     .Crs_Dv        (Crs_Dv),
     .Rxd           (Rxd),
     .Recv_Byte     (wEth_Byte_Rx),
@@ -167,7 +170,7 @@ module eth_top #(
 
   eth_tx eth_tx_inst (
     .Clk            (Eth_Clk),
-    .Rst            (Eth_Rst),
+    .Rst            (wEth_Rst),
     .Eth_Byte       (wEth_Byte_Tx),
     .Eth_Byte_Valid (wEth_Byte_Valid_Tx),
     .Txd            (Txd),
@@ -179,7 +182,7 @@ module eth_top #(
   //------------------------------------------
   eth_tx_tpg  eth_tx_tpg_inst (
     .Clk                 (Eth_Clk),
-    .Rst                 (Eth_Rst),
+    .Rst                 (wEth_Rst),
     .Eth_Tx_Test_En      (Eth_Tx_Test_En),
     .Eth_Byte_Test       (wEth_Byte_Test),
     .Eth_Byte_Valid_Test (wEth_Byte_Valid_Test)
