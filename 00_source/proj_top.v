@@ -32,6 +32,7 @@ module proj_top(
 
   // Ethernet PHY
   input  Eth_Clk,
+  input  Eth_Rst,
   input  Eth_Tx_Test_En,
   input  Crs_Dv,
   input  Rxd,
@@ -87,12 +88,14 @@ module proj_top(
 
   // Ethernet PHY
   wire Eth_Clk;
+  wire Eth_Rst;
   wire Eth_Tx_Test_En;
   wire Crs_Dv;
   wire [1:0] Rxd;
   wire [1:0] Txd;
   wire Tx_En;
 
+  // NOTE: PS must boot for reset to be released
   bd_wrapper  bd_wrapper_inst (
     .AXI_Clk              (AXI_Clk),
     .AXI_Rstn             (AXI_Rstn),
@@ -172,6 +175,7 @@ module proj_top(
 
     // Ethernet Interface
     .Eth_Clk              (Eth_Clk),
+    .Eth_Rst              (Eth_Rst),
     .Eth_Tx_Test_En       (Eth_Tx_Test_En),
     .Crs_Dv               (Crs_Dv),
     .Rxd                  (Rxd),

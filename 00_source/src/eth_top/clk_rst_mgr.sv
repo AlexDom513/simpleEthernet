@@ -8,8 +8,6 @@
 module clk_rst_mgr (
   input  logic AXI_Clk,
   input  logic AXI_Rstn,
-  input  logic Eth_Clk,
-  output logic Eth_Rst,
   output logic MDC_Clk,
   output logic MDC_Rst
 );
@@ -52,8 +50,6 @@ module clk_rst_mgr (
   //------------------------------------------
   logic rMDC_Rst_meta;
   logic rMDC_Rst;
-  logic rEth_Rst_meta;
-  logic rEth_Rst;
 
   // MDC_Rst
   always_ff @(posedge wMDC_Clk)
@@ -62,13 +58,5 @@ module clk_rst_mgr (
     rMDC_Rst <= rMDC_Rst_meta;
   end 
   assign MDC_Rst = rMDC_Rst;
-
-  // Eth_Rst
-  always_ff @(posedge Eth_Clk)
-  begin
-    rEth_Rst_meta <= ~AXI_Rstn;
-    rEth_Rst <= rEth_Rst_meta;
-  end
-  assign Eth_Rst = rEth_Rst;
 
 endmodule
