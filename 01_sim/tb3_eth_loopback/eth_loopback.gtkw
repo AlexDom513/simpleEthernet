@@ -1,22 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed Apr 30 03:55:43 2025
+[*] Thu Sep 11 04:45:49 2025
 [*]
 [dumpfile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/dump.vcd"
-[dumpfile_mtime] "Wed Apr 30 03:50:50 2025"
-[dumpfile_size] 820349
+[dumpfile_mtime] "Thu Sep 11 04:38:51 2025"
+[dumpfile_size] 80141513
 [savefile] "/home/flan/dev/projects/simpleEthernet/01_sim/tb3_eth_loopback/eth_loopback.gtkw"
-[timestart] 4455000
-[size] 1245 1376
-[pos] 2754 659
-*-16.780375 4620000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 1222350000
+[size] 1920 1043
+[pos] 4000 1167
+*-23.549423 -1 1167860000 1168880000 1252820000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] eth_top.
 [treeopen] eth_top.eth_rx_inst.
 [treeopen] eth_top.eth_tx_inst.
 [sst_width] 321
 [signals_width] 274
 [sst_expanded] 1
-[sst_vpaned_height] 415
+[sst_vpaned_height] 299
 @28
 eth_top.Eth_Rst
 @200
@@ -28,15 +28,13 @@ eth_top.eth_rx_inst.eth_rx_ctrl_inst.Rx_En
 eth_top.eth_rx_inst.eth_rx_ctrl_inst.rRx_Ctrl_Cnt[7:0]
 @28
 eth_top.Crs_Dv
-@820
+@22
 [color] 3
 eth_top.eth_rx_inst.rByte[7:0]
-@22
 [color] 3
 eth_top.eth_rx_inst.rByte_Rdy
 @24
 eth_top.eth_rx_inst.eth_rx_ctrl_inst.sRx_Ctrl_State[1:0]
-eth_top.eth_rx_inst.eth_rx_ctrl_inst.sByte_Ctrl_State[2:0]
 @200
 -
 @22
@@ -69,6 +67,9 @@ eth_top.eth_rx_inst.rRecv_Byte_Rdy[16:0]
 -group_end
 @200
 -
+@22
+eth_top.eth_rx_inst.eth_rx_ctrl_inst.rCrc_Recv[31:0]
+eth_top.eth_rx_inst.eth_rx_ctrl_inst.Crc_Computed[31:0]
 @28
 [color] 1
 eth_top.eth_rx_inst.wCrc_Valid
@@ -84,7 +85,10 @@ eth_top.eth_rx_inst.wEOP
 eth_top.eth_rx_inst.wRecv_Byte[9:0]
 @28
 eth_top.eth_rx_inst.wRecv_Byte_Rdy
+@29
+[color] 1
 eth_top.eth_rx_inst.rFifo_Rd_Valid
+@28
 eth_top.eth_rx_inst.wFifo_Empty
 @200
 -
@@ -120,7 +124,6 @@ eth_top.eth_tx_inst.wFifo_Rd_Data[7:0]
 @28
 eth_top.eth_tx_inst.wFifo_Rd_Valid
 eth_top.eth_tx_inst.rFifo_Rd_Valid_d1
-@29
 eth_top.Eth_Clk
 @22
 [color] 2
@@ -136,14 +139,18 @@ eth_top.eth_tx_inst.rLen_Type_Buf[15:0]
 [color] 2
 eth_top.eth_tx_inst.rPayload_Buf[7:0]
 @24
-eth_top.eth_tx_inst.eth_tx_ctrl_inst.rByte_Cnt[9:0]
+[color] 6
+eth_top.eth_rx_inst.eth_rx_ctrl_inst.sByte_Ctrl_State[2:0]
 @22
+[color] 6
 eth_top.eth_tx_inst.eth_tx_ctrl_inst.Tx_Ctrl_FSM_State[3:0]
 @200
 -
 @28
 eth_top.eth_tx_inst.wCrc_Byte_Valid
+eth_top.eth_tx_inst.eth_tx_ctrl_inst.Crc_En
 @22
+[color] 2
 eth_top.eth_tx_inst.wCrc_Computed[31:0]
 eth_top.eth_tx_inst.wCrc_Computed_Tx[31:0]
 @200
@@ -155,5 +162,32 @@ eth_top.eth_tx_inst.rFCS_Buf[31:0]
 eth_top.eth_tx_inst.rFifo_Rd_Valid_d1
 eth_top.Tx_En
 eth_top.Txd[1:0]
+@200
+-
+@28
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Clk
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Rst
+@22
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Byte[7:0]
+@28
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Byte_Rdy
+@22
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Crc_Out[31:0]
+@28
+eth_top.eth_tx_inst.wCrc_En
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Crc_Req
+@22
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Lfsr_C[31:0]
+[color] 3
+eth_top.eth_tx_inst.eth_crc_gen_inst.Lfsr_Q[31:0]
+@200
+-
 [pattern_trace] 1
 [pattern_trace] 0

@@ -42,10 +42,10 @@ module eth_top #(
   input  logic        Eth_Clk,
   input  logic        Eth_Rst,
   input  logic        Eth_Tx_Test_En,
-  input  logic        Crs_Dv,
-  input  logic [1:0]  Rxd,
-  output logic [1:0]  Txd,
-  output logic        Tx_En
+  (* mark_debug = "true" *) input  logic        Crs_Dv,
+  (* mark_debug = "true" *) input  logic [1:0]  Rxd,
+  (* mark_debug = "true" *) output logic [1:0]  Txd,
+  (* mark_debug = "true" *) output logic        Tx_En
 );
 
   //------------------------------------------
@@ -68,12 +68,12 @@ module eth_top #(
   logic        wEth_Byte_Valid_Test;
 
   // RX Data
-  logic [9:0]  wEth_Byte_Rx;
-  logic        wEth_Byte_Valid_Rx;
+  (* mark_debug = "true" *) logic [9:0]  wEth_Byte_Rx;
+  (* mark_debug = "true" *) logic        wEth_Byte_Valid_Rx;
 
   // Selected TX Data
-  logic [9:0]  wEth_Byte_Tx;
-  logic        wEth_Byte_Valid_Tx;
+  (* mark_debug = "true" *) logic [9:0]  wEth_Byte_Tx;
+  (* mark_debug = "true" *) logic        wEth_Byte_Valid_Tx;
 
   // MDIO DMA
   logic [4:0]  wMDIO_Phy_Addr_Req;
@@ -90,7 +90,7 @@ module eth_top #(
   //------------------------------------------
   // clk_rst_mgr
   //------------------------------------------
-  clk_rst_mgr  clk_rst_mgr_inst (
+  clk_rst_mgr clk_rst_mgr_inst (
     .AXI_Clk     (AXI_Clk),
     .AXI_Rstn    (AXI_Rstn),
     .MDC_Clk     (wMDC_Clk),
@@ -116,7 +116,7 @@ module eth_top #(
   //------------------------------------------
   // eth_rx
   //------------------------------------------
-  eth_rx  eth_rx_inst (
+  eth_rx eth_rx_inst (
     .Clk           (Eth_Clk),
     .Rst           (Eth_Rst),
     .Crs_Dv        (Crs_Dv),
@@ -176,7 +176,7 @@ module eth_top #(
   //------------------------------------------
   // eth_tx_tpg
   //------------------------------------------
-  eth_tx_tpg  eth_tx_tpg_inst (
+  eth_tx_tpg eth_tx_tpg_inst (
     .Clk                 (Eth_Clk),
     .Rst                 (Eth_Rst),
     .Eth_Tx_Test_En      (Eth_Tx_Test_En),
@@ -223,7 +223,7 @@ module eth_top #(
   //------------------------------------------
   // eth_mdio
   //------------------------------------------
-  eth_mdio  eth_mdio_inst (
+  eth_mdio eth_mdio_inst (
     .Clk                   (wMDC_Clk),
     .Rst                   (wMDC_Rst),
     .MDIO                  (MDIO),

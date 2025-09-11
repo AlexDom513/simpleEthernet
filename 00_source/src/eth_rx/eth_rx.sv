@@ -61,12 +61,12 @@ module eth_rx (
   logic        rCrc_Valid;
 
   // rx fifo control
-  logic        wPkt_Invalid;
-  logic        wSOP_Out;
+  (* mark_debug = "true" *) logic        wPkt_Invalid;
+  (* mark_debug = "true" *) logic        wSOP_Out;
   logic [15:0] rSOP;
   logic        wSOP;
   logic        wEOP;
-  logic        wFifo_Empty;
+  (* mark_debug = "true" *) logic        wFifo_Empty;
   logic        rFifo_Rd_Valid;
   logic        rFifo_Rd_Valid_d1;
 
@@ -76,7 +76,7 @@ module eth_rx (
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk          (Clk),
     .Rst          (Rst),
-    .Crs_Dv       (Crs_Dv),
+    .Crs_Dv       (Crs_Dv & ~rFifo_Rd_Valid), // trying to block reads during rx fifo readout - test only
     .Rxd          (Rxd),
     .Byte_Rdy     (rByte_Rdy),
     .Byte         (rByte),
@@ -229,7 +229,7 @@ module eth_rx (
 
   async_fifo #(
     .DSIZE       (10),
-    .ASIZE       (11),
+    .ASIZE       (12),
     .FALLTHROUGH ("FALSE") // "TRUE" causes inference of LUTRAM
   ) 
   async_fifo_inst (

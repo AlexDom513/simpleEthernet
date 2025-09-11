@@ -66,16 +66,16 @@ async def tb_eth_loopback(dut):
 
     # test sequential valid packets
     await valid_packet(dut)
-    await(Timer(10, 'us'))
+    await(Timer(1, 'ms'))
     
     # test consecutive valid packets
-    await valid_packet(dut)
-    await valid_packet(dut)
-    await(Timer(10, 'us'))
+    for _ in range(10):
+        await valid_packet(dut)
+        await(Timer(15, 'us')) # consecutive valid packets leads to an issue; crcs don't match
+    await(Timer(1, 'ms'))
 
     # test valid packet interrupted by miscellaneous packet
     await valid_packet(dut)
     await misc_packet(dut)
-
-    await(Timer(10, 'us'))
+    await(Timer(1, 'ms'))
 

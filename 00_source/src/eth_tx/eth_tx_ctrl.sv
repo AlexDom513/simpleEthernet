@@ -21,8 +21,8 @@ module eth_tx_ctrl (
   //------------------------------------------
   // Logic
   //------------------------------------------
-  logic [9:0] rTx_Ctrl_Cnt;
-  logic [9:0] rByte_Cnt;
+  (* mark_debug = "true" *) logic [9:0] rTx_Ctrl_Cnt;
+  (* mark_debug = "true" *) logic [11:0] rByte_Cnt; // needs to be larger than max # bytes in packet
 
   //------------------------------------------
   // eth_tx_ctrl_fsm
