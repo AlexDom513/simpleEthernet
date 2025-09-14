@@ -150,6 +150,13 @@ module eth_tx_ctrl (
           else
             Tx_Ctrl_FSM_State <= PAD;
         end
+
+        // transition on stuck state
+        if (rByte_Cnt == 12'hFFF) begin
+          rTx_Ctrl_Cnt <= 0;
+          Crc_En <= 0;
+          Tx_Ctrl_FSM_State <= FCS;
+        end
       end
 
       //----------------
