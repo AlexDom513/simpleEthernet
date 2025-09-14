@@ -29,8 +29,7 @@ module eth_tx_ctrl (
   //------------------------------------------
   // control read-out of bits to PHY
 
-  always_ff @(posedge Clk)
-  begin
+  always_ff @(posedge Clk) begin
     if (Rst) begin
       Tx_En <= 0;
       Crc_En <= 0;

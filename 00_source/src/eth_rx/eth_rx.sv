@@ -69,6 +69,9 @@ module eth_rx (
   (* mark_debug = "true" *) logic        wFifo_Empty;
   logic        rFifo_Rd_Valid;
   logic        rFifo_Rd_Valid_d1;
+  logic        wEOP_Redge;
+  logic        wEOP_Output;
+  logic        rEOP_Output;
 
   //------------------------------------------
   // eth_rx_ctrl
@@ -76,7 +79,8 @@ module eth_rx (
   eth_rx_ctrl eth_rx_ctrl_inst (
     .Clk          (Clk),
     .Rst          (Rst),
-    .Crs_Dv       (Crs_Dv & ~rFifo_Rd_Valid), // trying to block reads during rx fifo readout - test only
+    //.Crs_Dv       (Crs_Dv & ~rFifo_Rd_Valid), // trying to block reads during rx fifo readout - test only
+    .Crs_Dv       (Crs_Dv),
     .Rxd          (Rxd),
     .Byte_Rdy     (rByte_Rdy),
     .Byte         (rByte),
@@ -217,7 +221,7 @@ module eth_rx (
         rFifo_Rd_Valid <= 1;
 
       // end readout on EOP flag or empty
-      if (Recv_Byte[8] | wFifo_Empty)
+      if (wEOP_Redge | wFifo_Empty)
         rFifo_Rd_Valid <= 0;
     end
   end
@@ -226,6 +230,13 @@ module eth_rx (
   // data output to FIFO
   assign wRecv_Byte = {wSOP, wEOP, rRecv_Byte_d4};
   assign wRecv_Byte_Rdy = rRecv_Byte_Rdy[16] & rRecv_Byte_Rdy[0];
+
+  // create redge EOP trigger
+  assign wEOP_Redge = wEOP_Output & ~rEOP_Output;
+  assign wEOP_Output = Recv_Byte[8];
+  always_ff @(posedge Clk) begin
+    rEOP_Output <= wEOP_Output;
+  end
 
   async_fifo #(
     .DSIZE       (10),
@@ -241,7 +252,7 @@ module eth_rx (
     .awfull   (),
     .rclk     (Clk),
     .rrst_n   (~Rst & ~wPkt_Invalid),
-    .rinc     (rFifo_Rd_Valid),
+    .rinc     (rFifo_Rd_Valid & ~wEOP_Redge),
     .rdata    (Recv_Byte),
     .rempty   (wFifo_Empty),
     .arempty  ()

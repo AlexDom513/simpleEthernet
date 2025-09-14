@@ -45,12 +45,17 @@ module eth_tx (
   // data
   logic[1:0]  rTx_Data;
   logic[1:0]  rTx_Data_d1;
+  logic wFifo_Rd_Req;
   (* mark_debug = "true" *) logic       wFifo_Rd_Valid;
   logic       rFifo_Rd_Valid_d1;
   logic [9:0] wFifo_Rd_Data_Out;
   logic [7:0] wFifo_Rd_Data;
   logic       wEOP;
   (* mark_debug = "true" *) logic       rEOP;
+  logic rEOP_d1;
+  logic rEOP_d2;
+  logic rEOP_d3;
+  logic rEOP_d4;
 
   // crc
   logic [7:0]  rCrc_Byte;
@@ -79,10 +84,10 @@ module eth_tx (
     .Clk               (Clk),
     .Rst               (Rst),
     .Tx_Ctrl_FSM_State (sTx_Ctrl_FSM_State),
-    .EOP               (rEOP),
+    .EOP               (rEOP_d4),
     .Fifo_Empty        (wFifo_Empty),
     .Tx_En             (wTx_En),
-    .Fifo_Rd           (wFifo_Rd_Valid),
+    .Fifo_Rd           (wFifo_Rd_Req),
     .Crc_En            (wCrc_En)
   );
 
@@ -98,6 +103,9 @@ module eth_tx (
   // holds payload bytes prior to transmission,
   // to guarantee proper readout, all bytes belonging to same packet
   // must enter on consecutive clock cycles
+
+  // fifo read valid
+  assign wFifo_Rd_Valid = wFifo_Rd_Req & ~rEOP_d3;
 
   async_fifo #(
     .DSIZE       (10),
@@ -122,19 +130,26 @@ module eth_tx (
   // extract bytes without SOP/EOP
   assign wFifo_Rd_Data = wFifo_Rd_Data_Out[7:0];
 
-  // pipeline wEOP by 1 CC
+  // extract EOP
   assign wEOP = wFifo_Rd_Data_Out[8];
-  always_ff @(posedge Clk)
-  begin
-    if (wFifo_Rd_Valid)
-      rEOP <= wEOP;
+
+  // special formatting for rEOP_d4, sent to control FSM;
+  // do not read FIFO past EOP
+  always_ff @(posedge Clk) begin
+    rEOP <= wEOP;
+
+    if (~rEOP & wEOP)
+      rEOP_d1 <= 1;
     else
-      rEOP <= 0;
+      rEOP_d1 <= 0;
+
+    rEOP_d2 <= rEOP_d1;
+    rEOP_d3 <= rEOP_d2;
+    rEOP_d4 <= rEOP_d3;
   end
 
   // read delay
-  always_ff @(posedge Clk)
-  begin
+  always_ff @(posedge Clk) begin
     if (Rst)
       rFifo_Rd_Valid_d1 <= 0;
     else
@@ -147,8 +162,7 @@ module eth_tx (
   // in register, shift right by pMII_WIDTH to make
   // LSBs avaliable first for eth_data_mux
 
-  always_ff @(posedge Clk)
-  begin
+  always_ff @(posedge Clk) begin
     if (Rst) begin
       rPreamble_Buf  <= 0;
       rSFD_Buf       <= 0;
