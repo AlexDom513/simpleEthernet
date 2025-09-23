@@ -20,7 +20,7 @@ def frame_gen(custom_etherpkt):
     preamble    = np.tile([1,0,1,0,1,0,1,0], 7)
     sfd         = np.array([1, 0, 1, 0, 1, 0, 1, 1])
     eth_layer   = Ether(dst="ff:ff:ff:ff:ff:ff", src="00:00:00:00:00:00", type=ethertype)
-    payload     = "Test"
+    payload     = 1000*"A"
     frame       = eth_layer / payload
 
     # write frame bytes/info to file

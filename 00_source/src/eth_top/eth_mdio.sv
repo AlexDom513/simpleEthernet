@@ -64,8 +64,8 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   logic [4:0]  rPhy_Addr;
   logic [4:0]  rReg_Addr;
   logic [4:0]  rReg_Addr_hold;
-  logic        rTransc_Type;
   logic [15:0] rWr_Dat;
+  logic        rTransc_Type;
 
   // Serial MDIO Data Handling
   logic        rMDIO_Output_En;
@@ -104,8 +104,7 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   //------------------------------------------
 
   // **eth_regs is operating in clock domain different from Clk in MDIO module
-  // synchronize start signal into domain used in eth_mdio
-  // add pulse stretch??
+  // synchronize MDIO_En_Recv (from AXI_Clk) into domain used in eth_mdio (MDC_Clk)
   always_ff @(posedge Clk)
   begin
     if (Rst) begin
@@ -140,7 +139,7 @@ module eth_mdio #(parameter SIM_MODE = 0) (
   end
 
   //------------------------------------------
-  // ctrl_fsm
+  // mdio_ctrl_fsm
   //------------------------------------------
   always_ff @(posedge Clk)
   begin

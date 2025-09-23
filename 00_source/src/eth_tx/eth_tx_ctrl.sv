@@ -21,16 +21,15 @@ module eth_tx_ctrl (
   //------------------------------------------
   // Logic
   //------------------------------------------
-  logic [9:0] rTx_Ctrl_Cnt;
-  logic [9:0] rByte_Cnt;
+  (* mark_debug = "true" *) logic [9:0] rTx_Ctrl_Cnt;
+  (* mark_debug = "true" *) logic [11:0] rByte_Cnt; // needs to be larger than max # bytes in packet
 
   //------------------------------------------
   // eth_tx_ctrl_fsm
   //------------------------------------------
   // control read-out of bits to PHY
 
-  always_ff @(posedge Clk)
-  begin
+  always_ff @(posedge Clk) begin
     if (Rst) begin
       Tx_En <= 0;
       Crc_En <= 0;
@@ -53,6 +52,7 @@ module eth_tx_ctrl (
         rTx_Ctrl_Cnt  <= 0;
         rByte_Cnt <= 14;
         if (~Fifo_Empty) begin
+          Fifo_Rd <= 1;
           Tx_En <= 1;
           Tx_Ctrl_FSM_State <= PREAMBLE;
         end
@@ -63,6 +63,7 @@ module eth_tx_ctrl (
       //----------------
       PREAMBLE:
       begin
+        Fifo_Rd <= 0;
         rTx_Ctrl_Cnt <= rTx_Ctrl_Cnt + 1;
         if (rTx_Ctrl_Cnt == pPREAMBLE_CNT-1) begin
           rTx_Ctrl_Cnt <= 0;
@@ -148,6 +149,13 @@ module eth_tx_ctrl (
           end
           else
             Tx_Ctrl_FSM_State <= PAD;
+        end
+
+        // transition on stuck state
+        if (rByte_Cnt == 12'hFFF) begin
+          rTx_Ctrl_Cnt <= 0;
+          Crc_En <= 0;
+          Tx_Ctrl_FSM_State <= FCS;
         end
       end
 

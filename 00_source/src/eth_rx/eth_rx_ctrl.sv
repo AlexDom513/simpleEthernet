@@ -50,10 +50,10 @@ module eth_rx_ctrl (
   //------------------------------------------
   // Logic
   //------------------------------------------
-  eth_rx_ctrl_state_t   sRx_Ctrl_State;
+  (* mark_debug = "true" *) eth_rx_ctrl_state_t   sRx_Ctrl_State;
   logic [7:0]           rRx_Ctrl_Cnt;
 
-  eth_byte_ctrl_state_t sByte_Ctrl_State;
+  (* mark_debug = "true" *) eth_byte_ctrl_state_t sByte_Ctrl_State;
   logic [15:0]          rByte_Cnt;
   logic                 rByte_Ctrl_Done;
 

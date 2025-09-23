@@ -30,8 +30,8 @@ module eth_tx (
   //------------------------------------------
 
   // fsm
-  eth_tx_ctrl_state_t sTx_Ctrl_FSM_State;
-  eth_tx_ctrl_state_t sTx_Ctrl_FSM_State_d1;
+  (* mark_debug = "true" *) eth_tx_ctrl_state_t sTx_Ctrl_FSM_State;
+  (* mark_debug = "true" *) eth_tx_ctrl_state_t sTx_Ctrl_FSM_State_d1;
 
   // control
   logic       wTx_En;
@@ -45,12 +45,17 @@ module eth_tx (
   // data
   logic[1:0]  rTx_Data;
   logic[1:0]  rTx_Data_d1;
-  logic       wFifo_Rd_Valid;
+  logic wFifo_Rd_Req;
+  (* mark_debug = "true" *) logic       wFifo_Rd_Valid;
   logic       rFifo_Rd_Valid_d1;
   logic [9:0] wFifo_Rd_Data_Out;
   logic [7:0] wFifo_Rd_Data;
   logic       wEOP;
-  logic       rEOP;
+  (* mark_debug = "true" *) logic       rEOP;
+  logic rEOP_d1;
+  logic rEOP_d2;
+  logic rEOP_d3;
+  logic rEOP_d4;
 
   // crc
   logic [7:0]  rCrc_Byte;
@@ -69,6 +74,9 @@ module eth_tx (
   logic [7:0]  rPayload_Buf;
   logic [31:0] rFCS_Buf;
 
+  // debug only
+  (* mark_debug = "true" *) logic tx_buf_full;
+
   //------------------------------------------
   // eth_tx_ctrl
   //------------------------------------------
@@ -76,10 +84,10 @@ module eth_tx (
     .Clk               (Clk),
     .Rst               (Rst),
     .Tx_Ctrl_FSM_State (sTx_Ctrl_FSM_State),
-    .EOP               (rEOP),
+    .EOP               (rEOP_d4),
     .Fifo_Empty        (wFifo_Empty),
     .Tx_En             (wTx_En),
-    .Fifo_Rd           (wFifo_Rd_Valid),
+    .Fifo_Rd           (wFifo_Rd_Req),
     .Crc_En            (wCrc_En)
   );
 
@@ -96,16 +104,20 @@ module eth_tx (
   // to guarantee proper readout, all bytes belonging to same packet
   // must enter on consecutive clock cycles
 
+  // fifo read valid
+  assign wFifo_Rd_Valid = wFifo_Rd_Req & ~rEOP_d3;
+
   async_fifo #(
-    .DSIZE (10),
-    .ASIZE (9)
+    .DSIZE       (10),
+    .ASIZE       (12),
+    .FALLTHROUGH ("FALSE") // "TRUE" causes inference of LUTRAM
   )
   async_fifo_inst (
     .wclk     (Clk),
     .wrst_n   (~Rst),
     .winc     (Eth_Byte_Valid),
     .wdata    (Eth_Byte),
-    .wfull    (),
+    .wfull    (tx_buf_full),
     .awfull   (),
     .rclk     (Clk),
     .rrst_n   (~Rst),
@@ -115,20 +127,29 @@ module eth_tx (
     .arempty  ()
   );
 
-  // pipeline wEOP by 1 CC
-  assign wEOP = wFifo_Rd_Data_Out[8];
-  always_ff @(posedge Clk)
-  begin
-    if (wFifo_Rd_Valid)
-      rEOP <= wEOP;
-    else
-      rEOP <= 0;
-  end
-
+  // extract bytes without SOP/EOP
   assign wFifo_Rd_Data = wFifo_Rd_Data_Out[7:0];
 
-  always_ff @(posedge Clk)
-  begin
+  // extract EOP
+  assign wEOP = wFifo_Rd_Data_Out[8];
+
+  // special formatting for rEOP_d4, sent to control FSM;
+  // do not read FIFO past EOP
+  always_ff @(posedge Clk) begin
+    rEOP <= wEOP;
+
+    if (~rEOP & wEOP)
+      rEOP_d1 <= 1;
+    else
+      rEOP_d1 <= 0;
+
+    rEOP_d2 <= rEOP_d1;
+    rEOP_d3 <= rEOP_d2;
+    rEOP_d4 <= rEOP_d3;
+  end
+
+  // read delay
+  always_ff @(posedge Clk) begin
     if (Rst)
       rFifo_Rd_Valid_d1 <= 0;
     else
@@ -141,8 +162,7 @@ module eth_tx (
   // in register, shift right by pMII_WIDTH to make
   // LSBs avaliable first for eth_data_mux
 
-  always_ff @(posedge Clk)
-  begin
+  always_ff @(posedge Clk) begin
     if (Rst) begin
       rPreamble_Buf  <= 0;
       rSFD_Buf       <= 0;

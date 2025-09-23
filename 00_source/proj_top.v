@@ -95,6 +95,7 @@ module proj_top(
   wire [1:0] Txd;
   wire Tx_En;
 
+  // NOTE: PS must boot for reset to be released
   bd_wrapper  bd_wrapper_inst (
     .AXI_Clk              (AXI_Clk),
     .AXI_Rstn             (AXI_Rstn),
@@ -140,7 +141,7 @@ module proj_top(
     .M_AXI_0_wvalid       (M_AXI_0_wvalid)
   );
 
-  eth_top  eth_top_inst (
+  eth_top eth_top_inst (
 
     // Block Design
     .AXI_Clk              (AXI_Clk),
@@ -161,7 +162,13 @@ module proj_top(
     .AXI_rdata            (M_AXI_0_rdata),
     .AXI_rvalid           (M_AXI_0_rvalid),
     .AXI_rresp            (M_AXI_0_rresp),
-    
+
+    // Data Interface
+    .Eth_Byte_Rx          (),
+    .Eth_Byte_Valid_Rx    (),
+    .Eth_Byte_Tx          (),
+    .Eth_Byte_Valid_Tx    (),
+
     // MDIO Interface
     .MDC_Clk              (MDC_Clk),
     .MDIO                 (MDIO),

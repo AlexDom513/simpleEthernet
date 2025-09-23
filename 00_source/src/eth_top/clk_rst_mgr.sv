@@ -6,8 +6,8 @@
 //--------------------------------------------------------------------
 
 module clk_rst_mgr (
-  input  logic Clk,
-  input  logic Rstn,
+  input  logic AXI_Clk,
+  input  logic AXI_Rstn,
   output logic MDC_Clk,
   output logic MDC_Rst
 );
@@ -25,9 +25,9 @@ module clk_rst_mgr (
   logic       rMDC_Clk = 1;
   logic       wMDC_Clk;
 
-  always_ff @(posedge Clk)
+  always_ff @(posedge AXI_Clk)
   begin
-    if (~Rstn)
+    if (~AXI_Rstn)
       rClk_Cnt <= 0;
     else begin
       rClk_Cnt <= rClk_Cnt + 1;
@@ -36,7 +36,7 @@ module clk_rst_mgr (
     end
   end
 
-  always_ff @(posedge Clk)
+  always_ff @(posedge AXI_Clk)
   begin
     if (rClk_Cnt == CLK_DIV_CNT-1)
       rMDC_Clk <= ~rMDC_Clk;
@@ -48,15 +48,15 @@ module clk_rst_mgr (
   //------------------------------------------
   // Reset Management
   //------------------------------------------
-  reg rMDC_Rst;
+  logic rMDC_Rst_meta;
+  logic rMDC_Rst;
 
+  // MDC_Rst
   always_ff @(posedge wMDC_Clk)
   begin
-  if (~Rstn)
-    rMDC_Rst <= 1;
-  else
-      rMDC_Rst <= 0;
-    end
+    rMDC_Rst_meta <= ~AXI_Rstn;
+    rMDC_Rst <= rMDC_Rst_meta;
+  end 
   assign MDC_Rst = rMDC_Rst;
 
 endmodule
